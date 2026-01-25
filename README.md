@@ -6,7 +6,7 @@ puzzle game available on Steam. Learn more about Polymino at
 
 This project uses unplugin-vue-components to automatically import all components
 when editing a .vue file. Components are imported by concatenating their file
-path relative to `src/components`.
+paths in kebab-case relative to `src/components`.
 For example, a component in a file called
 `src/components/pdx/some-folder/my-component.vue` can be referenced as
 `<pdx-some-folder-my-component>` without importing it. The plugin automatically
@@ -20,8 +20,8 @@ generated at `auto-imports.d.ts` in the repo's root directory.
 This project also uses Biome as its linter. Biome also offers additional tools
 such as code formatting, but it is currently only set up for linting.
 
-The following information is from the default Vue readme and is helpful for
-editing and running the project:
+The following information is mostly unchanged from the default Vue readme and is
+helpful for editing and running the project:
 
 ## Recommended IDE Setup
 

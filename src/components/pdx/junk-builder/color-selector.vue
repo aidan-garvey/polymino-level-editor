@@ -4,17 +4,15 @@
       v-for="(row, rowIndex) in colorRows"
       :key="rowIndex"
     >
-      <template
+      <pdx-junk-builder-selector-item
         v-for="(color, colIndex) in row"
         :key="colIndex"
-      >
-        <pdx-block
-          :grid="grid"
-          :row="rowIndex"
-          :col="colIndex"
-          @click="editor.junkBuilder.setColor(color)"
-        />
-      </template>
+        :grid="grid"
+        :row="rowIndex"
+        :col="colIndex"
+        :tooltip="blockColorTitles[color]"
+        :onClick="() => editor.junkBuilder.setColor(color)"
+      />
     </template>
   </div>
 </template>
@@ -25,6 +23,7 @@ import { CellGrid } from '@/types/CellGrid'
 import { BlockColor } from '@/types/BlockColor'
 import { Junk } from '@/types/Junk'
 import { JunkShape } from '@/types/JunkShape'
+import { blockColorTitles } from '@/consts/block'
 
 const {
   BLUE,
@@ -61,6 +60,5 @@ for (const row of [0, 1, 2] as const) {
 .pdx-junk-builder-color-selector {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
 }
 </style>

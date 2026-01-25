@@ -23,6 +23,7 @@ declare module 'vue' {
     PdxJunkBuilderCanvas: typeof import('./src/components/pdx/junk-builder/canvas.vue')['default']
     PdxJunkBuilderColorSelector: typeof import('./src/components/pdx/junk-builder/color-selector.vue')['default']
     PdxJunkBuilderEffectSelector: typeof import('./src/components/pdx/junk-builder/effect-selector.vue')['default']
+    PdxJunkBuilderSelectorItem: typeof import('./src/components/pdx/junk-builder/selector-item.vue')['default']
     PdxJunkEffectSelector: typeof import('./src/components/pdx/junk-effect-selector.vue')['default']
     PdxLayerBase: typeof import('./src/components/pdx/layer/base.vue')['default']
     PdxLayerBrush: typeof import('./src/components/pdx/layer/brush.vue')['default']

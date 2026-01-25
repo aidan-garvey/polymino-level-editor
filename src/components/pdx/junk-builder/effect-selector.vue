@@ -4,17 +4,15 @@
       v-for="(row, rowIndex) in effectRows"
       :key="rowIndex"
     >
-      <template
+      <pdx-junk-builder-selector-item
         v-for="(effect, colIndex) in row"
         :key="colIndex"
-      >
-        <pdx-block
-          :grid="grid"
-          :row="rowIndex"
-          :col="colIndex"
-          @click="editor.junkBuilder.setEffect(effect)"
-        />
-      </template>
+        :grid="grid"
+        :row="rowIndex"
+        :col="colIndex"
+        :tooltip="effect ? junkEffectNames[effect] : 'None'"
+        :onClick="() => editor.junkBuilder.setEffect(effect)"
+      />
     </template>
   </div>
 </template>
@@ -26,6 +24,7 @@ import { BlockColor } from '@/types/BlockColor'
 import { JunkEffect } from '@/types/JunkEffect'
 import { Junk } from '@/types/Junk'
 import { JunkShape } from '@/types/JunkShape'
+import { junkEffectNames } from '@/consts/effects'
 
 const {
   Armored,
@@ -63,6 +62,5 @@ for (const row of [0, 1] as const) {
 .pdx-junk-builder-effect-selector {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
 }
 </style>

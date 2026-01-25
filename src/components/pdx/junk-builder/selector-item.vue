@@ -2,6 +2,9 @@
   <div
     ref="itemRef"
     class="pdx-junk-builder-selector-item"
+    :class="{
+      'pdx-junk-builder-selector-item--selected': isSelected,
+    }"
     @pointerenter="onPointerEnter"
     @pointerleave="onPointerLeave"
   >
@@ -24,6 +27,7 @@ const props = defineProps<{
   col: number
   /** Acts as the tooltip text and name */
   tooltip: string
+  isSelected: boolean
   onClick: () => void
 }>()
 
@@ -43,5 +47,13 @@ const { onPointerEnter, onPointerLeave } = useTooltip(
 <style lang="scss">
 .pdx-junk-builder-selector-item {
   padding: 4px;
+
+  &--selected {
+    background: radial-gradient(
+      closest-side at center,
+      oklch(var(--lch-yellow)) 0%,
+      oklch(var(--lch-yellow) / 0) 100%
+    );
+  }
 }
 </style>

@@ -11,6 +11,7 @@
         :row="rowIndex"
         :col="colIndex"
         :tooltip="blockColorTitles[color]"
+        :isSelected="editor.junkBuilder.getColor() === color"
         :onClick="() => editor.junkBuilder.setColor(color)"
       />
     </template>

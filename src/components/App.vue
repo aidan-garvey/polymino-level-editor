@@ -3,6 +3,7 @@
 </template>
 
 <style lang="css">
+@import './variables.scss';
 @import './pdx/tool-selector.scss';
 @import './pdx/junk-builder/selector.scss';
 

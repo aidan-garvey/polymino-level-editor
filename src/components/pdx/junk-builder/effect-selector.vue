@@ -11,6 +11,7 @@
         :row="rowIndex"
         :col="colIndex"
         :tooltip="effect ? junkEffectNames[effect] : 'None'"
+        :isSelected="editor.junkBuilder.getEffect() === effect"
         :onClick="() => editor.junkBuilder.setEffect(effect)"
       />
     </template>

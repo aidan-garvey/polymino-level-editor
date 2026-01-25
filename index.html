@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="/favicon.ico">
+    <!--
+      Should really only request specific symbols, but it increases dev
+      friction, so I'm going to wait until I'm more confident that I don't need
+      more symbols.
+      Fun way to track down the list could be a global Set of icon names that
+      all <pdx-icon> components write to when mounted, and clicking a debug
+      button will log all of them.
+    -->
+    <link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block"
+    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polymino Level Editor</title>
+    <meta name="application-name" content="Polymino Level Editor">
+    <meta name="author" content="Aidan Garvey">
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

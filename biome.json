@@ -1,0 +1,83 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.3.11/schema.json",
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true,
+		"defaultBranch": "master"
+	},
+	"files": {
+		"ignoreUnknown": false
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "space",
+		"lineWidth": 80
+	},
+	"linter": {
+		"enabled": true,
+		"includes": [
+			"src/**/*.ts",
+			"src/**/*.css",
+			"src/**/*.scss",
+			"src/**/*.vue"
+		],
+		"rules": {
+			"recommended": true,
+			"a11y": "on",
+			"complexity": {
+				"noExcessiveLinesPerFunction": "off"
+			},
+			"correctness": {
+				"useJsonImportAttributes": "off"
+			},
+			"nursery": {
+				"recommended": true
+			},
+			"performance": "on",
+			"security": {
+				"noSecrets": {
+					"options": {
+						"entropyThreshold": 41
+					}
+				}
+			},
+			"style": {
+				"noDefaultExport": "off",
+				"useTemplate": "off"
+			},
+			"suspicious": {
+				"noConsole": "off"
+			}
+		}
+	},
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "single"
+		}
+	},
+	"html": {
+		"experimentalFullSupportEnabled": true
+	},
+	"assist": {
+		"enabled": false,
+		"actions": {
+			"source": {
+				"organizeImports": "on"
+			}
+		}
+	},
+	"overrides": [
+		{
+			"includes": ["src/**/*.vue"],
+			"linter": {
+				"rules": {
+					"correctness": {
+						"noUnusedVariables": "off",
+						"noUnusedImports": "off"
+					}
+				}
+			}
+		}
+	]
+}

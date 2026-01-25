@@ -39,8 +39,11 @@ const right = ref('0px')
 
 watch(tooltipItemName, () => {
   const rect = container.value?.getBoundingClientRect()
-  if (!rect)
+  if (!container.value || !rect)
     return
+
+  if (getComputedStyle(container.value).position === 'static')
+    console.warn('Tooltip parent is not positioned, positions may be incorrect')
 
   const containerTop = rect.top
   const containerLeft = rect.left

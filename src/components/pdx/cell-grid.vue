@@ -2,7 +2,8 @@
   <div
     class="cell-grid"
     :style="{
-      gridTemplateColumns: cssGridCols
+      gridTemplateColumns: cssGridCols,
+      gridTemplateRows: cssGridRows,
     }"
   >
     <template
@@ -15,14 +16,27 @@
         :grid
         :row="grid.height - yDown"
         :col="x - 1"
-        :should-show="shouldShow"
-        :get-opacity="getOpacity"
+        next-color
+        :should-show
+        :style="{
+          gridRow: yDown,
+          gridColumn: x
+        }"
         @cell-pointer-down="(...args) => emit('cellPointerDown', ...args)"
         @cell-pointer-enter="(...args) => emit('cellPointerEnter', ...args)"
         @cell-drag-over="(...args) => emit('cellDragOver', ...args)"
         @cell-drop="(...args) => emit('cellDrop', ...args)"
       />
     </template>
+
+    <pdx-junk
+      v-for="(junk, junkIndex) of grid.getJunk()"
+      :key="junkIndex"
+      :junk
+      :grid
+      @cell-drag-over="(...args) => emit('cellDragOver', ...args)"
+      @cell-drop="(...args) => emit('cellDrop', ...args)"
+    />
   </div>
 </template>
 
@@ -32,10 +46,8 @@ import type { CellGrid } from '@/types/CellGrid'
 const props = withDefaults(defineProps<{
   grid: CellGrid
   shouldShow?: (row: number, col: number) => boolean
-  getOpacity?: (row: number, col: number) => number
 }>(), {
   shouldShow: () => true,
-  getOpacity: () => 1,
 })
 
 const emit = defineEmits<{
@@ -46,6 +58,7 @@ const emit = defineEmits<{
 }>()
 
 const cssGridCols = computed(() => `repeat(${props.grid.width}, 1fr)`)
+const cssGridRows = computed(() => `repeat(${props.grid.height}, 1fr)`)
 </script>
 
 <style lang="scss">

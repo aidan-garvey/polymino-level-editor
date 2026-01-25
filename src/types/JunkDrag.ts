@@ -1,6 +1,8 @@
-import { BlockColor } from "@/types/BlockColor"
-import { JunkEffect } from "@/types/JunkEffect"
-import { JunkShape } from "@/types/JunkShape"
+import type { Junk } from '@/types/Junk'
+import { BlockColor } from '@/types/BlockColor'
+import { JunkEffect } from '@/types/JunkEffect'
+import { JunkShape } from '@/types/JunkShape'
+import { junkShapeDimensions } from '@/consts/junk'
 
 export type JunkDragFormat = `pdx/junk:${number}:${number}`
 
@@ -30,6 +32,7 @@ export const getJunkDragDimensions = (format: JunkDragFormat): [number, number] 
 }
 
 export interface JunkDragData {
+  id: number
   shape: JunkShape
   color: BlockColor
   effect: JunkEffect | null
@@ -54,4 +57,16 @@ export const getJunkDragData = (event: DragEvent): JunkDragData | null => {
   const data = JSON.parse(event.dataTransfer.getData(format))
 
   return isJunkDragData(data) ? data : null
+}
+
+export const setJunkDragData = (event: DragEvent, junk: Junk): void => {
+  const [width, height] = junkShapeDimensions[junk.shape]
+  const format: JunkDragFormat = `pdx/junk:${width}:${height}`
+  const data: JunkDragData = {
+    id: junk.id,
+    shape: junk.shape,
+    color: junk.color,
+    effect: junk.activeEffect
+  }
+  event.dataTransfer?.setData(format, JSON.stringify(data))
 }

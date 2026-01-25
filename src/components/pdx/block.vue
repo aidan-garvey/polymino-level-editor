@@ -2,8 +2,9 @@
   <div
     class="pdx-block"
     :style="{
-      opacity: getOpacity(row, col),
-      visibility: shouldShow(row, col) ? 'visible' : 'hidden'
+      opacity,
+      visibility: shouldShow(row, col) ? 'visible' : 'hidden',
+      ...cursorStyle
     }"
     @pointerdown="e => emit('cellPointerDown', e, row, col)"
     @pointerenter="e => emit('cellPointerEnter', e, row, col)"
@@ -38,11 +39,14 @@ const props = withDefaults(defineProps<{
   row: number
   col: number
   grid: CellGrid
+  /**
+   * If true, and the block to render is a junk piece, we render its nextColor
+   * instead of the main block.
+   */
+  nextColor?: boolean
   shouldShow?: (row: number, col: number) => boolean
-  getOpacity?: (row: number, col: number) => number
 }>(), {
   shouldShow: () => true,
-  getOpacity: () => 1,
 })
 
 const emit = defineEmits<{
@@ -54,9 +58,21 @@ const emit = defineEmits<{
 
 const cell = computed(() => props.grid.getBlock(props.row, props.col))
 
-const imageSrc = computed(() => cell.value.getImageSrc())
+const imageSrc = computed(() => {
+  if (cell.value.state === BlockState.JUNK && props.nextColor) {
+    return cell.value.getNextImageSrc()
+  } else {
+    return cell.value.getImageSrc()
+  }
+})
 
-const overlaySrc = computed(() => cell.value.getOverlaySrc())
+const overlaySrc = computed(() => {
+  if (cell.value.state === BlockState.JUNK && props.nextColor) {
+    return null
+  } else {
+    return cell.value.getOverlaySrc()
+  }
+})
 
 const imageFlip = computed(() => {
   const [hflip, vflip] = cell.value.getImageFlip()
@@ -74,6 +90,26 @@ const overlayFlip = computed(() => {
   }
   return {
     transform: `scaleX(${hflip ? -1 : 1}) scaleY(${vflip ? -1 : 1})`
+  }
+})
+
+const cursorStyle = computed(() => {
+  if (cell.value.state === BlockState.JUNK && props.grid.draggableJunk) {
+    return {
+      cursor: 'grab'
+    }
+  } else {
+    return {}
+  }
+})
+
+const opacity = computed(() => {
+  if (cell.value.state === BlockState.JUNK) {
+    return props.nextColor
+      ? props.grid.nextColorOpacity.value
+      : props.grid.junkOpacity.value
+  } else {
+    return props.grid.blockOpacity.value
   }
 })
 </script>

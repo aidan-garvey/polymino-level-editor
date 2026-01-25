@@ -16,7 +16,7 @@ const props = defineProps<{
 }>()
 
 const shouldShow = (row: number, col: number) => {
-  const junkBlock = props.editor.junkLayer.junkBlocks.getBlock(row, col)
+  const junkBlock = props.editor.junkLayer.board.getBlock(row, col)
   return junkBlock.state === BlockState.EMPTY
 }
 </script>

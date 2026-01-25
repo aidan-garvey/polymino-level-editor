@@ -5,22 +5,26 @@ import { Junk } from '@/types/Junk'
 import { junkShapeDimensions } from '@/consts/junk'
 
 export class JunkLayer {
-  readonly junkBlocks: CellGrid
-  readonly nextBlocks: CellGrid
+  readonly board: CellGrid
 
   constructor() {
-    this.junkBlocks = new CellGrid(BOARD_WIDTH, BOARD_HEIGHT)
-    this.nextBlocks = new CellGrid(BOARD_WIDTH, BOARD_HEIGHT)
+    this.board = new CellGrid(BOARD_WIDTH, BOARD_HEIGHT, true)
   }
 
   onCellDragOver(event: DragEvent, row: number, col: number): void {
     const format = getJunkDragFormat(event)
-    if (!format)
+    if (!format || !event.dataTransfer)
       return
 
     const [width, height] = getJunkDragDimensions(format)
-    if (this.junkBlocks.canPlaceJunk(row, col, width, height)) {
+    if (this.board.canPlaceJunk(row, col, width, height)) {
       event.preventDefault()
+      // Holding shift copies junk, otherwise it gets moved
+      if (event.shiftKey) {
+        event.dataTransfer.dropEffect = 'copy'
+      } else {
+        event.dataTransfer.dropEffect = 'move'
+      }
     }
   }
 
@@ -30,12 +34,17 @@ export class JunkLayer {
       return
 
     const [width, height] = junkShapeDimensions[data.shape]
-    if (!this.junkBlocks.canPlaceJunk(row, col, width, height))
+    if (!this.board.canPlaceJunk(row, col, width, height))
       return
 
     event.preventDefault()
 
-    this.junkBlocks.placeJunk(new Junk(
+    // Holding shift copies junk, otherwise it gets moved
+    if (!event.shiftKey) {
+      this.board.removeJunkById(data.id)
+    }
+
+    this.board.placeJunk(new Junk(
       data.shape,
       data.color,
       row,

@@ -10,7 +10,7 @@ export class BrushLayer {
   readonly board: CellGrid
 
   constructor() {
-    this.board = new CellGrid(BOARD_WIDTH, BOARD_HEIGHT)
+    this.board = new CellGrid(BOARD_WIDTH, BOARD_HEIGHT, false)
   }
 
   applyBrush(tool: Tool, row: number, col: number): void {

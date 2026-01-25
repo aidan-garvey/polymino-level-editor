@@ -12,12 +12,20 @@ export class CellGrid {
   private readonly cells: Ref<Block>[][]
   private readonly junkPieces: Ref<Junk[]>
 
+  readonly draggableJunk: boolean
+
+  readonly blockOpacity = ref(1)
+  readonly junkOpacity = ref(1)
+  readonly nextColorOpacity = ref(0)
+
   constructor(
     width: number,
     height: number,
+    draggableJunk: boolean,
   ) {
     this.width = width
     this.height = height
+    this.draggableJunk = draggableJunk
     this.cells = Array(height).fill(null).map(() => {
       return Array(width).fill(null).map(() => ref(new EmptyBlock()))
     })
@@ -99,6 +107,15 @@ export class CellGrid {
     const junkIndex = this.junkPieces.value.indexOf(junk)
     if (junkIndex !== -1)
       this.junkPieces.value.splice(junkIndex, 1)
+  }
+
+  removeJunkById(id: number): void {
+    for (const junk of this.junkPieces.value) {
+      if (junk.id === id) {
+        this.removeJunk(junk)
+        return
+      }
+    }
   }
 
   /**

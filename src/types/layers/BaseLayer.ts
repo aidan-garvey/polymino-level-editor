@@ -27,7 +27,8 @@ export class BaseLayer {
     seed = Math.round(performance.now()),
     rows = BOARD_HEIGHT
   ) {
-    this.board = new CellGrid(BOARD_WIDTH, BOARD_HEIGHT)
+    this.board = new CellGrid(BOARD_WIDTH, BOARD_HEIGHT, false)
+    this.board.blockOpacity.value = 0.25
     this.seed = seed
     this.rows = rows
     this.generateGrid()

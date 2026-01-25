@@ -2,7 +2,7 @@
   <div class="pdx-junk-builder">
     <pdx-tooltip />
 
-    <div class="text-body text-center">
+    <div class="text-title text-center">
       Junk Builder
     </div>
 

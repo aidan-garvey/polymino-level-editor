@@ -3,7 +3,8 @@
 </template>
 
 <style lang="css">
-@import './variables.scss';
+@import './color.scss';
+@import './typography.scss';
 @import './pdx/tool-selector.scss';
 @import './pdx/junk-builder/selector.scss';
 
@@ -28,21 +29,6 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.text-body {
-  font-size: 16px;
-  line-height: 20px;
-}
-
-.text-detail {
-  font-size: 14px;
-  line-height: 20px;
-  color: #ccc;
 }
 
 select {

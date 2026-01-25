@@ -2,7 +2,7 @@
   <div class="pdx-editor-brushes">
     <pdx-tooltip />
 
-    <div class="text-body text-center">
+    <div class="text-title text-center">
       Brushes
     </div>
 

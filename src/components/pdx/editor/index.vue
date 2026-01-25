@@ -17,6 +17,7 @@
     <div
       v-if="editor"
       class="pdx-editor__board"
+      :style="cursorStyle"
     >
       <pdx-layer-base :editor />
       <pdx-layer-brush :editor />
@@ -28,8 +29,18 @@
 <script setup lang="ts">
 import { Editor } from '@/types/Editor'
 import { BOARD_HEIGHT, BOARD_WIDTH } from '@/consts/board'
+import { ToolKind } from '@/types/Tool'
 
 const editor = new Editor()
+
+const cursorStyle = computed(() => {
+  switch (editor.leftTool.value.kind) {
+    case ToolKind.BRUSH:
+      return { cursor: 'crosshair' }
+    case ToolKind.SELECT:
+      return {}
+  }
+})
 </script>
 
 <style lang="scss">

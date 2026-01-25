@@ -40,7 +40,7 @@ body {
 }
 
 .text-detail {
-  font-size: 12px;
+  font-size: 14px;
   line-height: 20px;
   color: #ccc;
 }

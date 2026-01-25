@@ -7,12 +7,12 @@
     }"
     @pointerenter="onPointerEnter"
     @pointerleave="onPointerLeave"
+    @click="onClick"
   >
     <pdx-block
       :grid="grid"
       :row="row"
       :col="col"
-      @click="onClick"
     />
   </div>
 </template>
@@ -46,9 +46,11 @@ const { onPointerEnter, onPointerLeave } = useTooltip(
 
 <style lang="scss">
 .pdx-junk-builder-selector-item {
-  padding: 4px;
+  padding: 8px;
+  cursor: pointer;
 
   &--selected {
+    box-shadow: inset 0 0 3px 3px #111;
     background: radial-gradient(
       closest-side at center,
       oklch(var(--lch-yellow)) 0%,

@@ -1,5 +1,6 @@
 <template>
   <pdx-cell-grid
+    :editor
     :grid="editor.brushLayer.board"
     :should-show
     @cell-pointer-down="(...args) => editor.onCellPointerDown(...args)"

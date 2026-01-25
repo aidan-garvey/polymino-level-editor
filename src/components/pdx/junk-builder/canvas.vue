@@ -8,6 +8,7 @@
     }"
   >
     <pdx-cell-grid
+      :editor
       :grid="editor.junkBuilder.grid.value"
     />
   </div>

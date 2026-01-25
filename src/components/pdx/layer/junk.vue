@@ -1,5 +1,6 @@
 <template>
   <pdx-cell-grid
+    :editor
     :grid="editor.junkLayer.board"
     @cell-pointer-down="(...args) => editor.onCellPointerDown(...args)"
     @cell-pointer-enter="(...args) => editor.onCellPointerEnter(...args)"

@@ -19,8 +19,6 @@
         gridRow: pos.cssGridRow,
         gridColumn: pos.cssGridCol,
       }"
-      @cell-pointer-down="(...args) => emit('cellPointerDown', ...args)"
-      @cell-pointer-enter="(...args) => emit('cellPointerEnter', ...args)"
       @cell-drag-over="(...args) => emit('cellDragOver', ...args)"
       @cell-drop="(...args) => emit('cellDrop', ...args)"
     />
@@ -30,6 +28,7 @@
 <script setup lang="ts">
 import type { Junk } from '@/types/Junk'
 import type { CellGrid } from '@/types/CellGrid'
+import type { Editor } from '@/types/Editor'
 import { BlockState } from '@/types/BlockState'
 import { setJunkDragData } from '@/types/JunkDrag'
 
@@ -51,11 +50,10 @@ type BlockPosition = {
 const props = defineProps<{
   junk: Junk
   grid: CellGrid
+  editor: Editor
 }>()
 
 const emit = defineEmits<{
-  cellPointerDown: [event: PointerEvent, row: number, col: number]
-  cellPointerEnter: [event: PointerEvent, row: number, col: number]
   cellDragOver: [event: DragEvent, row: number, col: number]
   cellDrop: [event: DragEvent, row: number, col: number]
 }>()
@@ -106,6 +104,7 @@ const setDragImage = (event: DragEvent) => {
 }
 
 const onDragStart = (event: DragEvent) => {
+  props.editor.isDragging = true
   setDragImage(event)
   setJunkDragData(event, props.junk)
 }

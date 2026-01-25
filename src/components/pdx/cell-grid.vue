@@ -34,6 +34,7 @@
       :key="junkIndex"
       :junk
       :grid
+      :editor
       @cell-drag-over="(...args) => emit('cellDragOver', ...args)"
       @cell-drop="(...args) => emit('cellDrop', ...args)"
     />
@@ -41,9 +42,11 @@
 </template>
 
 <script setup lang="ts">
+import type { Editor } from '@/types/Editor'
 import type { CellGrid } from '@/types/CellGrid'
 
 const props = withDefaults(defineProps<{
+  editor: Editor
   grid: CellGrid
   shouldShow?: (row: number, col: number) => boolean
 }>(), {

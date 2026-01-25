@@ -51,6 +51,16 @@ export class Editor {
     brushEffect: null,
   })
 
+  // When we start dragging a junk piece, this is set to true to ignore
+  // pointerenter events. It won't get set back to false by external code when
+  // the drag ends because the pointerenter event won't fire until more than one
+  // tick after the dragend event; instead, we'll set it to false the next time
+  // onCellPointerEnter is called.
+  // This works out because the user will want to move their mouse to a new cell
+  // before they start painting again, otherwise they'd be painting underneath
+  // the junk piece they just placed.
+  isDragging = false
+
   constructor() {
     this.baseLayer = new BaseLayer()
     this.brushLayer = new BrushLayer()
@@ -138,6 +148,11 @@ export class Editor {
   }
 
   onCellPointerEnter(event: PointerEvent, row: number, col: number): void {
+    if (this.isDragging) {
+      this.isDragging = false
+      return
+    }
+
     const useTool = (tool: Ref<Tool>) => {
       if (tool.value.kind === ToolKind.BRUSH) {
         this.brushLayer.applyBrush(tool.value, row, col)

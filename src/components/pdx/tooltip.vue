@@ -32,18 +32,21 @@ const padding = computed(() => {
   return `${(tooltipTriggerHeight.value - FONT_SIZE) / 2}px`
 })
 
-const {
-  top: containerTop,
-  left: containerLeft,
-} = useElementBounding(useParentElement())
+const container = useParentElement()
 
-const top = computed(() => {
-  return `${containerTop.value + tooltipOffsetY.value}px`
-})
+const top = ref('0px')
+const right = ref('0px')
 
-const right = computed(() => {
+watch(tooltipItemName, () => {
+  const rect = container.value?.getBoundingClientRect()
+  if (!rect)
+    return
+
+  const containerTop = rect.top
+  const containerLeft = rect.left
+  top.value = `${containerTop + tooltipOffsetY.value}px`
   // add 1 so the borders overlap
-  return `calc(100% - ${containerLeft.value + 1}px)`
+  right.value = `calc(100% - ${containerLeft + 1}px)`
 })
 </script>
 

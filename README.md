@@ -1,6 +1,27 @@
-# polymino-level-editor
+# Polymino Level Editor
 
-This template should help get you started developing with Vue 3 in Vite.
+A web-based level editor for designing Puzzle Mode levels for Polymino, an indie
+puzzle game available on Steam. Learn more about Polymino at
+[polymino.net](https://polymino.net)
+
+This project uses unplugin-vue-components to automatically import all components
+when editing a .vue file. Components are imported by concatenating their file
+path relative to `src/components`.
+For example, a component in a file called
+`src/components/pdx/some-folder/my-component.vue` can be referenced as
+`<pdx-some-folder-my-component>` without importing it. The plugin automatically
+generates this list while running the dev environment in the `components.d.ts`
+file in the repo's root directory.
+
+This project also uses unpluigin-auto-import to automatically import all `vue`
+and `@vueuse/core` functions and types. The file produced by this plugin is
+generated at `auto-imports.d.ts` in the repo's root directory.
+
+This project also uses Biome as its linter. Biome also offers additional tools
+such as code formatting, but it is currently only set up for linting.
+
+The following information is from the default Vue readme and is helpful for
+editing and running the project:
 
 ## Recommended IDE Setup
 
@@ -39,4 +60,10 @@ yarn dev
 
 ```sh
 yarn build
+```
+
+### Linting with Biome
+
+```sh
+yarn lint
 ```

@@ -17,6 +17,7 @@
       <pdx-layer-base :editor />
       <pdx-layer-brush :editor />
       <pdx-layer-junk :editor />
+      <pdx-board-overlay :editor />
     </div>
     <div class="pdx-editor__right">
       <pdx-junk-editor :editor />

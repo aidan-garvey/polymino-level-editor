@@ -13,6 +13,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     App: typeof import('./src/components/App.vue')['default']
     PdxBlock: typeof import('./src/components/pdx/block.vue')['default']
+    PdxBoardOverlay: typeof import('./src/components/pdx/board-overlay/index.vue')['default']
     PdxBrushSelector: typeof import('./src/components/pdx/brush-selector.vue')['default']
     PdxCellGrid: typeof import('./src/components/pdx/cell-grid.vue')['default']
     PdxEditor: typeof import('./src/components/pdx/editor/index.vue')['default']

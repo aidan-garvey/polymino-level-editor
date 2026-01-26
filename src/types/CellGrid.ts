@@ -57,6 +57,10 @@ export class CellGrid {
     )
   }
 
+  /**
+   * Returns a list of (row, col) coordinates for all blocks belonging to the
+   * given junk piece in this cell grid.
+   */
   junkBlockPositions(junk: Junk): [number, number][] {
     const [width, height] = junkShapeDimensions[junk.shape]
     const positions: [number, number][] = []

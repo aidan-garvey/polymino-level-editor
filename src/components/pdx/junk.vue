@@ -19,6 +19,8 @@
         gridRow: pos.cssGridRow,
         gridColumn: pos.cssGridCol,
       }"
+      @cell-pointer-down="(...args) => emit('cellPointerDown', ...args)"
+      @cell-pointer-enter="(...args) => emit('cellPointerEnter', ...args)"
       @cell-drag-over="(...args) => emit('cellDragOver', ...args)"
       @cell-drop="(...args) => emit('cellDrop', ...args)"
     />
@@ -53,7 +55,12 @@ const props = defineProps<{
   editor: Editor
 }>()
 
+// Junk needs to bubble all events since it can be in the brush and junk layers,
+// e.g. blocking brush-related events prevents you from painting over 1x1 junk
+// blocks in the brush layer.
 const emit = defineEmits<{
+  cellPointerDown: [event: PointerEvent, row: number, col: number]
+  cellPointerEnter: [event: PointerEvent, row: number, col: number]
   cellDragOver: [event: DragEvent, row: number, col: number]
   cellDrop: [event: DragEvent, row: number, col: number]
 }>()
@@ -104,6 +111,9 @@ const setDragImage = (event: DragEvent) => {
 }
 
 const onDragStart = (event: DragEvent) => {
+  if (!props.grid.draggableJunk)
+    return
+
   props.editor.isDragging = true
   setDragImage(event)
   setJunkDragData(event, props.junk)
@@ -117,5 +127,8 @@ const onDragStart = (event: DragEvent) => {
   grid-template-columns: subgrid;
   // allows stacking in the grid
   z-index: 1;
+  // don't block events in lower layers, can rely on bubbling from child
+  // elements to trigger dragstart on the junk piece
+  pointer-events: none;
 }
 </style>

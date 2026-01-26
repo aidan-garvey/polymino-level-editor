@@ -35,6 +35,8 @@
       :junk
       :grid
       :editor
+      @cell-pointer-down="(...args) => emit('cellPointerDown', ...args)"
+      @cell-pointer-enter="(...args) => emit('cellPointerEnter', ...args)"
       @cell-drag-over="(...args) => emit('cellDragOver', ...args)"
       @cell-drop="(...args) => emit('cellDrop', ...args)"
     />
@@ -70,5 +72,7 @@ const cssGridRows = computed(() => `repeat(${props.grid.height}, 1fr)`)
   position: absolute;
   top: 0;
   left: 0;
+  // don't block events in lower layers
+  pointer-events: none;
 }
 </style>

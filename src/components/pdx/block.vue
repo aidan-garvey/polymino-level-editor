@@ -3,7 +3,7 @@
     class="pdx-block"
     :style="{
       opacity,
-      visibility: shouldShow(row, col) ? 'visible' : 'hidden',
+      ...visibilityStyle,
       ...cursorStyle
     }"
     @pointerdown="e => emit('cellPointerDown', e, row, col)"
@@ -32,6 +32,7 @@
 
 <script setup lang="ts">
 import type { CellGrid } from '@/types/CellGrid'
+import type { CSSProperties } from 'vue'
 import { BlockState } from '@/types/BlockState'
 import { JunkEffect } from '@/types/JunkEffect'
 
@@ -93,13 +94,27 @@ const overlayFlip = computed(() => {
   }
 })
 
-const cursorStyle = computed(() => {
+const cursorStyle = computed<CSSProperties>(() => {
   if (cell.value.state === BlockState.JUNK && props.grid.draggableJunk) {
     return {
       cursor: 'grab'
     }
   } else {
     return {}
+  }
+})
+
+const visibilityStyle = computed<CSSProperties>(() => {
+  if (props.shouldShow(props.row, props.col)) {
+    return {
+      visibility: 'visible',
+      pointerEvents: 'auto',
+    }
+  } else {
+    return {
+      visibility: 'hidden',
+      pointerEvents: 'none',
+    }
   }
 })
 

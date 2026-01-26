@@ -1,6 +1,5 @@
 <template>
   <div
-    ref="pdxJunkBuilderCanvasRef"
     class="pdx-junk-builder-canvas"
     :style="{
       width: `calc(${editor.junkBuilder.grid.value.width} * var(--block-size))`,

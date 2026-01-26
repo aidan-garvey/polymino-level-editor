@@ -5,6 +5,7 @@ import type { JunkEffect } from '@/types/JunkEffect'
 export enum ToolKind {
   SELECT = 'select',
   BRUSH = 'brush',
+  PICKER = 'picker',
 }
 
 export interface Tool {

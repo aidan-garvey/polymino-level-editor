@@ -21,6 +21,13 @@
         tooltip="Erase"
         @pointerdown="e => editor.selectBrush(e, BlockState.EMPTY, BlockColor.GRAY)"
       />
+      <pdx-icon-tool-selector
+        :editor="editor"
+        :selected-predicate="pickerPredicate"
+        icon-name="colorize"
+        tooltip="Picker"
+        @pointerdown="e => editor.selectPicker(e)"
+      />
     </div>
 
     <div class="text-detail text-center">
@@ -128,6 +135,10 @@ const noEffectPredicate = (tool: Tool) => {
   return tool.kind === ToolKind.BRUSH
     && tool.brushState === BlockState.JUNK
     && tool.brushEffect === null
+}
+
+const pickerPredicate = (tool: Tool) => {
+  return tool.kind === ToolKind.PICKER
 }
 </script>
 

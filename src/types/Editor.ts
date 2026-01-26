@@ -116,6 +116,17 @@ export class Editor {
     }
   }
 
+  selectPicker(event: PointerEvent): void {
+    if (event.buttons & MouseButton.LEFT) {
+      event.preventDefault()
+      this.leftTool.value.kind = ToolKind.PICKER
+    }
+    if (event.buttons & MouseButton.RIGHT) {
+      event.preventDefault()
+      this.rightTool.value.kind = ToolKind.PICKER
+    }
+  }
+
   chooseSelectTool(event: PointerEvent): void {
     if (event.buttons & MouseButton.LEFT) {
       this.leftTool.value.kind = ToolKind.SELECT
@@ -133,6 +144,9 @@ export class Editor {
           break
         case ToolKind.BRUSH:
           this.brushLayer.applyBrush(tool.value, row, col)
+          break
+        case ToolKind.PICKER:
+          this.pick(tool.value, row, col)
           break
       }
     }
@@ -167,5 +181,19 @@ export class Editor {
       event.preventDefault()
       useTool(this.rightTool)
     }
+  }
+
+  private pick(tool: Tool, row: number, col: number): void {
+    const block = this.brushLayer.board.getBlock(row, col)
+    if (block.state === BlockState.EMPTY) {
+      return
+    }
+
+    tool.kind = ToolKind.BRUSH
+    tool.brushState = block.state
+    tool.brushColor = block.color
+    tool.brushEffect = block.state === BlockState.JUNK
+      ? block.junk.activeEffect
+      : null
   }
 }

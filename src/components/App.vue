@@ -6,7 +6,7 @@
 @import './color.scss';
 @import './typography.scss';
 @import './pdx/tool-selector.scss';
-@import './pdx/junk-builder/selector.scss';
+@import './pdx/junk-selector.scss';
 @import './pdx/side-panel.scss';
 
 * {

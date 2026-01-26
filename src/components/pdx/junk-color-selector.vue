@@ -1,5 +1,5 @@
 <template>
-  <div class="pdx-junk-color-selector pdx-junk-builder-selector">
+  <div class="pdx-junk-color-selector pdx-junk-selector">
     <template
       v-for="(row, rowIndex) in colorRows"
       :key="rowIndex"

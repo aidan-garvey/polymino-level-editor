@@ -1,5 +1,5 @@
 <template>
-  <div class="pdx-junk-effect-selector pdx-junk-builder-selector">
+  <div class="pdx-junk-effect-selector pdx-junk-selector">
     <template
       v-for="(row, rowIndex) in effectRows"
       :key="rowIndex"

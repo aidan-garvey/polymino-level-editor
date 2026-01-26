@@ -47,6 +47,16 @@ in the "compilerOptions" object in [tsconfig.base.json](tsconfig.base.json), and
 you're once again more than welcome to propose changes by opening a PR which
 modifies this file.
 
+## Design style
+
+For the look of this project, I want to consistently use sharp corners on all UI
+elements, and not use borders thicker than one pixel.
+It should be minimalist and no-nonsense, with small but comfortable amounts of
+padding.
+The clickable areas of interactive elements should be maximized and extend to
+the edges of their parents.
+Basically everything Microsoft forgot when designing Windows 11 ;-(
+
 ## Code quality and style
 
 In general I'm not picky about code style, but there are some rules I will

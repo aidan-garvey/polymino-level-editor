@@ -23,6 +23,7 @@
       @cell-pointer-enter="(...args) => emit('cellPointerEnter', ...args)"
       @cell-drag-over="(...args) => emit('cellDragOver', ...args)"
       @cell-drop="(...args) => emit('cellDrop', ...args)"
+      @click="emit('junkClicked', junk)"
     />
   </div>
 </template>
@@ -31,19 +32,9 @@
 import type { Junk } from '@/types/Junk'
 import type { CellGrid } from '@/types/CellGrid'
 import type { Editor } from '@/types/Editor'
+import type { JunkBlockPosition } from '@/types/JunkBlockPosition'
 import { BlockState } from '@/types/BlockState'
 import { setJunkDragData } from '@/types/JunkDrag'
-
-type BlockPosition = {
-  /** 0-based index relative to the bottom of the board */
-  cellGridRow: number
-  /** 0-based index relative to the left of the board */
-  cellGridCol: number
-  /** 1-based index relative to the top of the junk piece */
-  cssGridRow: number
-  /** 1-based index relative to the left of the junk piece */
-  cssGridCol: number
-}
 
 // each block's flex row number is grid.height - block.row
 // so we find the CSS row number of the top row in the junk piece, then pass
@@ -63,6 +54,7 @@ const emit = defineEmits<{
   cellPointerEnter: [event: PointerEvent, row: number, col: number]
   cellDragOver: [event: DragEvent, row: number, col: number]
   cellDrop: [event: DragEvent, row: number, col: number]
+  junkClicked: [junk: Junk]
 }>()
 
 const junkRef = useTemplateRef('junkRef')
@@ -77,8 +69,12 @@ const gridColumn = computed(() => {
   return `${props.junk.leftColumn + 1} / span ${props.junk.width}`
 })
 
-const blockPositions = computed<BlockPosition[]>(() => {
-  const result: BlockPosition[] = []
+// I tried extracting this into a composable by passing `grid` and `junk` to a
+// function which returned an identical `computed`, but it didn't work for some
+// reason, I guess it must be related to the specific properties in each object
+// which are reactive. Copy-paste it is :-(
+const blockPositions = computed<JunkBlockPosition[]>(() => {
+  const result: JunkBlockPosition[] = []
 
   for (const [row, col] of props.grid.junkBlockPositions(props.junk)) {
     const cell = props.grid.getBlock(row, col)

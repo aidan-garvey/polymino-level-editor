@@ -1,5 +1,5 @@
 <template>
-  <div class="pdx-editor-brushes">
+  <div class="pdx-side-panel pdx-editor-brushes">
     <pdx-tooltip />
 
     <div class="text-title text-center">
@@ -70,7 +70,7 @@
     </div>
 
     <div class="pdx-editor-brushes__section">
-      <pdx-junk-effect-selector
+      <pdx-junk-effect-brush-selector
         v-for="effect in junkEffects"
         :key="effect"
         :effect="effect"
@@ -144,18 +144,9 @@ const pickerPredicate = (tool: Tool) => {
 
 <style lang="scss">
 .pdx-editor-brushes {
-  border: 1px solid #fff;
-  background: #111;
-  padding: 8px;
-
   display: flex;
   flex-direction: column;
   gap: 4px;
-
-  position: relative;
-
-  height: 100%;
-  overflow-y: auto;
 
   &__section {
     display: grid;

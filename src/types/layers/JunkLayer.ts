@@ -1,3 +1,4 @@
+import type { JunkDragData } from '@/types/JunkDrag'
 import { CellGrid } from '@/types/CellGrid'
 import { BOARD_WIDTH, BOARD_HEIGHT } from '@/consts/board'
 import { getJunkDragFormat, getJunkDragDimensions, getJunkDragData } from '@/types/JunkDrag'
@@ -39,11 +40,18 @@ export class JunkLayer {
 
     event.preventDefault()
 
-    // Holding shift copies junk, otherwise it gets moved
-    if (!event.shiftKey) {
-      this.board.removeJunkById(data.id)
-    }
+    const existing = this.board.getJunkById(data.id)
 
+    // Holding shift copies junk, otherwise it gets moved if it isn't coming
+    // from another cell grid
+    if (!existing || event.shiftKey) {
+      this.placeJunk(data, row, col)
+    } else {
+      this.board.moveJunk(existing, row, col)
+    }
+  }
+
+  private placeJunk(data: JunkDragData, row: number, col: number): void {
     this.board.placeJunk(new Junk(
       data.shape,
       data.color,

@@ -23,6 +23,10 @@
       <pdx-layer-brush :editor />
       <pdx-layer-junk :editor />
     </div>
+    <pdx-junk-editor
+      v-if="editor"
+      :editor
+    />
   </div>
 </template>
 

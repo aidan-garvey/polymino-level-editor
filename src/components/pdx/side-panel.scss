@@ -1,0 +1,11 @@
+.pdx-side-panel {
+  border: 1px solid #fff;
+  background: #111;
+  padding: 8px;
+
+  // So we can use offsetTop on tooltip targets
+  position: relative;
+
+  height: 100%;
+  overflow-y: auto;
+}

@@ -5,6 +5,7 @@
     :should-show
     @cell-drag-over="(...args) => editor.junkLayer.onCellDragOver(...args)"
     @cell-drop="(...args) => editor.junkLayer.onCellDrop(...args)"
+    @junk-clicked="(...args) => editor.selectJunk(...args)"
   />
 </template>
 

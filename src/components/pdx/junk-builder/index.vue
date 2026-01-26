@@ -1,5 +1,5 @@
 <template>
-  <div class="pdx-junk-builder">
+  <div class="pdx-side-panel pdx-junk-builder">
     <pdx-tooltip />
 
     <div class="text-title text-center">
@@ -30,16 +30,20 @@
       Color
     </div>
 
-    <pdx-junk-builder-color-selector
+    <pdx-junk-color-selector
       :editor
+      :isSelected="color => editor.junkBuilder.getColor() === color"
+      :onClick="color => editor.junkBuilder.setColor(color)"
     />
 
     <div class="text-detail text-center">
       Effect
     </div>
 
-    <pdx-junk-builder-effect-selector
+    <pdx-junk-effect-selector
       :editor
+      :isSelected="effect => editor.junkBuilder.getEffect() === effect"
+      :onClick="effect => editor.junkBuilder.setEffect(effect)"
     />
   </div>
 </template>
@@ -77,19 +81,9 @@ const onShapeChange = () => {
 
 <style lang="scss">
 .pdx-junk-builder {
-  border: 1px solid #fff;
-  background: #111;
-  padding: 8px;
-
-  // So we can use offsetTop on tooltip targets
-  position: relative;
-
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
-
-  height: 100%;
-  overflow-y: auto;
 }
 </style>

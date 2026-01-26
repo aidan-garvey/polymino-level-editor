@@ -1,4 +1,5 @@
 import type { JunkEffect } from '@/types/JunkEffect'
+import type { Junk } from '@/types/Junk'
 import { type Tool, ToolKind } from '@/types/Tool'
 import { BaseLayer } from '@/types/layers/BaseLayer'
 import { BrushLayer } from '@/types/layers/BrushLayer'
@@ -22,6 +23,8 @@ export class Editor {
   readonly junkLayer: JunkLayer
 
   readonly junkBuilder: JunkBuilder
+
+  readonly selectedJunk: ShallowRef<Junk | null> = shallowRef(null)
 
   /**
    * All players' random generators will be initalized to this value when the
@@ -195,5 +198,9 @@ export class Editor {
     tool.brushEffect = block.state === BlockState.JUNK
       ? block.junk.activeEffect
       : null
+  }
+
+  selectJunk(junk: Junk): void {
+    this.selectedJunk.value = junk
   }
 }

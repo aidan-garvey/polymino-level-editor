@@ -39,6 +39,7 @@
       @cell-pointer-enter="(...args) => emit('cellPointerEnter', ...args)"
       @cell-drag-over="(...args) => emit('cellDragOver', ...args)"
       @cell-drop="(...args) => emit('cellDrop', ...args)"
+      @junk-clicked="(...args) => emit('junkClicked', ...args)"
     />
   </div>
 </template>
@@ -46,6 +47,7 @@
 <script setup lang="ts">
 import type { Editor } from '@/types/Editor'
 import type { CellGrid } from '@/types/CellGrid'
+import type { Junk } from '@/types/Junk'
 
 const props = withDefaults(defineProps<{
   editor: Editor
@@ -60,6 +62,7 @@ const emit = defineEmits<{
   cellPointerEnter: [event: PointerEvent, row: number, col: number]
   cellDragOver: [event: DragEvent, row: number, col: number]
   cellDrop: [event: DragEvent, row: number, col: number]
+  junkClicked: [junk: Junk]
 }>()
 
 const cssGridCols = computed(() => `repeat(${props.grid.width}, 1fr)`)

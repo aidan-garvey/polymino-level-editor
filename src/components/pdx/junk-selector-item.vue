@@ -1,9 +1,9 @@
 <template>
   <div
     ref="itemRef"
-    class="pdx-junk-builder-selector-item"
+    class="pdx-junk-selector-item"
     :class="{
-      'pdx-junk-builder-selector-item--selected': isSelected,
+      'pdx-junk-selector-item--selected': isSelected,
     }"
     @pointerenter="onPointerEnter"
     @pointerleave="onPointerLeave"
@@ -45,7 +45,7 @@ const { onPointerEnter, onPointerLeave } = useTooltip(
 </script>
 
 <style lang="scss">
-.pdx-junk-builder-selector-item {
+.pdx-junk-selector-item {
   padding: 8px;
   cursor: pointer;
 

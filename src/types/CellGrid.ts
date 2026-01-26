@@ -91,6 +91,10 @@ export class CellGrid {
     }
   }
 
+  getJunkById(id: number): Junk | null {
+    return this.junkPieces.value.find(junk => junk.id === id) ?? null
+  }
+
   removeBlock(y: number, x: number): void {
     const block = this.getBlock(y, x)
     if (block.state === BlockState.JUNK) {
@@ -180,5 +184,15 @@ export class CellGrid {
 
   getJunk(): Junk[] {
     return this.junkPieces.value
+  }
+
+  moveJunk(junk: Junk, row: number, col: number): void {
+    if (this.getJunkById(junk.id) !== junk) {
+      throw new Error(`Junk with id ${junk.id} not found in this CellGrid`)
+    }
+    this.removeJunk(junk)
+    junk.bottomRow = row
+    junk.leftColumn = col
+    this.placeJunk(junk)
   }
 }

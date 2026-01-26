@@ -3,6 +3,11 @@
 </template>
 
 <style lang="css">
+/**
+ * Import style sheets here instead of in other component style tags to prevent
+ * the same style rules from being imported multiple times. Reduces noise when
+ * looking at styles in your browser's devtools.
+ */
 @import './color.scss';
 @import './typography.scss';
 @import './pdx/tool-selector.scss';

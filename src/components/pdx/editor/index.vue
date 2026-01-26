@@ -6,16 +6,11 @@
       '--board-width': BOARD_WIDTH,
     }"
   >
-    <pdx-junk-builder
-      v-if="editor"
-      :editor
-    />
-    <pdx-editor-brushes
-      v-if="editor"
-      :editor
-    />
+    <div class="pdx-editor__left">
+      <pdx-junk-builder :editor />
+      <pdx-editor-brushes :editor />
+    </div>
     <div
-      v-if="editor"
       class="pdx-editor__board"
       :style="cursorStyle"
     >
@@ -23,10 +18,9 @@
       <pdx-layer-brush :editor />
       <pdx-layer-junk :editor />
     </div>
-    <pdx-junk-editor
-      v-if="editor"
-      :editor
-    />
+    <div class="pdx-editor__right">
+      <pdx-junk-editor :editor />
+    </div>
   </div>
 </template>
 
@@ -58,6 +52,24 @@ const cursorStyle = computed(() => {
   align-items: stretch;
   gap: 16px;
   height: var(--board-height-px);
+  width: 100%;
+
+  &__left, &__right {
+    flex: 1;
+
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    height: var(--board-height-px);
+    align-items: stretch;
+  }
+
+  &__left {
+    justify-content: flex-end;
+  }
+  &__right {
+    justify-content: flex-start;
+  }
 
   &__board {
     position: relative;

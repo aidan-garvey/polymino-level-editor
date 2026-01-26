@@ -13,13 +13,19 @@
       :value="editor.junkBuilder.getJunkShape()"
       @change="onShapeChange"
     >
-      <option
+      <template
         v-for="shape in JunkShape"
         :key="shape"
-        :value="shape"
       >
-        {{ shape }}
-      </option>
+        <!-- 1x1 junk is for the brush layer, we want interaction with them to
+        be consistent so we won't let them be placed in the junk layer -->
+        <option
+          v-if="shape !== JunkShape.RECT_1X1"
+          :value="shape"
+        >
+          {{ shape }}
+        </option>
+      </template>
     </select>
 
     <pdx-junk-builder-canvas

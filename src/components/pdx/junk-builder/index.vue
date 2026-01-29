@@ -7,7 +7,7 @@
     </div>
 
     <select
-      ref="pdxJunkBuilderShapeSelectorRef"
+      ref="shapeSelector"
       class="pdx-junk-builder__shape-selector"
       name="junk-shape"
       :value="editor.junkBuilder.getJunkShape()"
@@ -63,7 +63,7 @@ const props = defineProps<{
   editor: Editor
 }>()
 
-const pdxJunkBuilderShapeSelectorRef = useTemplateRef('pdxJunkBuilderShapeSelectorRef')
+const shapeSelector = useTemplateRef('shapeSelector')
 
 const tooltipOffsetY = ref(0)
 provide(injectTooltipOffsetY, tooltipOffsetY)
@@ -78,7 +78,7 @@ const tooltipItemName = ref<string | null>(null)
 provide(injectTooltipItemName, tooltipItemName)
 
 const onShapeChange = () => {
-  const shape = pdxJunkBuilderShapeSelectorRef.value?.value
+  const shape = shapeSelector.value?.value
   if (shape && shape in JunkShape) {
     props.editor.junkBuilder.setJunkShape(shape as JunkShape)
   }

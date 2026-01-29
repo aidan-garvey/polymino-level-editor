@@ -12,6 +12,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     App: typeof import('./src/components/App.vue')['default']
+    PdxBaseLayerSlider: typeof import('./src/components/pdx/base-layer-slider.vue')['default']
     PdxBlock: typeof import('./src/components/pdx/block.vue')['default']
     PdxBoardOverlay: typeof import('./src/components/pdx/board-overlay/index.vue')['default']
     PdxBrushSelector: typeof import('./src/components/pdx/brush-selector.vue')['default']

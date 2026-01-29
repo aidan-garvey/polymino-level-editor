@@ -20,6 +20,7 @@
       <pdx-board-overlay :editor />
     </div>
     <div class="pdx-editor__right">
+      <pdx-base-layer-slider :editor />
       <pdx-junk-editor :editor />
     </div>
   </div>

@@ -17,8 +17,9 @@ interface IBlock {
 export class EmptyBlock implements IBlock {
   readonly state: BlockState.EMPTY = BlockState.EMPTY
 
-  // So checking color on any block is valid, but it might be null unless we
-  // check its state.
+  // Here so checking the color on any block doesn't cause a TS error due to the
+  // property possibly not existing, but the value might be null unless we check
+  // its state first.
   readonly color: null = null
 
   getImageSrc(): string {

@@ -10,6 +10,10 @@
       v-for="yDown in grid.height"
       :key="yDown"
     >
+      <!--
+        For junk pieces, this will render the nextColor and pdx-junk will render
+        the actual junk blocks.
+      -->
       <pdx-block
         v-for="x in grid.width"
         :key="x"

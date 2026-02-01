@@ -13,7 +13,9 @@ export class BaseLayer {
   readonly board: CellGrid
 
   /**
-   * RNG seed used to populate the initial board.
+   * RNG seed used to populate the initial board. This is only used in the
+   * editor; when levels are exported, all cell grids are combined and exported
+   * in their entirety.
    */
   private seed: number
 

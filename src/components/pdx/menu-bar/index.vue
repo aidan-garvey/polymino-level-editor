@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import type { Editor } from '@/types/Editor'
-import type { LevelStorage } from '@/types/LevelStorage'
+import type { LevelStorage } from '@/types/Storage/LevelStorage'
 
 const editor = defineModel<Editor>('editor', { required: true })
 

@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { Editor } from '@/types/Editor'
-import { LevelStorage } from '@/types/LevelStorage'
+import { LevelStorage } from '@/types/Storage/LevelStorage'
 
 const editor = shallowRef(new Editor())
 const levelStorage = new LevelStorage()

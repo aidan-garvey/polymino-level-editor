@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import type { LevelStorage, SavedLevelDict } from '@/types/LevelStorage'
+import type { LevelStorage, SavedLevelDict } from '@/types/Storage/LevelStorage'
 import { Editor } from '@/types/Editor'
 import { isSavedLevel } from '@/types/Saved/SavedLevel'
 

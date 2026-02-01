@@ -1,19 +1,8 @@
 import type { ExportedLevel } from '@/types/Exported/ExportedLevel'
-import { type SavedLevel, isSavedLevel } from '@/types/Saved/SavedLevel'
-
-// To prevent collisions, all keys written to local storage begin with one of
-// these prefixes, followed by a colon.
-const LEVEL_PREFIX = 'level' as const
-const FEATURE_TEST_PREFIX = 'featuretest' as const
-
-type LevelPrefix = typeof LEVEL_PREFIX
-type FeatureTestPrefix = typeof FEATURE_TEST_PREFIX
-
-type StorageKeyPrefix =
-  | LevelPrefix
-  | FeatureTestPrefix
-
-type StorageKey = `${StorageKeyPrefix}:${string}`
+import type { SavedLevel } from '@/types/Saved/SavedLevel'
+import type { StorageKey } from '@/types/Storage/StorageKey'
+import { isSavedLevel } from '@/types/Saved/SavedLevel'
+import { LEVEL_PREFIX, FEATURE_TEST_PREFIX, isLevelKey } from '@/types/Storage/StorageKey'
 
 export type SavedLevelDict = Record<string, SavedLevel>
 
@@ -30,24 +19,6 @@ export class LevelStorage {
     // Try to access it immediately in case the user has it disabled and it'll
     // trigger a prompt asking the user for permission
     this.getLocalStorage()
-  }
-
-  private static isLevelPrefix(str: string): str is LevelPrefix {
-    return str === LEVEL_PREFIX
-  }
-  private static isFeatureTestPrefix(str: string): str is FeatureTestPrefix {
-    return str === FEATURE_TEST_PREFIX
-  }
-  private static isStorageKeyPrefix(str: string): str is StorageKeyPrefix {
-    return LevelStorage.isLevelPrefix(str)
-      || LevelStorage.isFeatureTestPrefix(str)
-  }
-
-  private static isStorageKey(str: string): str is StorageKey {
-    const parts = str.split(':')
-    return !!parts[0]
-      && !!parts[1]
-      && LevelStorage.isStorageKeyPrefix(parts[0])
   }
 
   private static read(storage: Storage, key: StorageKey): string | null {
@@ -76,8 +47,8 @@ export class LevelStorage {
 
     try {
       this.storageHandle = window.localStorage
-      LevelStorage.write(this.storageHandle, 'featuretest:', 'test')
-      LevelStorage.delete(this.storageHandle, 'featuretest:')
+      LevelStorage.write(this.storageHandle, FEATURE_TEST_PREFIX, 'test')
+      LevelStorage.delete(this.storageHandle, FEATURE_TEST_PREFIX)
       console.debug('Access to local storage acquired')
       return this.storageHandle
     } catch (e) {
@@ -115,12 +86,12 @@ export class LevelStorage {
         continue
       }
 
-      if (!LevelStorage.isStorageKey(key)) {
+      if (!isLevelKey(key)) {
         // e.g. vue dev tools, no need to panic
         continue
       }
 
-      const name = key.slice(`${LEVEL_PREFIX}:`.length)
+      const name = key.slice(LEVEL_PREFIX.length)
 
       const str = LevelStorage.read(storage, key)
       if (str === null) {
@@ -134,8 +105,8 @@ export class LevelStorage {
           console.warn(`Saved level ${key} is corrupted or outdated`)
           console.warn(data)
           // TODO: a way to update the level data if it's out-of-date, or a way
-          // to display corrupted/outdated levels in the UI and a way to
-          // download them.
+          // to display corrupted/outdated levels in the UI and download or
+          // delete them.
         }
       }
     }
@@ -155,7 +126,7 @@ export class LevelStorage {
     } else {
       LevelStorage.write(
         storage,
-        `level:${this.currentLevelName.value}`,
+        `${LEVEL_PREFIX}${this.currentLevelName.value}`,
         JSON.stringify(data)
       )
     }
@@ -176,7 +147,7 @@ export class LevelStorage {
       return null
     }
 
-    const str = LevelStorage.read(storage, `${LEVEL_PREFIX}:${name}`)
+    const str = LevelStorage.read(storage, `${LEVEL_PREFIX}${name}`)
     if (str === null) {
       return null
     }

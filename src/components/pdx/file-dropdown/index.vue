@@ -59,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import type { LevelStorage } from '@/types/LevelStorage'
+import type { LevelStorage } from '@/types/Storage/LevelStorage'
 import { Editor } from '@/types/Editor'
 
 const editor = defineModel<Editor>('editor', { required: true })

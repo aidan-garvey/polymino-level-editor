@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import type { SavedLevelDict } from '@/types/LevelStorage'
+import type { SavedLevelDict } from '@/types/Storage/LevelStorage'
 
 const props = defineProps<{
   levelName: string

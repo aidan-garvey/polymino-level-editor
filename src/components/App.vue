@@ -1,18 +1,38 @@
 <template>
-  <pdx-editor />
+  <div class="app-top">
+    <pdx-menu-bar
+      v-model:editor="editor"
+      :level-storage
+    />
+  </div>
+  <div class="app-middle">
+    <pdx-editor :editor />
+  </div>
+  <div class="app-bottom">
+
+  </div>
 </template>
 
-<style lang="css">
+<script setup lang="ts">
+import { Editor } from '@/types/Editor'
+import { LevelStorage } from '@/types/LevelStorage'
+
+const editor = shallowRef(new Editor())
+const levelStorage = new LevelStorage()
+</script>
+
+<style lang="scss">
 /**
  * Import style sheets here instead of in other component style tags to prevent
  * the same style rules from being imported multiple times. Reduces noise when
  * looking at styles in your browser's devtools.
  */
-@import './color.scss';
-@import './typography.scss';
-@import './pdx/tool-selector.scss';
-@import './pdx/junk-selector.scss';
-@import './pdx/side-panel.scss';
+@use './color';
+@use './typography';
+@use './button';
+@use './pdx/tool-selector';
+@use './pdx/junk-selector';
+@use './pdx/side-panel';
 
 * {
   box-sizing: border-box;
@@ -27,14 +47,26 @@ body {
     sans-serif;
 }
 
+// This component's div element
 #app {
   width: 100vw;
   height: 100vh;
   display: flex;
   overflow-y: hidden;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
+
+  .app-top, .app-bottom {
+    flex: 0;
+  }
+
+  .app-middle {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 select {

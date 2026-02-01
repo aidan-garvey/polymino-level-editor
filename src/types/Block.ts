@@ -1,6 +1,12 @@
 import type { BlockColor } from '@/types/BlockColor'
 import type { Junk } from '@/types/Junk'
 import type { JunkBlockType } from '@/types/JunkBlockType'
+import type {
+  ExportedBlock,
+  ExportedEmptyBlock,
+  ExportedNormalBlock,
+  ExportedJunkBlock
+} from '@/types/Exported/ExportedBlock'
 import { BlockState } from '@/types/BlockState'
 import { JunkEffect } from '@/types/JunkEffect'
 import { blockColorNames } from '@/consts/block'
@@ -9,6 +15,7 @@ import { overlayBlockPathSuffixes } from '@/consts/effects'
 import { randomColor } from '@/utils/randomColor'
 
 interface IBlock {
+  export(): ExportedBlock
   getImageSrc(): string
   getOverlaySrc(): string | null
   getImageFlip(): [boolean, boolean]
@@ -21,6 +28,12 @@ export class EmptyBlock implements IBlock {
   // property possibly not existing, but the value might be null unless we check
   // its state first.
   readonly color: null = null
+
+  export(): ExportedEmptyBlock {
+    return {
+      state: this.state
+    }
+  }
 
   getImageSrc(): string {
     return 'assets/empty.png'
@@ -44,6 +57,13 @@ export class NormalBlock implements IBlock {
     this.color = color
   }
 
+  export(): ExportedNormalBlock {
+    return {
+      state: this.state,
+      color: this.color
+    }
+  }
+
   getImageSrc(): string {
     const colorName = blockColorNames[this.color]
     return `assets/blocks/${colorName}.png`
@@ -64,7 +84,7 @@ export class JunkBlock implements IBlock {
    */
   readonly junk: Junk
   readonly junkBlockType: JunkBlockType
-  private nextColor: BlockColor
+  nextColor: BlockColor
 
   public get color(): BlockColor {
     return this.junk.color
@@ -78,6 +98,14 @@ export class JunkBlock implements IBlock {
     this.junk = junk
     this.junkBlockType = junkBlockType
     this.nextColor = nextColor
+  }
+
+  export(): ExportedJunkBlock {
+    return {
+      state: this.state,
+      color: this.color,
+      nextColor: this.nextColor
+    }
   }
 
   getImageSrc(): string {

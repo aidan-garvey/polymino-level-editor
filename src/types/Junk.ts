@@ -1,5 +1,6 @@
 import type { JunkShape } from '@/types/JunkShape'
 import type { JunkEffect } from '@/types/JunkEffect'
+import type { ExportedJunk } from '@/types/Exported/ExportedJunk'
 import { BlockColor } from '@/types/BlockColor'
 import { junkShapeDimensions } from '@/consts/junk'
 
@@ -19,5 +20,25 @@ export class Junk {
   ) {
     this.id = Junk.ID++
     ;[this.width, this.height] = junkShapeDimensions[shape]
+  }
+
+  export(): ExportedJunk {
+    return {
+      shape: this.shape,
+      color: this.color,
+      bottomRow: this.bottomRow,
+      leftColumn: this.leftColumn,
+      activeEffect: this.activeEffect ?? undefined
+    }
+  }
+
+  static fromExported(exported: ExportedJunk | Junk): Junk {
+    return new Junk(
+      exported.shape,
+      exported.color,
+      exported.bottomRow,
+      exported.leftColumn,
+      exported.activeEffect
+    )
   }
 }

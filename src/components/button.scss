@@ -1,0 +1,43 @@
+button, .pdx-button, .pdx-interactive {
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+button {
+  background: #000;
+  border: 1px solid #fff;
+  border-radius: 0;
+  color: #fff;
+  padding: 3px 5px;
+
+  &:hover:not(:disabled) {
+    background: #222;
+    border-color: #ff0;
+  }
+  &:hover:not(:disabled), &:focus-visible:not(:disabled) {
+    color: #ff0;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.pdx-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pdx-button:active, .pdx-button:focus-visible {
+  > * {
+    transform: translateY(1px);
+  }
+}

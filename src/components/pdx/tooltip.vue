@@ -55,7 +55,7 @@ watch(tooltipItemName, () => {
 
 <style lang="scss">
 .pdx-tooltip {
-  z-index: 68000;
+  z-index: 1000;
   position: absolute;
 
   white-space: nowrap;

@@ -1,6 +1,9 @@
 import type { JunkEffect } from '@/types/JunkEffect'
 import type { Junk } from '@/types/Junk'
+import type { SavedLevel } from '@/types/Saved/SavedLevel'
+import type { ExportedLevel } from '@/types/Exported/ExportedLevel'
 import { type Tool, ToolKind } from '@/types/Tool'
+import { CellGrid } from '@/types/CellGrid'
 import { BaseLayer } from '@/types/Layer/BaseLayer'
 import { BrushLayer } from '@/types/Layer/BrushLayer'
 import { JunkLayer } from '@/types/Layer/JunkLayer'
@@ -8,6 +11,7 @@ import { JunkBuilder } from '@/types/JunkBuilder'
 import { BlockState } from '@/types/BlockState'
 import { BlockColor } from '@/types/BlockColor'
 import { MouseButton } from '@/consts/mouse'
+import { BOARD_WIDTH, BOARD_HEIGHT } from '@/consts/board'
 
 export class Editor {
   /**
@@ -64,12 +68,45 @@ export class Editor {
   // the junk piece they just placed.
   isDragging = false
 
-  constructor() {
-    this.baseLayer = new BaseLayer()
-    this.brushLayer = new BrushLayer()
-    this.junkLayer = new JunkLayer()
-    this.junkBuilder = new JunkBuilder()
-    this.seed = Math.round(performance.now())
+  constructor(data?: SavedLevel) {
+    if (data) {
+      this.baseLayer = BaseLayer.fromSaved(data.baseLayer)
+      this.brushLayer = new BrushLayer(
+        CellGrid.fromExported(data.brushLayer, false)
+      )
+      this.junkLayer = new JunkLayer(
+        CellGrid.fromExported(data.junkLayer, true)
+      )
+      this.junkBuilder = new JunkBuilder()
+      this.seed = data.seed
+    } else {
+      this.baseLayer = new BaseLayer()
+      this.brushLayer = new BrushLayer()
+      this.junkLayer = new JunkLayer()
+      this.junkBuilder = new JunkBuilder()
+      this.seed = Math.round(performance.now())
+    }
+  }
+
+  save(): SavedLevel {
+    return {
+      baseLayer: this.baseLayer.save(),
+      brushLayer: this.brushLayer.board.export(),
+      junkLayer: this.junkLayer.board.export(),
+      seed: this.seed,
+      lastModified: (new Date).toISOString()
+    }
+  }
+
+  export(): ExportedLevel {
+    const combinedGrid = new CellGrid(BOARD_WIDTH, BOARD_HEIGHT, false)
+    this.baseLayer.board.overlayOnto(combinedGrid)
+    this.brushLayer.board.overlayOnto(combinedGrid)
+    this.junkLayer.board.overlayOnto(combinedGrid)
+    return {
+      ...combinedGrid.export(),
+      seed: this.seed
+    }
   }
 
   selectBrush(

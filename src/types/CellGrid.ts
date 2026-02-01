@@ -1,7 +1,8 @@
-import type { Junk } from '@/types/Junk'
-import type { Block, NormalBlock } from '@/types/Block'
+import type { Block } from '@/types/Block'
 import type { JunkEffect } from '@/types/JunkEffect'
-import { EmptyBlock, JunkBlock } from '@/types/Block'
+import type { ExportedCellGrid } from '@/types/Exported/ExportedCellGrid'
+import { Junk } from '@/types/Junk'
+import { EmptyBlock, NormalBlock, JunkBlock } from '@/types/Block'
 import { JunkBlockType } from '@/types/JunkBlockType'
 import { junkShapeBlocks, junkShapeDimensions } from '@/consts/junk'
 import { BlockState } from '@/types/BlockState'
@@ -30,6 +31,81 @@ export class CellGrid {
       return Array(width).fill(null).map(() => ref(new EmptyBlock()))
     })
     this.junkPieces = ref([])
+  }
+
+  export(): ExportedCellGrid {
+    return {
+      cells: this.cells.map(row => row.map(cell => cell.value.export())),
+      junkPieces: this.junkPieces.value.map(j => j.export())
+    }
+  }
+
+  static fromExported(
+    data: ExportedCellGrid,
+    draggableJunk: boolean
+  ): CellGrid {
+    const height = data.cells.length
+    const width = data.cells[0]?.length
+    if (!height || !width) {
+      throw new TypeError('Width and height must be greater than 0')
+    }
+    for (const row of data.cells) {
+      if (row.length !== width) {
+        throw new TypeError('CellGrid rows were not all the same width')
+      }
+    }
+
+    const result = new CellGrid(width, height, draggableJunk)
+
+    // Place junk first, then we can set nextColor on our second pass
+    for (const junk of data.junkPieces) {
+      result.placeJunk(Junk.fromExported(junk))
+    }
+
+    for (let row = 0; row < height; ++row) {
+      for (let col = 0; col < width; ++col) {
+        const dest = result.cells[row]?.[col]
+        const src = data.cells[row]?.[col]
+        if (!dest || !src) {
+          throw new TypeError(`Dest/source mismatch at (row, col) = (${row}, ${col})`)
+        }
+        if (src.state === BlockState.NORMAL) {
+          result.placeBlock(row, col, new NormalBlock(src.color))
+        } else if (src.state === BlockState.JUNK) {
+          if (dest.value.state === BlockState.JUNK) {
+            dest.value.nextColor = src.nextColor
+          } else {
+            throw new TypeError(`Dest/source mismatch at (row, col) = (${row}, ${col})`)
+          }
+        }
+      }
+    }
+
+    return result
+  }
+
+  /**
+   * Overlay this grid onto the target grid by placing all of our junk and
+   * non-empty blocks in the target grid.
+   */
+  overlayOnto(other: CellGrid) {
+    if (this.width !== other.width || this.height !== other.height) {
+      throw new TypeError('CellGrid size mismatch in overlayOnto')
+    }
+    for (const junk of this.junkPieces.value) {
+      other.placeJunk(Junk.fromExported(junk))
+    }
+    for (let row = 0; row < this.height; ++row) {
+      for (let col = 0; col < this.width; ++col) {
+        const src = this.cells[row]?.[col]
+        if (!src) {
+          throw new TypeError(`Cell not found at (row, col) = (${row}, ${col})`)
+        }
+        if (src.value.state === BlockState.NORMAL) {
+          other.placeBlock(row, col, new NormalBlock(src.value.color))
+        }
+      }
+    }
   }
 
   private checkPosition(

@@ -9,8 +9,8 @@ import { JunkShape } from '@/types/JunkShape'
 export class BrushLayer {
   readonly board: CellGrid
 
-  constructor() {
-    this.board = new CellGrid(BOARD_WIDTH, BOARD_HEIGHT, false)
+  constructor(board?: CellGrid) {
+    this.board = board ?? new CellGrid(BOARD_WIDTH, BOARD_HEIGHT, false)
   }
 
   applyBrush(tool: Tool, row: number, col: number): void {

@@ -1,4 +1,5 @@
 import type { BlockColor } from '@/types/BlockColor'
+import type { SavedBaseLayer } from '@/types/Saved/SavedBaseLayer'
 import { NormalBlock } from '@/types/Block'
 import { CellGrid } from '@/types/CellGrid'
 import { MinstdRand } from '@/utils/RandomEngine'
@@ -32,6 +33,20 @@ export class BaseLayer {
     this.seed = seed
     this.rows = rows
     this.generateGrid()
+  }
+
+  static fromSaved(data: SavedBaseLayer): BaseLayer {
+    const result = new BaseLayer(data.seed, data.rows)
+    result.setBannedColor(data.bannedColor)
+    return result
+  }
+
+  save(): SavedBaseLayer {
+    return {
+      rows: this.rows,
+      seed: this.seed,
+      bannedColor: this.bannedColor
+    }
   }
 
   getSeed(): number {

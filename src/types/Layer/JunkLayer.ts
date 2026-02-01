@@ -8,8 +8,8 @@ import { junkShapeDimensions } from '@/consts/junk'
 export class JunkLayer {
   readonly board: CellGrid
 
-  constructor() {
-    this.board = new CellGrid(BOARD_WIDTH, BOARD_HEIGHT, true)
+  constructor(board?: CellGrid) {
+    this.board = board ?? new CellGrid(BOARD_WIDTH, BOARD_HEIGHT, true)
   }
 
   onCellDragOver(event: DragEvent, row: number, col: number): void {

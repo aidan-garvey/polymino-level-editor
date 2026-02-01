@@ -27,15 +27,18 @@
 </template>
 
 <script setup lang="ts">
-import { Editor } from '@/types/Editor'
+import type { Editor } from '@/types/Editor'
 import { BOARD_HEIGHT, BOARD_WIDTH } from '@/consts/board'
 import { ToolKind } from '@/types/Tool'
 
-const editor = new Editor()
+const props = defineProps<{
+  editor: Editor
+}>()
 
 const cursorStyle = computed(() => {
-  switch (editor.leftTool.value.kind) {
+  switch (props.editor.leftTool.value.kind) {
     case ToolKind.BRUSH:
+    case ToolKind.PICKER:
       return { cursor: 'crosshair' }
     case ToolKind.SELECT:
       return {}

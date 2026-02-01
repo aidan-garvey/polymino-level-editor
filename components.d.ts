@@ -12,13 +12,18 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     App: typeof import('./src/components/App.vue')['default']
+    PdxAreYouSure: typeof import('./src/components/pdx/are-you-sure.vue')['default']
     PdxBaseLayerSlider: typeof import('./src/components/pdx/base-layer-slider.vue')['default']
     PdxBlock: typeof import('./src/components/pdx/block.vue')['default']
     PdxBoardOverlay: typeof import('./src/components/pdx/board-overlay/index.vue')['default']
     PdxBrushSelector: typeof import('./src/components/pdx/brush-selector.vue')['default']
     PdxCellGrid: typeof import('./src/components/pdx/cell-grid.vue')['default']
+    PdxDialog: typeof import('./src/components/pdx/dialog/index.vue')['default']
+    PdxDialogTitleBar: typeof import('./src/components/pdx/dialog/title-bar.vue')['default']
     PdxEditor: typeof import('./src/components/pdx/editor/index.vue')['default']
     PdxEditorBrushes: typeof import('./src/components/pdx/editor/brushes.vue')['default']
+    PdxFileDropdown: typeof import('./src/components/pdx/file-dropdown/index.vue')['default']
+    PdxFileDropdownItem: typeof import('./src/components/pdx/file-dropdown/item.vue')['default']
     PdxIcon: typeof import('./src/components/pdx/icon.vue')['default']
     PdxIconToolSelector: typeof import('./src/components/pdx/icon-tool-selector.vue')['default']
     PdxJunk: typeof import('./src/components/pdx/junk.vue')['default']
@@ -33,6 +38,12 @@ declare module 'vue' {
     PdxLayerBase: typeof import('./src/components/pdx/layer/base.vue')['default']
     PdxLayerBrush: typeof import('./src/components/pdx/layer/brush.vue')['default']
     PdxLayerJunk: typeof import('./src/components/pdx/layer/junk.vue')['default']
+    PdxLevelBrowser: typeof import('./src/components/pdx/level-browser/index.vue')['default']
+    PdxLevelBrowserInput: typeof import('./src/components/pdx/level-browser/input.vue')['default']
+    PdxLevelBrowserList: typeof import('./src/components/pdx/level-browser/list.vue')['default']
+    PdxLevelBrowserOpenButtons: typeof import('./src/components/pdx/level-browser/open-buttons.vue')['default']
+    PdxLevelBrowserSaveButtons: typeof import('./src/components/pdx/level-browser/save-buttons.vue')['default']
+    PdxMenuBar: typeof import('./src/components/pdx/menu-bar/index.vue')['default']
     PdxTooltip: typeof import('./src/components/pdx/tooltip.vue')['default']
   }
 }

@@ -6,22 +6,22 @@
     }"
     :style="{
       height: `${size}px`,
-      width: `${size}px`
+      width: `${size}px`,
+      fontSize: `${size}px`,
+      lineHeight: `${size}px`,
     }"
   >
-    <span
-      :style="{
-        fontSize: `${size}px`
-      }"
-    >
-      {{ name }}
-    </span>
+    <span>{{ name }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
 defineProps<{
   name: string
+  /**
+   * Number or numeric string representing size in pixels (not including CSS
+   * units)
+   */
   size: number | string
   fill?: boolean
 }>()

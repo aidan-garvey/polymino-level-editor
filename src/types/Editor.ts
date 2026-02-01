@@ -142,9 +142,6 @@ export class Editor {
   onCellPointerDown(event: PointerEvent, row: number, col: number): void {
     const useTool = (tool: Ref<Tool>) => {
       switch (tool.value.kind) {
-        case ToolKind.SELECT:
-          // TODO: If there's a junk piece on the cell, select it
-          break
         case ToolKind.BRUSH:
           this.brushLayer.applyBrush(tool.value, row, col)
           break

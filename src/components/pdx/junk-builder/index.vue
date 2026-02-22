@@ -57,7 +57,7 @@
 <script setup lang="ts">
 import type { Editor } from '@/types/Editor'
 import { JunkShape } from '@/types/JunkShape'
-import { injectTooltipOffsetY, injectTooltipTriggerHeight, injectTooltipText, injectTooltipItemName } from '@/consts/inject'
+import { provideTooltipRefs } from '@/use/tooltip'
 
 const props = defineProps<{
   editor: Editor
@@ -65,17 +65,7 @@ const props = defineProps<{
 
 const shapeSelector = useTemplateRef('shapeSelector')
 
-const tooltipOffsetY = ref(0)
-provide(injectTooltipOffsetY, tooltipOffsetY)
-
-const tooltipTriggerHeight = ref(0)
-provide(injectTooltipTriggerHeight, tooltipTriggerHeight)
-
-const tooltipText = ref('')
-provide(injectTooltipText, tooltipText)
-
-const tooltipItemName = ref<string | null>(null)
-provide(injectTooltipItemName, tooltipItemName)
+provideTooltipRefs()
 
 const onShapeChange = () => {
   const shape = shapeSelector.value?.value

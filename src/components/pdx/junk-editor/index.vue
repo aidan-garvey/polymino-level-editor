@@ -44,23 +44,13 @@
 import type { Editor } from '@/types/Editor'
 import type { BlockColor } from '@/types/BlockColor'
 import type { JunkEffect } from '@/types/JunkEffect'
-import { injectTooltipOffsetY, injectTooltipTriggerHeight, injectTooltipText, injectTooltipItemName } from '@/consts/inject'
+import { provideTooltipRefs } from '@/use/tooltip'
 
 const props = defineProps<{
   editor: Editor
 }>()
 
-const tooltipOffsetY = ref(0)
-provide(injectTooltipOffsetY, tooltipOffsetY)
-
-const tooltipTriggerHeight = ref(0)
-provide(injectTooltipTriggerHeight, tooltipTriggerHeight)
-
-const tooltipText = ref('')
-provide(injectTooltipText, tooltipText)
-
-const tooltipItemName = ref<string | null>(null)
-provide(injectTooltipItemName, tooltipItemName)
+provideTooltipRefs()
 
 const onColorClick = (color: BlockColor) => {
   if (!props.editor.selectedJunk.value)

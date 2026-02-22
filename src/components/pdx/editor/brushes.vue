@@ -97,24 +97,13 @@ import { BlockColor } from '@/types/BlockColor'
 import { normalBlockColors, junkBlockColors } from '@/types/BlockColor'
 import { junkEffects } from '@/types/JunkEffect'
 import { ToolKind } from '@/types/Tool'
-import { injectTooltipOffsetY, injectTooltipText, injectTooltipItemName, injectTooltipTriggerHeight } from '@/consts/inject'
+import { provideTooltipRefs } from '@/use/tooltip'
 
 const props = defineProps<{
   editor: Editor
 }>()
 
-// Written by the brush selectors, read by the tooltip
-const tooltipOffsetY = ref(0)
-provide(injectTooltipOffsetY, tooltipOffsetY)
-
-const tooltipTriggerHeight = ref(0)
-provide(injectTooltipTriggerHeight, tooltipTriggerHeight)
-
-const tooltipText = ref('')
-provide(injectTooltipText, tooltipText)
-
-const tooltipItemName = ref<string | null>(null)
-provide(injectTooltipItemName, tooltipItemName)
+provideTooltipRefs()
 
 const selectPredicate = (tool: Tool) => {
   return tool.kind === ToolKind.SELECT

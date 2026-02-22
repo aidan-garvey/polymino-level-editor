@@ -31,3 +31,20 @@ export const useTooltip = (
     onPointerLeave,
   }
 }
+
+/**
+ * Creates and provides refs for tooltips.
+ */
+export const provideTooltipRefs = () => {
+  const tooltipOffsetY = ref(0)
+  provide(injectTooltipOffsetY, tooltipOffsetY)
+
+  const tooltipTriggerHeight = ref(0)
+  provide(injectTooltipTriggerHeight, tooltipTriggerHeight)
+
+  const tooltipText = ref('')
+  provide(injectTooltipText, tooltipText)
+
+  const tooltipItemName = ref<string | null>(null)
+  provide(injectTooltipItemName, tooltipItemName)
+}

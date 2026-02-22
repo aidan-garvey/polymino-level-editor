@@ -51,6 +51,15 @@ watch(thumbRow, () => {
   props.editor.baseLayer.setRows(thumbRow.value)
 })
 
+/**
+ * When a new level is opened (editor gets replaced), set the slider thumb
+ * position based on the new level's base layer.
+ */
+watch(() => props.editor, () => {
+  thumbRow.value = props.editor.baseLayer.getRows()
+  updateThumbTop()
+})
+
 const onPointerDown = (event: PointerEvent) => {
   if (!sliderThumb.value)
     return
@@ -77,11 +86,15 @@ const onPointerMove = (event: PointerEvent) => {
 
 const onLostCapture = () => {
   pointerId.value = undefined
+  updateThumbTop()
+}
+
+const updateThumbTop = () => {
   if (!sliderTrack.value)
     return
 
   const trackHeight = sliderTrack.value.getBoundingClientRect().height
-  thumbCssTop.value = trackHeight - thumbRow.value * trackHeight / BOARD_HEIGHT
+  thumbCssTop.value = trackHeight * (1 - thumbRow.value / BOARD_HEIGHT)
 }
 </script>
 

@@ -14,16 +14,19 @@ export class LinearCongruentialEngine implements RandomEngine {
 
   private state: bigint
 
+  /**
+   * All parameters are converted to unsigned integers.
+   */
   constructor(
     multiplier: number,
     increment: number,
     modulus: number,
     seed: number,
   ) {
-    this.modulus = BigInt(modulus)
-    this.multiplier = BigInt(multiplier)
-    this.increment = BigInt(increment)
-    this.state = BigInt(seed)
+    this.modulus = BigInt(modulus >>> 0)
+    this.multiplier = BigInt(multiplier >>> 0)
+    this.increment = BigInt(increment >>> 0)
+    this.state = BigInt(seed >>> 0)
   }
 
   gen(): number {

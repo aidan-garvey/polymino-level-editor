@@ -74,7 +74,7 @@ const {
     border-radius: 0;
     color: #fff;
 
-    transition: border-color ease-out 0.05s;
+    transition: border-color 0.05s ease-out;
 
     &:focus {
       border-color: #fff;

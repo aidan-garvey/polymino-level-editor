@@ -1,15 +1,15 @@
 <template>
   <Teleport to="body">
     <div
-      v-if="tooltipItemName"
       class="pdx-tooltip"
       :style="{
         top: `${top}`,
         right: `${right}`,
         minHeight: `${tooltipTriggerHeight}px`,
-        padding: `4px ${padding}`,
+        padding: `4px ${hPadding}`,
         fontSize: `${FONT_SIZE}px`,
         lineHeight: `${FONT_SIZE}px`,
+        ...displayStyle
       }"
     >
       {{ tooltipText }}
@@ -28,7 +28,7 @@ const tooltipOffsetY = notNull(inject(injectTooltipOffsetY))
 const tooltipTriggerHeight = notNull(inject(injectTooltipTriggerHeight))
 const tooltipText = notNull(inject(injectTooltipText))
 
-const padding = computed(() => {
+const hPadding = computed(() => {
   return `${(tooltipTriggerHeight.value - FONT_SIZE) / 2}px`
 })
 
@@ -36,6 +36,16 @@ const container = useParentElement()
 
 const top = ref('0px')
 const right = ref('0px')
+const displayStyle = computed(() => {
+  if (!tooltipItemName.value) {
+    return {
+      display: 'none',
+      opacity: 0
+    }
+  } else {
+    return {}
+  }
+})
 
 watch(tooltipItemName, () => {
   const rect = container.value?.getBoundingClientRect()
@@ -67,5 +77,15 @@ watch(tooltipItemName, () => {
   display: flex;
   align-items: center;
   justify-content: center;
+
+  // Won't work on Firefox, but it's just aesthetic
+  transition:
+    opacity 0.2s ease-out,
+    display 0.2s ease-out;
+
+  transition-behavior: allow-discrete;
+  @starting-style {
+    opacity: 0;
+  }
 }
 </style>

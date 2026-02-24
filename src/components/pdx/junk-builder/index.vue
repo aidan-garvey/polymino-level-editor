@@ -8,7 +8,6 @@
 
     <select
       ref="shapeSelector"
-      class="pdx-junk-builder__shape-selector"
       name="junk-shape"
       :value="editor.junkBuilder.getJunkShape()"
       @change="onShapeChange"

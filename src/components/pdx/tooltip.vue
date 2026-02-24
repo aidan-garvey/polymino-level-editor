@@ -6,8 +6,8 @@
       :style="{
         top: `${top}`,
         right: `${right}`,
-        height: `${tooltipTriggerHeight}px`,
-        padding: `0 ${padding}`,
+        minHeight: `${tooltipTriggerHeight}px`,
+        padding: `4px ${padding}`,
         fontSize: `${FONT_SIZE}px`,
         lineHeight: `${FONT_SIZE}px`,
       }"
@@ -58,8 +58,8 @@ watch(tooltipItemName, () => {
   z-index: 1000;
   position: absolute;
 
-  white-space: nowrap;
-  text-align: right;
+  white-space: pre-line;
+  text-align: center;
 
   background: #111;
   border: 1px solid #fff;

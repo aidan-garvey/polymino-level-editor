@@ -22,6 +22,7 @@
     <div class="pdx-editor__right">
       <pdx-base-layer-slider :editor />
       <pdx-junk-editor :editor />
+      <pdx-level-settings :editor />
     </div>
   </div>
 </template>

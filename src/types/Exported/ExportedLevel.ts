@@ -9,5 +9,6 @@ export interface ExportedLevel extends ExportedCellGrid {
   // as the RNG seed, objective details, etc.
   // maybe even a customized junk queue where the puzzle setter can specify the
   // junk pieces that can be dropped, if that's a thing that'd be fun
+  readonly name: string
   readonly seed: number
 }

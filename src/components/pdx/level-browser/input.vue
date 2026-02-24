@@ -1,8 +1,9 @@
 <template>
-  <div class="pdx-level-browser-input text-body">
-    <span>Level name:</span>
-    <input type="text"
+  <div class="pdx-level-browser-input">
+    <pdx-input-text
       v-model="levelName"
+      label="File name:"
+      inline-label
     />
   </div>
 </template>
@@ -15,21 +16,6 @@ const levelName = defineModel<string>({ required: true })
 .pdx-level-browser-input {
   display: flex;
   flex-direction: row;
-  gap: 4px;
-  align-items: center;
   justify-content: flex-end;
-
-  input {
-    appearance: none;
-    outline: none;
-    background: #111;
-    border: 1px solid #444;
-    border-radius: 0;
-    color: #fff;
-
-    &:focus {
-      border-color: #fff;
-    }
-  }
 }
 </style>

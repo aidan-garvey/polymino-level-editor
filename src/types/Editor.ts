@@ -30,13 +30,15 @@ export class Editor {
 
   readonly selectedJunk: ShallowRef<Junk | null> = shallowRef(null)
 
+  readonly levelName: Ref<string> = ref('Untitled')
+
   /**
    * All players' random generators will be initalized to this value when the
    * level is loaded, ensuring the same sequence of actions in a puzzle level
    * will always have the same results. As far as the level editor is concerned,
    * it's just a number that doesn't affect anything.
    */
-  seed: number
+  readonly seed: Ref<number>
 
   /**
    * State of the tool selected on the left mouse button
@@ -78,22 +80,23 @@ export class Editor {
         CellGrid.fromExported(data.junkLayer, true)
       )
       this.junkBuilder = new JunkBuilder()
-      this.seed = data.seed
+      this.seed = ref(data.seed)
     } else {
       this.baseLayer = new BaseLayer()
       this.brushLayer = new BrushLayer()
       this.junkLayer = new JunkLayer()
       this.junkBuilder = new JunkBuilder()
-      this.seed = Math.round(performance.now())
+      this.seed = ref(Math.round(performance.now()))
     }
   }
 
   save(): SavedLevel {
     return {
+      name: this.levelName.value,
       baseLayer: this.baseLayer.save(),
       brushLayer: this.brushLayer.board.export(),
       junkLayer: this.junkLayer.board.export(),
-      seed: this.seed,
+      seed: this.seed.value,
       lastModified: (new Date).toISOString()
     }
   }
@@ -105,7 +108,8 @@ export class Editor {
     this.junkLayer.board.overlayOnto(combinedGrid)
     return {
       ...combinedGrid.export(),
-      seed: this.seed
+      name: this.levelName.value,
+      seed: this.seed.value
     }
   }
 

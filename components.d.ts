@@ -26,6 +26,9 @@ declare module 'vue' {
     PdxFileDropdownItem: typeof import('./src/components/pdx/file-dropdown/item.vue')['default']
     PdxIcon: typeof import('./src/components/pdx/icon.vue')['default']
     PdxIconToolSelector: typeof import('./src/components/pdx/icon-tool-selector.vue')['default']
+    PdxInputNumber: typeof import('./src/components/pdx/input/number.vue')['default']
+    PdxInputText: typeof import('./src/components/pdx/input/text.vue')['default']
+    PdxInputWrapper: typeof import('./src/components/pdx/input/wrapper.vue')['default']
     PdxJunk: typeof import('./src/components/pdx/junk.vue')['default']
     PdxJunkBuilder: typeof import('./src/components/pdx/junk-builder/index.vue')['default']
     PdxJunkBuilderCanvas: typeof import('./src/components/pdx/junk-builder/canvas.vue')['default']
@@ -43,6 +46,8 @@ declare module 'vue' {
     PdxLevelBrowserList: typeof import('./src/components/pdx/level-browser/list.vue')['default']
     PdxLevelBrowserOpenButtons: typeof import('./src/components/pdx/level-browser/open-buttons.vue')['default']
     PdxLevelBrowserSaveButtons: typeof import('./src/components/pdx/level-browser/save-buttons.vue')['default']
+    PdxLevelSettings: typeof import('./src/components/pdx/level-settings/index.vue')['default']
+    PdxLevelSettingsBannedColor: typeof import('./src/components/pdx/level-settings/banned-color.vue')['default']
     PdxMenuBar: typeof import('./src/components/pdx/menu-bar/index.vue')['default']
     PdxTooltip: typeof import('./src/components/pdx/tooltip.vue')['default']
   }

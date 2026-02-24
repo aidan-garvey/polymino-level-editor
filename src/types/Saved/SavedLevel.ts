@@ -2,6 +2,7 @@ import { type SavedBaseLayer, isSavedBaseLayer } from '@/types/Saved/SavedBaseLa
 import { type ExportedCellGrid, isExportedCellGrid } from '@/types/Exported/ExportedCellGrid'
 
 export interface SavedLevel {
+  readonly name: string
   readonly baseLayer: SavedBaseLayer
   readonly brushLayer: ExportedCellGrid
   readonly junkLayer: ExportedCellGrid
@@ -12,6 +13,8 @@ export interface SavedLevel {
 export const isSavedLevel = (data: unknown): data is SavedLevel => {
   return typeof data === 'object'
     && data !== null
+    && 'name' in data
+    && typeof data.name === 'string'
     && 'baseLayer' in data
     && isSavedBaseLayer(data.baseLayer)
     && 'brushLayer' in data

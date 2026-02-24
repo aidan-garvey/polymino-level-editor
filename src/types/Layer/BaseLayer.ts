@@ -17,12 +17,12 @@ export class BaseLayer {
    * editor; when levels are exported, all cell grids are combined and exported
    * in their entirety.
    */
-  private seed: number
+  private readonly seed: Ref<number>
 
   /**
    * How many rows of blocks to add to the base layer.
    */
-  private rows: number
+  private readonly rows: Ref<number>
 
   private bannedColor?: BlockColor
 
@@ -32,8 +32,8 @@ export class BaseLayer {
   ) {
     this.board = new CellGrid(BOARD_WIDTH, BOARD_HEIGHT, false)
     this.board.blockOpacity.value = 0.25
-    this.seed = seed
-    this.rows = rows
+    this.seed = ref(seed)
+    this.rows = ref(rows)
     this.generateGrid()
   }
 
@@ -45,25 +45,25 @@ export class BaseLayer {
 
   save(): SavedBaseLayer {
     return {
-      rows: this.rows,
-      seed: this.seed,
+      rows: this.rows.value,
+      seed: this.seed.value,
       bannedColor: this.bannedColor
     }
   }
 
   getSeed(): number {
-    return this.seed
+    return this.seed.value
   }
   setSeed(seed: number): void {
-    this.seed = seed
+    this.seed.value = seed
     this.generateGrid()
   }
 
   getRows(): number {
-    return this.rows
+    return this.rows.value
   }
   setRows(rows: number): void {
-    this.rows = rows
+    this.rows.value = rows
     this.generateGrid()
   }
 
@@ -81,9 +81,9 @@ export class BaseLayer {
    * consistent, then reduces the number of filled rows to this.initialRows.
    */
   private generateGrid(): void {
-    const engine = MinstdRand(this.seed)
+    const engine = MinstdRand(this.seed.value)
 
-    for (let row = 0; row < this.rows; ++row) {
+    for (let row = 0; row < this.rows.value; ++row) {
       for (let col = 0; col < BOARD_WIDTH; ++col) {
         let color = randomColor(engine)
         while (color === this.bannedColor) {
@@ -92,7 +92,7 @@ export class BaseLayer {
         this.board.placeBlock(row, col, new NormalBlock(color))
       }
     }
-    for (let row = this.rows; row < BOARD_HEIGHT; ++row) {
+    for (let row = this.rows.value; row < BOARD_HEIGHT; ++row) {
       for (let col = 0; col < BOARD_WIDTH; ++col) {
         this.board.removeBlock(row, col)
       }

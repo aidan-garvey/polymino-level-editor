@@ -55,7 +55,7 @@ watch(thumbRow, () => {
  * When a new level is opened (editor gets replaced), set the slider thumb
  * position based on the new level's base layer.
  */
-watch(() => props.editor, () => {
+watch(() => props.editor.baseLayer.getRows(), () => {
   thumbRow.value = props.editor.baseLayer.getRows()
   updateThumbTop()
 })

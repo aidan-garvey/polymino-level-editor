@@ -9,26 +9,3 @@ export enum BlockColor {
   TEAL = 7,
   GRAY = 8,
 }
-
-export const junkBlockColors: BlockColor[] = [
-  BlockColor.BLUE,
-  BlockColor.RED,
-  BlockColor.GREEN,
-  BlockColor.YELLOW,
-  BlockColor.ORANGE,
-  BlockColor.PINK,
-  BlockColor.VIOLET,
-  BlockColor.TEAL,
-  BlockColor.GRAY,
-]
-
-export const normalBlockColors: BlockColor[] = [
-  BlockColor.BLUE,
-  BlockColor.RED,
-  BlockColor.GREEN,
-  BlockColor.YELLOW,
-  BlockColor.ORANGE,
-  BlockColor.PINK,
-  BlockColor.VIOLET,
-  BlockColor.TEAL,
-]

@@ -34,8 +34,8 @@
 
 <script setup lang="ts">
 import type { Editor } from '@/types/Editor'
-import { BlockColor, normalBlockColors } from '@/types/BlockColor'
-import { blockColorTitles } from '@/consts/block'
+import { BlockColor } from '@/types/BlockColor'
+import { blockColorTitles, normalBlockColors } from '@/consts/block'
 import { useTooltip } from '@/use/tooltip'
 
 const props = defineProps<{

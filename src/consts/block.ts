@@ -23,3 +23,26 @@ export const blockColorTitles: Record<BlockColor, string> = {
   [BlockColor.TEAL]: 'Teal',
   [BlockColor.GRAY]: 'Gray',
 }
+
+export const junkBlockColors: BlockColor[] = [
+  BlockColor.BLUE,
+  BlockColor.RED,
+  BlockColor.GREEN,
+  BlockColor.YELLOW,
+  BlockColor.ORANGE,
+  BlockColor.PINK,
+  BlockColor.VIOLET,
+  BlockColor.TEAL,
+  BlockColor.GRAY,
+]
+
+export const normalBlockColors: BlockColor[] = [
+  BlockColor.BLUE,
+  BlockColor.RED,
+  BlockColor.GREEN,
+  BlockColor.YELLOW,
+  BlockColor.ORANGE,
+  BlockColor.PINK,
+  BlockColor.VIOLET,
+  BlockColor.TEAL,
+]

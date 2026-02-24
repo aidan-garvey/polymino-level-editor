@@ -3,6 +3,7 @@ import { BlockColor } from '@/types/BlockColor'
 import { JunkEffect } from '@/types/JunkEffect'
 import { JunkShape } from '@/types/JunkShape'
 import { junkShapeDimensions } from '@/consts/junk'
+import { parseOrDefault } from '@/utils/parseOrDefault'
 
 export type JunkDragFormat = `pdx/junk:${number}:${number}`
 
@@ -54,7 +55,7 @@ export const getJunkDragData = (event: DragEvent): JunkDragData | null => {
   if (!format || !event.dataTransfer)
     return null
 
-  const data = JSON.parse(event.dataTransfer.getData(format))
+  const data = parseOrDefault(event.dataTransfer.getData(format))
 
   return isJunkDragData(data) ? data : null
 }

@@ -43,6 +43,7 @@
 import type { LevelStorage, SavedLevelDict } from '@/types/Storage/LevelStorage'
 import { Editor } from '@/types/Editor'
 import { isSavedLevel } from '@/types/Saved/SavedLevel'
+import { parseOrDefault } from '@/utils/parseOrDefault'
 
 const modelValue = defineModel<boolean>({ required: true })
 const editor = defineModel<Editor>('editor', { required: true })
@@ -98,7 +99,7 @@ const openFromDisk = () => {
 const onFileChange = async () => {
   const file = fileInputRef.value?.files?.[0]
   if (file) {
-    const content = JSON.parse(await file.text())
+    const content = parseOrDefault(await file.text())
     if (isSavedLevel(content)) {
       editor.value = new Editor(content)
       modelValue.value = false

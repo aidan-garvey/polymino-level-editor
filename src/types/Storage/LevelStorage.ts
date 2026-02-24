@@ -3,6 +3,7 @@ import type { SavedLevel } from '@/types/Saved/SavedLevel'
 import type { StorageKey } from '@/types/Storage/StorageKey'
 import { isSavedLevel } from '@/types/Saved/SavedLevel'
 import { LEVEL_PREFIX, FEATURE_TEST_PREFIX, isLevelKey } from '@/types/Storage/StorageKey'
+import { parseOrDefault } from '@/utils/parseOrDefault'
 
 export type SavedLevelDict = Record<string, SavedLevel>
 
@@ -98,7 +99,7 @@ export class LevelStorage {
         console.warn(`No data at key ${key}, deleting...`)
         LevelStorage.delete(storage, key)
       } else {
-        const data = JSON.parse(str)
+        const data = parseOrDefault(str)
         if (isSavedLevel(data)) {
           result[name] = data
         } else {
@@ -152,7 +153,7 @@ export class LevelStorage {
       return null
     }
 
-    const data = JSON.parse(str)
+    const data = parseOrDefault(str)
     if (isSavedLevel(data)) {
       this.currentLevelName.value = name
       return data

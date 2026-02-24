@@ -75,6 +75,23 @@ export class BaseLayer {
     this.generateGrid()
   }
 
+  private getColor(row: number, col: number): BlockColor | null {
+    const block = this.board.getBlock(row, col)
+    return block.color
+  }
+
+  private isVerticalMatch(row: number, col: number, color: BlockColor) {
+    return row >= 2
+      && this.getColor(row - 1, col) === color
+      && this.getColor(row - 2, col) === color
+  }
+
+  private isHorizontalMatch(row: number, col: number, color: BlockColor) {
+    return col >= 2
+      && this.getColor(row, col - 1) === color
+      && this.getColor(row, col - 2) === color
+  }
+
   /**
    * Regenerates the grid when one of the layer's parameters is changed. Always
    * generates a full board of blocks so the final state of the random engine is
@@ -86,7 +103,10 @@ export class BaseLayer {
     for (let row = 0; row < this.rows.value; ++row) {
       for (let col = 0; col < BOARD_WIDTH; ++col) {
         let color = randomColor(engine)
-        while (color === this.bannedColor) {
+        while (color === this.bannedColor
+          || this.isVerticalMatch(row, col, color)
+          || this.isHorizontalMatch(row, col, color)
+        ) {
           color = randomColor(engine)
         }
         this.board.placeBlock(row, col, new NormalBlock(color))

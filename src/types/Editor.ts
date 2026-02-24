@@ -183,6 +183,9 @@ export class Editor {
   onCellPointerDown(event: PointerEvent, row: number, col: number): void {
     const useTool = (tool: Ref<Tool>) => {
       switch (tool.value.kind) {
+        case ToolKind.SELECT:
+          this.selectedJunk.value = null
+          break
         case ToolKind.BRUSH:
           this.brushLayer.applyBrush(tool.value, row, col)
           break

@@ -12,6 +12,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     App: typeof import('./src/components/App.vue')['default']
+    PdxAlert: typeof import('./src/components/pdx/alert.vue')['default']
     PdxAreYouSure: typeof import('./src/components/pdx/are-you-sure.vue')['default']
     PdxBaseLayerSlider: typeof import('./src/components/pdx/base-layer-slider.vue')['default']
     PdxBlock: typeof import('./src/components/pdx/block.vue')['default']
@@ -19,6 +20,7 @@ declare module 'vue' {
     PdxBrushSelector: typeof import('./src/components/pdx/brush-selector.vue')['default']
     PdxCellGrid: typeof import('./src/components/pdx/cell-grid.vue')['default']
     PdxDialog: typeof import('./src/components/pdx/dialog/index.vue')['default']
+    PdxDialogManager: typeof import('./src/components/pdx/dialog/manager.vue')['default']
     PdxDialogTitleBar: typeof import('./src/components/pdx/dialog/title-bar.vue')['default']
     PdxEditor: typeof import('./src/components/pdx/editor/index.vue')['default']
     PdxEditorBrushes: typeof import('./src/components/pdx/editor/brushes.vue')['default']

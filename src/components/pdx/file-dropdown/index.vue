@@ -40,15 +40,6 @@
       />
     </div>
 
-    <pdx-are-you-sure
-      v-model="newLevelConfirm"
-      @confirm="confirmNewLevel"
-    >
-      Are you sure you want to start a new level?
-      <br />
-      Any unsaved progress will be lost.
-    </pdx-are-you-sure>
-
     <pdx-level-browser
       v-model="showLevelBrowser"
       v-model:editor="editor"
@@ -61,6 +52,7 @@
 <script setup lang="ts">
 import type { LevelStorage } from '@/types/Storage/LevelStorage'
 import { Editor } from '@/types/Editor'
+import { useDialog } from '@/use/dialog'
 
 const editor = defineModel<Editor>('editor', { required: true })
 
@@ -68,9 +60,9 @@ const props = defineProps<{
   levelStorage: LevelStorage
 }>()
 
-const open = ref(false)
+const { showConfirmation } = useDialog()
 
-const newLevelConfirm = ref(false)
+const open = ref(false)
 
 const showLevelBrowser = ref(false)
 const levelBrowserMode = ref<'open' | 'save'>('open')
@@ -82,7 +74,11 @@ useEventListener('click', () => { open.value = false })
 const newLevel = () => {
   // TODO: track unsaved changes so we can skip this for levels which are
   // unmodified since last save
-  newLevelConfirm.value = true
+  showConfirmation(
+    'Are you sure you want to start a new level?\n' +
+    'Any unsaved progress will be lost.',
+    confirmNewLevel
+  )
 }
 
 const confirmNewLevel = () => {

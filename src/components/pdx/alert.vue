@@ -7,8 +7,7 @@
         </slot>
       </div>
       <div class="pdx-dialog-common__buttons">
-        <button type="button" @click="cancel">Cancel</button>
-        <button type="button" @click="confirm">Confirm</button>
+        <button type="button" @click="close">Close</button>
       </div>
     </div>
   </pdx-dialog>
@@ -22,17 +21,11 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  confirm: []
-  cancel: []
+  close: []
 }>()
 
-const confirm = () => {
+const close = () => {
   modelValue.value = false
-  emit('confirm')
-}
-
-const cancel = () => {
-  modelValue.value = false
-  emit('cancel')
+  emit('close')
 }
 </script>

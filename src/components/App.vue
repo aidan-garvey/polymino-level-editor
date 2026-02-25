@@ -11,14 +11,21 @@
   <div class="app-bottom">
 
   </div>
+  <pdx-dialog-manager
+    ref="dialogManager"
+  />
 </template>
 
 <script setup lang="ts">
 import { Editor } from '@/types/Editor'
 import { LevelStorage } from '@/types/Storage/LevelStorage'
+import { injectDialogManager } from './pdx/dialog/inject'
 
 const editor = shallowRef(new Editor())
 const levelStorage = new LevelStorage()
+
+const dialogManager = useTemplateRef('dialogManager')
+provide(injectDialogManager, dialogManager)
 </script>
 
 <style lang="scss">
@@ -33,6 +40,7 @@ const levelStorage = new LevelStorage()
 @use './pdx/tool-selector';
 @use './pdx/junk-selector';
 @use './pdx/side-panel';
+@use './pdx/dialog/common.scss';
 
 * {
   box-sizing: border-box;

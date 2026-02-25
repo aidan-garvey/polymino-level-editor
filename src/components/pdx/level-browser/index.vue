@@ -36,12 +36,6 @@
         accept=".json"
         @change="onFileChange"
       />
-
-      <pdx-are-you-sure
-        v-model="saveConfirm"
-        message="Are you sure you want to overwrite this level?"
-        @confirm="confirmSaveLevel"
-      />
     </div>
   </pdx-dialog>
 </template>
@@ -51,6 +45,7 @@ import type { LevelStorage, SavedLevelDict } from '@/types/Storage/LevelStorage'
 import { Editor } from '@/types/Editor'
 import { isSavedLevel } from '@/types/Saved/SavedLevel'
 import { parseOrDefault } from '@/utils/parseOrDefault'
+import { useDialog } from '@/use/dialog'
 
 const modelValue = defineModel<boolean>({ required: true })
 const editor = defineModel<Editor>('editor', { required: true })
@@ -60,13 +55,13 @@ const props = defineProps<{
   mode: 'open' | 'save'
 }>()
 
+const { showConfirmation, showAlert } = useDialog()
+
 const fileInputRef = useTemplateRef('fileInputRef')
 
 const levels = ref<SavedLevelDict | null>(null)
 
 const levelName = ref('')
-
-const saveConfirm = ref(false)
 
 const openLevel = (name: string) => {
   const level = props.levelStorage.loadLevel(name)
@@ -76,14 +71,24 @@ const openLevel = (name: string) => {
   }
 }
 
+const validNamePattern = /^[a-zA-Z0-9 ._-]+$/
+
 const saveLevel = (name: string) => {
+  name = name.trim()
   levelName.value = name
 
   const levelMatches = !!levels.value
     && Object.keys(levels.value).some(level => level === name)
 
-  if (levelMatches) {
-    saveConfirm.value = true
+  if (!name) {
+    showAlert('Level name cannot be empty')
+  } else if (!validNamePattern.test(name)) {
+    showAlert('Level name contains invalid characters')
+  } else if (levelMatches) {
+    showConfirmation(
+      'Are you sure you want to overwrite this level?',
+      confirmSaveLevel
+    )
   } else {
     confirmSaveLevel()
   }
@@ -95,9 +100,9 @@ const confirmSaveLevel = () => {
     modelValue.value = false
   } catch (error) {
     console.error(error)
-    // TODO: use a component for this, detect the error type and show a more
-    // specific message, e.g. tell user they need to delete levels to make room
-    window.alert('Failed to save level')
+    // TODO: detect the error type and show a more specific message, e.g. tell
+    // user they need to delete levels to make room
+    showAlert('Failed to save level')
   }
 }
 
@@ -126,8 +131,7 @@ const onFileChange = async () => {
       editor.value = new Editor(content)
       modelValue.value = false
     } else {
-      // TODO: use a component for this, have a way to update outdated levels
-      window.alert('Invalid level file')
+      showAlert('Invalid level file')
     }
   } else {
     console.error('No file selected')

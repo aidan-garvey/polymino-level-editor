@@ -12,6 +12,7 @@
 
       <pdx-level-browser-input
         v-model="levelName"
+        @keyup.enter="() => activateLevel(levelName)"
       />
       <pdx-level-browser-save-buttons
         v-if="mode === 'save'"
@@ -34,6 +35,12 @@
         ref="fileInputRef"
         accept=".json"
         @change="onFileChange"
+      />
+
+      <pdx-are-you-sure
+        v-model="saveConfirm"
+        message="Are you sure you want to overwrite this level?"
+        @confirm="confirmSaveLevel"
       />
     </div>
   </pdx-dialog>
@@ -59,6 +66,8 @@ const levels = ref<SavedLevelDict | null>(null)
 
 const levelName = ref('')
 
+const saveConfirm = ref(false)
+
 const openLevel = (name: string) => {
   const level = props.levelStorage.loadLevel(name)
   if (level) {
@@ -68,8 +77,21 @@ const openLevel = (name: string) => {
 }
 
 const saveLevel = (name: string) => {
+  levelName.value = name
+
+  const levelMatches = !!levels.value
+    && Object.keys(levels.value).some(level => level === name)
+
+  if (levelMatches) {
+    saveConfirm.value = true
+  } else {
+    confirmSaveLevel()
+  }
+}
+
+const confirmSaveLevel = () => {
   try {
-    props.levelStorage.saveAs(editor.value.save(), name)
+    props.levelStorage.saveAs(editor.value.save(), levelName.value)
     modelValue.value = false
   } catch (error) {
     console.error(error)

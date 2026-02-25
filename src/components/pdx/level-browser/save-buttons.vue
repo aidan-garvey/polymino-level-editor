@@ -37,11 +37,6 @@ const emit = defineEmits<{
 
 const saveConfirm = ref(false)
 
-const levelMatches = computed(() => {
-  return !!props.levels
-    && Object.keys(props.levels).some(level => level === props.levelName)
-})
-
 const validNamePattern = /^[a-zA-Z0-9 ._-]+$/
 
 const onSave = () => {
@@ -51,8 +46,6 @@ const onSave = () => {
   } else if (!validNamePattern.test(props.levelName)) {
     // TODO: use a component for this
     window.alert('Level name contains invalid characters')
-  } else if (levelMatches.value) {
-    saveConfirm.value = true
   } else {
     emit('save', props.levelName)
   }

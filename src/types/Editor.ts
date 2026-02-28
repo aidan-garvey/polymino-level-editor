@@ -227,6 +227,12 @@ export class Editor {
     }
   }
 
+  onCellDrop(event: DragEvent, row: number, col: number): void {
+    const result = this.junkLayer.onCellDrop(event, row, col)
+    if (result)
+      this.selectJunk(result)
+  }
+
   private pick(tool: Tool, row: number, col: number): void {
     const block = this.brushLayer.board.getBlock(row, col)
     if (block.state === BlockState.EMPTY) {

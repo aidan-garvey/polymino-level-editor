@@ -6,7 +6,7 @@
     @cell-pointer-down="(...args) => editor.onCellPointerDown(...args)"
     @cell-pointer-enter="(...args) => editor.onCellPointerEnter(...args)"
     @cell-drag-over="(...args) => editor.junkLayer.onCellDragOver(...args)"
-    @cell-drop="(...args) => editor.junkLayer.onCellDrop(...args)"
+    @cell-drop="(...args) => editor.onCellDrop(...args)"
   />
 </template>
 

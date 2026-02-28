@@ -29,14 +29,14 @@ export class JunkLayer {
     }
   }
 
-  onCellDrop(event: DragEvent, row: number, col: number): void {
+  onCellDrop(event: DragEvent, row: number, col: number): Junk | null {
     const data = getJunkDragData(event)
     if (!data)
-      return
+      return null
 
     const [width, height] = junkShapeDimensions[data.shape]
     if (!this.board.canPlaceJunk(row, col, width, height))
-      return
+      return null
 
     event.preventDefault()
 
@@ -45,14 +45,14 @@ export class JunkLayer {
     // Holding shift copies junk, otherwise it gets moved if it isn't coming
     // from another cell grid
     if (!existing || event.shiftKey) {
-      this.placeJunk(data, row, col)
+      return this.placeJunk(data, row, col)
     } else {
-      this.board.moveJunk(existing, row, col)
+      return this.board.moveJunk(existing, row, col)
     }
   }
 
-  private placeJunk(data: JunkDragData, row: number, col: number): void {
-    this.board.placeJunk(new Junk(
+  private placeJunk(data: JunkDragData, row: number, col: number): Junk {
+    return this.board.placeJunk(new Junk(
       data.shape,
       data.color,
       row,

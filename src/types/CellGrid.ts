@@ -230,7 +230,7 @@ export class CellGrid {
     this.placeBlockUnchecked(y, x, block)
   }
 
-  placeJunk(junk: Junk): void {
+  placeJunk(junk: Junk): Junk {
     const [width, height] = junkShapeDimensions[junk.shape]
     this.checkPosition(junk.bottomRow, junk.leftColumn, width, height)
 
@@ -254,6 +254,17 @@ export class CellGrid {
       }
     }
     this.junkPieces.value.push(junk)
+
+    // Can't just return the `junk` parameter because non-reactive objects
+    // placed into the array will become reactive proxies.
+    const result = this.junkPieces.value.at(-1)
+    if (result) {
+      return result
+    } else {
+      throw new Error(
+        'Expected this.junkPieces to be non-empty after calling push'
+      )
+    }
   }
 
   applyJunkEffect(y: number, x: number, effect: JunkEffect | null): void {
@@ -267,13 +278,13 @@ export class CellGrid {
     return this.junkPieces.value
   }
 
-  moveJunk(junk: Junk, row: number, col: number): void {
+  moveJunk(junk: Junk, row: number, col: number): Junk {
     if (this.getJunkById(junk.id) !== junk) {
       throw new Error(`Junk with id ${junk.id} not found in this CellGrid`)
     }
     this.removeJunk(junk)
     junk.bottomRow = row
     junk.leftColumn = col
-    this.placeJunk(junk)
+    return this.placeJunk(junk)
   }
 }

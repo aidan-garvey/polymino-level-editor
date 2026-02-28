@@ -58,7 +58,7 @@ export const makeKeyCombo = (
 
 /**
  * Return a KeyboardEvent handler which invokes the given callback when any of
- * the specified keys are pressed.
+ * the specified keys are pressed, _unless_ an input element is focused.
  */
 export const makeHotkey = (
   action: KeyHandler,
@@ -67,7 +67,8 @@ export const makeHotkey = (
   keys = keys.map(k => k.toLowerCase())
 
   return (e: KeyboardEvent) => {
-    if (keys.includes(e.key.toLocaleLowerCase())) {
+    const isTyping = document.activeElement?.tagName === 'INPUT'
+    if (!isTyping && keys.includes(e.key.toLocaleLowerCase())) {
       e.preventDefault()
       e.stopPropagation()
       action(e)

@@ -12,9 +12,6 @@ variant uses this wrapper and is responsible for inserting and controlling an
     }"
     @pointerenter="onPointerEnter"
     @pointerleave="onPointerLeave"
-    @keyup.stop
-    @keydown.stop
-    @keypress.stop
   >
     <label
       :for="id"

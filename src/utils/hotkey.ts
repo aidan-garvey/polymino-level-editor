@@ -1,13 +1,15 @@
+type KeyHandler = (e: KeyboardEvent) => void
+
 /**
- * Given the label for a hotkey where each key that needs to be pressed
+ * Given the label for a key combination where each key that needs to be pressed
  * simultaneously is separated by a '+', and an action to perform when the key
  * combination is pressed, return an event handler that calls preventDefault on
  * the event and invokes the given callback when the key combination is pressed.
  */
-export const makeHotkey = (
+export const makeKeyCombo = (
   hotkeyLabel: string,
-  action: (e: KeyboardEvent) => void,
-): ((e: KeyboardEvent) => void) => {
+  action: KeyHandler,
+): KeyHandler => {
   const parts = hotkeyLabel.split('+').map(s => s.toLowerCase().trim())
 
   let alt = false
@@ -47,6 +49,25 @@ export const makeHotkey = (
       && e.shiftKey === shift
       && e.key.toLowerCase() === letter
     ) {
+      e.preventDefault()
+      e.stopPropagation()
+      action(e)
+    }
+  }
+}
+
+/**
+ * Return a KeyboardEvent handler which invokes the given callback when any of
+ * the specified keys are pressed.
+ */
+export const makeHotkey = (
+  action: KeyHandler,
+  ...keys: string[]
+): KeyHandler => {
+  keys = keys.map(k => k.toLowerCase())
+
+  return (e: KeyboardEvent) => {
+    if (keys.includes(e.key.toLocaleLowerCase())) {
       e.preventDefault()
       e.stopPropagation()
       action(e)

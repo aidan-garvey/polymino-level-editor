@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { makeHotkey } from '@/utils/hotkey'
+import { makeKeyCombo } from '@/utils/hotkey'
 
 const props = defineProps<{
   label: string
@@ -27,7 +27,7 @@ const emit = defineEmits<{
 }>()
 
 if (props.hotkey) {
-  useEventListener('keydown', makeHotkey(props.hotkey, () => emit('click')))
+  useEventListener('keydown', makeKeyCombo(props.hotkey, () => emit('click')))
 }
 </script>
 

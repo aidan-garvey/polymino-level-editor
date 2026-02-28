@@ -1,6 +1,5 @@
 <template>
   <div
-    v-if="editor.selectedJunk"
     class="pdx-side-panel pdx-junk-editor"
   >
     <pdx-tooltip />
@@ -37,6 +36,16 @@
       :isSelected="effect => editor.selectedJunk.value?.activeEffect === effect"
       :onClick="onEffectClick"
     />
+
+    <pdx-space />
+
+    <button
+      class="pdx-junk-editor__delete-button"
+      :disabled="!editor.selectedJunk.value"
+      @click="onDelete"
+    >
+      Delete
+    </button>
   </div>
 </template>
 
@@ -45,6 +54,7 @@ import type { Editor } from '@/types/Editor'
 import type { BlockColor } from '@/types/BlockColor'
 import type { JunkEffect } from '@/types/JunkEffect'
 import { provideTooltipRefs } from '@/use/tooltip'
+import { makeHotkey } from '@/utils/hotkey'
 
 const props = defineProps<{
   editor: Editor
@@ -65,6 +75,15 @@ const onEffectClick = (effect: JunkEffect | null) => {
 
   props.editor.selectedJunk.value.activeEffect = effect
 }
+
+const onDelete = () => {
+  if (props.editor.selectedJunk.value) {
+    props.editor.junkLayer.board.removeJunk(props.editor.selectedJunk.value)
+    props.editor.deselectJunk()
+  }
+}
+
+useEventListener('keydown', makeHotkey(onDelete, 'delete', 'backspace'))
 </script>
 
 <style lang="scss">
@@ -73,5 +92,9 @@ const onEffectClick = (effect: JunkEffect | null) => {
   flex-direction: column;
   align-items: center;
   gap: 8px;
+
+  &__delete-button {
+    width: 100%;
+  }
 }
 </style>

@@ -185,12 +185,13 @@ export class CellGrid {
   }
 
   removeJunk(junk: Junk): void {
-    for (const [y, x] of this.junkBlockPositions(junk))
-      this.placeBlockUnchecked(y, x, new EmptyBlock())
-
     const junkIndex = this.junkPieces.value.indexOf(junk)
-    if (junkIndex !== -1)
+    if (junkIndex !== -1) {
       this.junkPieces.value.splice(junkIndex, 1)
+
+      for (const [y, x] of this.junkBlockPositions(junk))
+        this.placeBlockUnchecked(y, x, new EmptyBlock())
+    }
   }
 
   removeJunkById(id: number): void {

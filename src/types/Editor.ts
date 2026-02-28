@@ -184,7 +184,7 @@ export class Editor {
     const useTool = (tool: Ref<Tool>) => {
       switch (tool.value.kind) {
         case ToolKind.SELECT:
-          this.selectedJunk.value = null
+          this.deselectJunk()
           break
         case ToolKind.BRUSH:
           this.brushLayer.applyBrush(tool.value, row, col)
@@ -243,5 +243,9 @@ export class Editor {
 
   selectJunk(junk: Junk): void {
     this.selectedJunk.value = junk
+  }
+
+  deselectJunk(): void {
+    this.selectedJunk.value = null
   }
 }

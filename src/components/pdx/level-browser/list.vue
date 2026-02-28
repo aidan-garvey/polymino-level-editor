@@ -8,7 +8,7 @@
       :key="level.name"
       class="pdx-level-browser-list__item pdx-interactive"
       :class="{
-        'pdx-level-browser-list__item--selected': level.name === inputLevelName,
+        'pdx-level-browser-list__item--selected': level.name === inputFileName,
       }"
       tabindex="0"
       @click="emit('select', level.name)"
@@ -30,8 +30,8 @@ import type { SavedLevelDict } from '@/types/Storage/LevelStorage'
 
 const props = defineProps<{
   levels: SavedLevelDict | null
-  /** String in the level name input */
-  inputLevelName: string
+  /** String in the file name input */
+  inputFileName: string
 }>()
 
 const emit = defineEmits<{

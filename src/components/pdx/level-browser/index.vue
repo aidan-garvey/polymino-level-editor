@@ -5,26 +5,26 @@
     <div class="pdx-level-browser">
       <pdx-level-browser-list
         :levels
-        :input-level-name="levelName"
-        @select="name => levelName = name"
+        :input-file-name="fileName"
+        @select="name => fileName = name"
         @activate="activateLevel"
       />
 
       <pdx-level-browser-input
-        v-model="levelName"
-        @keyup.enter="() => activateLevel(levelName)"
+        v-model="fileName"
+        @keyup.enter="() => activateLevel(fileName)"
       />
       <pdx-level-browser-save-buttons
         v-if="mode === 'save'"
         :levels
-        :level-name="levelName"
+        :file-name="fileName"
         @save="saveLevel"
         @save-to-disk="saveToDisk"
       />
       <pdx-level-browser-open-buttons
         v-else-if="mode === 'open'"
         :levels="levels"
-        :level-name="levelName"
+        :file-name="fileName"
         @open="openLevel"
         @open-from-disk="openFromDisk"
       />
@@ -61,7 +61,7 @@ const fileInputRef = useTemplateRef('fileInputRef')
 
 const levels = ref<SavedLevelDict | null>(null)
 
-const levelName = ref('')
+const fileName = ref('')
 
 const openLevel = (name: string) => {
   const level = props.levelStorage.loadLevel(name)
@@ -75,7 +75,7 @@ const validNamePattern = /^[a-zA-Z0-9 ._-]+$/
 
 const saveLevel = (name: string) => {
   name = name.trim()
-  levelName.value = name
+  fileName.value = name
 
   const levelMatches = !!levels.value
     && Object.keys(levels.value).some(level => level === name)
@@ -96,7 +96,7 @@ const saveLevel = (name: string) => {
 
 const confirmSaveLevel = () => {
   try {
-    props.levelStorage.saveAs(editor.value.save(), levelName.value)
+    props.levelStorage.saveAs(editor.value.save(), fileName.value)
     modelValue.value = false
   } catch (error) {
     console.error(error)

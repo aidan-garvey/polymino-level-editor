@@ -9,7 +9,7 @@
     <button
       v-if="levels"
       type="button"
-      @click="emit('save', levelName)"
+      @click="emit('save', fileName)"
     >
       Save
     </button>
@@ -21,7 +21,7 @@ import type { SavedLevelDict } from '@/types/Storage/LevelStorage'
 
 const props = defineProps<{
   levels: SavedLevelDict | null
-  levelName: string
+  fileName: string
 }>()
 
 const emit = defineEmits<{

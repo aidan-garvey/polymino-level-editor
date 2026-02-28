@@ -1,7 +1,7 @@
 <template>
   <div class="pdx-level-browser-input">
     <pdx-input-text
-      v-model="levelName"
+      v-model="fileName"
       label="File name:"
       inline-label
     />
@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-const levelName = defineModel<string>({ required: true })
+const fileName = defineModel<string>({ required: true })
 </script>
 
 <style lang="scss">

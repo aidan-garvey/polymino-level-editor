@@ -10,7 +10,7 @@
       v-if="levels"
       type="button"
       :disabled="!levelMatches"
-      @click="emit('open', levelName)"
+      @click="emit('open', fileName)"
     >
       Open
     </button>
@@ -21,7 +21,7 @@
 import type { SavedLevelDict } from '@/types/Storage/LevelStorage'
 
 const props = defineProps<{
-  levelName: string
+  fileName: string
   levels: SavedLevelDict | null
 }>()
 
@@ -32,7 +32,7 @@ const emit = defineEmits<{
 
 const levelMatches = computed(() => {
   return !!props.levels
-    && Object.keys(props.levels).some(level => level === props.levelName)
+    && Object.keys(props.levels).some(level => level === props.fileName)
 })
 </script>
 

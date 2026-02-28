@@ -40,7 +40,7 @@ provide(injectDialogManager, dialogManager)
 @use './pdx/tool-selector';
 @use './pdx/junk-selector';
 @use './pdx/side-panel';
-@use './pdx/dialog/common.scss';
+@use './pdx/dialog/common';
 
 * {
   box-sizing: border-box;

@@ -83,7 +83,7 @@ const onDelete = () => {
   }
 }
 
-useEventListener('keydown', makeHotkey(onDelete, 'delete', 'backspace'))
+useEventListener('keyup', makeHotkey(onDelete, 'delete', 'backspace'))
 </script>
 
 <style lang="scss">

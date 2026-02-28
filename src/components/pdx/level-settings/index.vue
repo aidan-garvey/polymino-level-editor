@@ -10,6 +10,8 @@
       v-model="editor.levelName.value"
       label="Level name"
       :tooltip="'Name of the level in-game,\nseparate from the file name'"
+      :allowed-chars="VALID_CHARS"
+      :max-length="NAME_MAX_LEN"
     />
 
     <pdx-input-number
@@ -47,6 +49,7 @@
 <script setup lang="ts">
 import type { Editor } from '@/types/Editor'
 import { provideTooltipRefs } from '@/use/tooltip'
+import { NAME_MAX_LEN, VALID_CHARS } from '@/consts/level'
 
 const props = defineProps<{
   editor: Editor

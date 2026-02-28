@@ -131,7 +131,6 @@ export class Editor {
     }
 
     if (event.buttons & MouseButton.LEFT) {
-      event.preventDefault()
       select(this.leftTool)
     }
     if (event.buttons & MouseButton.RIGHT) {
@@ -151,7 +150,6 @@ export class Editor {
     }
 
     if (event.buttons & MouseButton.LEFT) {
-      event.preventDefault()
       select(this.leftTool)
     }
     if (event.buttons & MouseButton.RIGHT) {
@@ -162,7 +160,6 @@ export class Editor {
 
   selectPicker(event: PointerEvent): void {
     if (event.buttons & MouseButton.LEFT) {
-      event.preventDefault()
       this.leftTool.value.kind = ToolKind.PICKER
     }
     if (event.buttons & MouseButton.RIGHT) {
@@ -196,7 +193,6 @@ export class Editor {
     }
 
     if (event.buttons & MouseButton.LEFT) {
-      event.preventDefault()
       useTool(this.leftTool)
     }
     if (event.buttons & MouseButton.RIGHT) {
@@ -218,7 +214,6 @@ export class Editor {
     }
 
     if (event.buttons & MouseButton.LEFT) {
-      event.preventDefault()
       useTool(this.leftTool)
     }
     if (event.buttons & MouseButton.RIGHT) {

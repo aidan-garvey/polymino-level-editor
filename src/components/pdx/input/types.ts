@@ -10,3 +10,8 @@ export interface PdxInputProps {
    */
   tooltip?: string
 }
+
+export interface PdxInputEmits {
+  focus: [FocusEvent]
+  blur: [FocusEvent]
+}

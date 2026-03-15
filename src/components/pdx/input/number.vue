@@ -11,12 +11,14 @@
       :id
       :min
       :max
+      @focus="e => emit('focus', e)"
+      @blur="e => emit('blur', e)"
     />
   </pdx-input-wrapper>
 </template>
 
 <script setup lang="ts">
-import type { PdxInputProps } from './types'
+import type { PdxInputProps, PdxInputEmits } from './types'
 
 const modelValue = defineModel<number>({ required: true })
 
@@ -29,6 +31,8 @@ const props = withDefaults(defineProps<PdxInputNumberProps>(), {
   min: -Infinity,
   max: Infinity,
 })
+
+const emit = defineEmits<PdxInputEmits>()
 
 const id = useId()
 

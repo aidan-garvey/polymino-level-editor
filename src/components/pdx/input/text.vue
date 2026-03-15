@@ -9,12 +9,14 @@
       type="text"
       v-model="modelValue"
       :id
+      @focus="e => emit('focus', e)"
+      @blur="e => emit('blur', e)"
     />
   </pdx-input-wrapper>
 </template>
 
 <script setup lang="ts">
-import type { PdxInputProps } from './types'
+import type { PdxInputProps, PdxInputEmits } from './types'
 
 const modelValue = defineModel<string>({ required: true })
 
@@ -24,6 +26,8 @@ interface PdxInputTextProps extends PdxInputProps {
 }
 
 const props = defineProps<PdxInputTextProps>()
+
+const emit = defineEmits<PdxInputEmits>()
 
 const id = useId()
 

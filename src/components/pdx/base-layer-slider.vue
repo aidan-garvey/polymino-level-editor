@@ -31,13 +31,13 @@
 import type { Editor } from '@/types/Editor'
 import { BOARD_HEIGHT } from '@/consts/board'
 
-const THUMB_WIDTH = 32
-const THUMB_HEIGHT = 16
-const TRACK_WIDTH = 16
-
 const props = defineProps<{
   editor: Editor
 }>()
+
+const THUMB_WIDTH = 32
+const THUMB_HEIGHT = 16
+const TRACK_WIDTH = 16
 
 const sliderTrack = useTemplateRef('sliderTrack')
 const sliderThumb = useTemplateRef('sliderThumb')

@@ -1,13 +1,13 @@
 import type { TemplateRef } from 'vue'
 
 export interface DialogManagerMethods {
-  showConfirmation(
+  showConfirmation: (
     message: string,
     onConfirm: () => void,
     onCancel?: () => void,
-  ): void
+  ) => void
 
-  showAlert(message: string, onClose?: () => void): void
+  showAlert: (message: string, onClose?: () => void) => void
 }
 
 /**

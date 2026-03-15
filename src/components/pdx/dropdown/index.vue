@@ -1,7 +1,7 @@
 <template>
   <div class="pdx-dropdown">
     <div class="pdx-dropdown__button"
-      @click.stop="open = !open"
+      @click.stop="toggleDropdown"
     >
       {{ name }}
     </div>
@@ -34,6 +34,10 @@ watch(open, (isOpen) => {
     emit('open')
   }
 })
+
+const toggleDropdown = () => {
+  open.value = !open.value
+}
 
 defineExpose({
   open: () => { open.value = true },

@@ -15,10 +15,10 @@ import { overlayBlockPathSuffixes } from '@/consts/effects'
 import { randomColor } from '@/utils/randomColor'
 
 interface IBlock {
-  export(): ExportedBlock
-  getImageSrc(): string
-  getOverlaySrc(): string | null
-  getImageFlip(): [boolean, boolean]
+  export: () => ExportedBlock
+  getImageSrc: () => string
+  getOverlaySrc: () => string | null
+  getImageFlip: () => [boolean, boolean]
 }
 
 export class EmptyBlock implements IBlock {

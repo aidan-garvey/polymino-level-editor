@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.11/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.7/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -17,6 +17,7 @@
   "linter": {
     "enabled": true,
     "includes": [
+      "index.html",
       "src/**/*.ts",
       "src/**/*.css",
       "src/**/*.scss",
@@ -26,34 +27,157 @@
       "recommended": true,
       "a11y": "on",
       "complexity": {
-        "noExcessiveLinesPerFunction": "off"
+        "recommended": true,
+        "noUselessCatchBinding": "on",
+        "noUselessStringConcat": "on",
+        "noUselessUndefined": "on",
+        "useWhile": "on"
       },
       "correctness": {
-        "useJsonImportAttributes": "off"
+        "recommended": true,
+        "noGlobalDirnameFilename": "on",
+        "noProcessGlobal": "on",
+        "noUndeclaredDependencies": "on",
+        "noVueSetupPropsReactivityLoss": "on",
+        "useImportExtensions": "on",
+        "useJsonImportAttributes": "on",
+        "useSingleJsDocAsterisk": "on",
+        "useUniqueElementIds": "on"
       },
       "nursery": {
-        "recommended": true
+        "recommended": true,
+        "noAmbiguousAnchorText": "on",
+        "noDivRegex": "on",
+        "noDuplicateEnumValues": "on",
+        "noEqualsToNull": "on",
+        "noFloatingClasses": "on",
+        "noFloatingPromises": "on",
+        "noForIn": "on",
+        "noMisusedPromises": "on",
+        "noMultiAssign": "on",
+        "noNestedPromises": "on",
+        "noParametersOnlyUsedInRecursion": "on",
+        "noProto": "on",
+        "noRedundantDefaultExport": "on",
+        "noScriptUrl": "on",
+        "noShadow": "on",
+        "noSyncScripts": "on",
+        "noUndeclaredEnvVars": "on",
+        "noUnknownAttribute": "on",
+        "noUnnecessaryConditions": "on",
+        "noUselessReturn": "on",
+        "noVueArrowFuncInWatch": "on",
+        "noVueOptionsApi": "on",
+        "noVueRefAsOperand": "on",
+        "useArraySome": "on",
+        "useArraySortCompare": "on",
+        "useAwaitThenable": "on",
+        "useConsistentEnumValueType": "on",
+        "useConsistentMethodSignatures": "on",
+        "useDestructuring": "on",
+        "useErrorCause": "on",
+        "useExhaustiveSwitchCases": "on",
+        // Note: I wish we could use useExplicitType but only for function
+        // return types. Requiring it for variables is too much dev friction.
+        // "useExplicitType": "on",
+        "useFind": "on",
+        "useImportsFirst": "on",
+        "useNullishCoalescing": "on",
+        "useRegexpExec": "on",
+        "useSortedClasses": "on",
+        "useSpread": "on",
+        // This one would be a no-brainer but it seems to think a lot of code
+        // is a defineProps declaration when it clearly isn't.
+        // "useVueConsistentDefinePropsDeclaration": "on",
+        "useVueDefineMacrosOrder": "on"
       },
       "performance": "on",
       "security": {
-        "noSecrets": {
-          "level": "on",
-          "options": {
-            "entropyThreshold": 58
-          }
-        }
+        "recommended": true
       },
       "style": {
-        "noDefaultExport": "off",
-        "useTemplate": "off"
+        "recommended": true,
+        "noCommonJs": "on",
+        "noDefaultExport": "on",
+        "noExportedImports": "on",
+        "noInferrableTypes": "on",
+        // This would flag some definitions of constants such as
+        // `[JunkShape.RECT_3X3]:   [3, 3]` which is too pedantic for my taste.
+        // "noMagicNumbers": "on",
+        "noNamespace": "on",
+        "noNestedTernary": "on",
+        "noShoutyConstants": "on",
+        "noSubstr": "on",
+        "useAsConstAssertion": "on",
+        "useAtIndex": "on",
+        "useConsistentArrayType": "on",
+        "useConsistentBuiltinInstantiation": "on",
+        "useConsistentObjectDefinitions": {
+          "level": "on",
+          "options": {
+            "syntax": "shorthand"
+          }
+        },
+        "useConsistentTypeDefinitions": {
+          "level": "on",
+          "options": {
+            "style": "interface"
+          }
+        },
+        "useDefaultParameterLast": "on",
+        "useForOf": "on",
+        "useGroupedAccessorPairs": "on",
+        "useNamingConvention": {
+          "level" :"on",
+          "options": {
+            "requireAscii": true,
+            "strictCase": false,
+            "conventions": [
+              {
+                "selector": {
+                  "kind": "enumMember"
+                },
+                // Both are allowed, they were copied as-is from Polymino's code
+                // and I don't really see the point in changing them.
+                "formats": ["PascalCase", "CONSTANT_CASE"]
+              }
+            ]
+          }
+        },
+        "useNumberNamespace": "on",
+        "useNumericSeparators": "on",
+        "useObjectSpread": "on",
+        "useReadonlyClassProperties": "on",
+        "useShorthandAssign": "on",
+        "useSingleVarDeclarator": "on",
+        "useThrowNewError": "on",
+        "useThrowOnlyError": "on",
+        "useTrimStartEnd": "on"
       },
       "suspicious": {
+        "recommended": true,
+        "noAlert": "on",
         "noConsole": {
           "level": "on",
           "options": {
             "allow": ["assert", "error", "warn", "info"]
           }
-        }
+        },
+        "noConstantBinaryExpressions": "on",
+        "noDeprecatedImports": "on",
+        "noEmptyBlockStatements": "on",
+        "noEmptySource": "on",
+        "noEvolvingTypes": "on",
+        "noImportCycles": "on",
+        "noUnassignedVariables": "on",
+        "noUnusedExpressions": "on",
+        "noVar": "on",
+        "useAwait": "on",
+        "useErrorMessage": "on",
+        "useGuardForIn": "on",
+        "useNumberToFixedDigitsArgument": "on",
+        "useStaticResponseMethods": "on",
+        "useStrictMode": "on"
       }
     }
   },
@@ -72,18 +196,5 @@
         "organizeImports": "on"
       }
     }
-  },
-  "overrides": [
-    {
-      "includes": ["src/**/*.vue"],
-      "linter": {
-        "rules": {
-          "correctness": {
-            "noUnusedVariables": "off",
-            "noUnusedImports": "off"
-          }
-        }
-      }
-    }
-  ]
+  }
 }

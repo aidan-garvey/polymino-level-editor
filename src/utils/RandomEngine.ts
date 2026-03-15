@@ -1,6 +1,6 @@
 export interface RandomEngine {
-  gen(): number
-  getState(): number
+  gen: () => number
+  getState: () => number
 }
 
 /**
@@ -44,8 +44,8 @@ export class LinearCongruentialEngine implements RandomEngine {
  * C++'s std::minstd_rand.
  */
 export const MinstdRand = (seed: number) => new LinearCongruentialEngine(
-  48271, // multiplier
+  48_271, // multiplier
   0, // increment
-  2147483647, // modulus
+  2_147_483_647, // modulus
   seed,
 )

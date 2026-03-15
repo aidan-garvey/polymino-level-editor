@@ -27,6 +27,12 @@ import { Junk } from '@/types/Junk'
 import { JunkShape } from '@/types/JunkShape'
 import { junkEffectNames } from '@/consts/effects'
 
+const props = defineProps<{
+  editor: Editor
+  isSelected: (effect: JunkEffect | null) => boolean
+  onClick: (effect: JunkEffect | null) => void
+}>()
+
 const {
   Armored,
   BombProof,
@@ -39,12 +45,6 @@ const effectRows = [
   [null, Armored, BombProof],
   [Blocker, Heavy, ExplodingJunk],
 ] as const
-
-const props = defineProps<{
-  editor: Editor
-  isSelected: (effect: JunkEffect | null) => boolean
-  onClick: (effect: JunkEffect | null) => void
-}>()
 
 const grid = new CellGrid(3, 2, false)
 for (const row of [0, 1] as const) {

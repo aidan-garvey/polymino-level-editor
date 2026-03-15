@@ -40,6 +40,7 @@
     <pdx-space />
 
     <button
+      type="button"
       class="pdx-junk-editor__delete-button"
       :disabled="!editor.selectedJunk.value"
       @click="onDelete"

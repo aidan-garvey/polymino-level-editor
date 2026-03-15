@@ -21,7 +21,7 @@
         None
       </option>
       <template
-        v-for="color of normalBlockColors"
+        v-for="color in normalBlockColors"
         :key="color"
       >
         <option :value="color">

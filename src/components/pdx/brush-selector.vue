@@ -15,6 +15,7 @@
       :src="imageSrc"
       width="8"
       height="8"
+      :alt="tooltipText"
     />
   </div>
 </template>

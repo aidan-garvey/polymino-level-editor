@@ -19,12 +19,14 @@
         :src="imageSrc"
         width="16"
         height="16"
+        :alt="tooltipText"
       />
       <img
         v-if="overlaySrc"
         :src="overlaySrc"
         width="16"
         height="16"
+        :alt="tooltipText"
       />
     </div>
     <pdx-icon

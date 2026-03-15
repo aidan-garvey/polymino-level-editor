@@ -28,8 +28,8 @@ interface PdxInputNumberProps extends PdxInputProps {
 }
 
 const props = withDefaults(defineProps<PdxInputNumberProps>(), {
-  min: -Infinity,
-  max: Infinity,
+  min: Number.NEGATIVE_INFINITY,
+  max: Number.POSITIVE_INFINITY,
 })
 
 const emit = defineEmits<PdxInputEmits>()

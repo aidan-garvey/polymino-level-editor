@@ -10,7 +10,7 @@
     @dragstart="onDragStart"
   >
     <pdx-block
-      v-for="(pos, index) of blockPositions"
+      v-for="(pos, index) in blockPositions"
       :key="index"
       :grid
       :row="pos.cellGridRow"

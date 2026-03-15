@@ -26,6 +26,12 @@ import { Junk } from '@/types/Junk'
 import { JunkShape } from '@/types/JunkShape'
 import { blockColorTitles } from '@/consts/block'
 
+const props = defineProps<{
+  editor: Editor
+  isSelected: (color: BlockColor) => boolean
+  onClick: (color: BlockColor) => void
+}>()
+
 const {
   BLUE,
   RED,
@@ -43,12 +49,6 @@ const colorRows = [
   [GREEN, YELLOW, ORANGE],
   [PINK, VIOLET, TEAL],
 ] as const
-
-const props = defineProps<{
-  editor: Editor
-  isSelected: (color: BlockColor) => boolean
-  onClick: (color: BlockColor) => void
-}>()
 
 const grid = new CellGrid(3, 3, false)
 for (const row of [0, 1, 2] as const) {

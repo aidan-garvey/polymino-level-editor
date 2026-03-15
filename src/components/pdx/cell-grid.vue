@@ -34,7 +34,7 @@
     </template>
 
     <pdx-junk
-      v-for="(junk, junkIndex) of grid.getJunk()"
+      v-for="(junk, junkIndex) in grid.getJunk()"
       :key="junkIndex"
       :junk
       :grid

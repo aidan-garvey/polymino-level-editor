@@ -18,6 +18,7 @@
       width="8"
       :style="imageFlip"
       draggable="false"
+      aria-hidden="true"
     />
     <img
       v-if="overlaySrc"
@@ -26,6 +27,7 @@
       width="8"
       :style="overlayFlip"
       draggable="false"
+      aria-hidden="true"
     />
   </div>
 </template>

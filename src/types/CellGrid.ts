@@ -27,8 +27,8 @@ export class CellGrid {
     this.width = width
     this.height = height
     this.draggableJunk = draggableJunk
-    this.cells = Array(height).fill(null).map(() => {
-      return Array(width).fill(null).map(() => ref(new EmptyBlock()))
+    this.cells = new Array(height).fill(null).map(() => {
+      return new Array(width).fill(null).map(() => ref(new EmptyBlock()))
     })
     this.junkPieces = ref([])
   }

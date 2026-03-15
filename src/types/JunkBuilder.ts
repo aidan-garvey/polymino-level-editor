@@ -1,4 +1,4 @@
-import type { JunkEffect } from './JunkEffect'
+import type { JunkEffect } from '@/types/JunkEffect'
 import { CellGrid } from '@/types/CellGrid'
 import { Junk } from '@/types/Junk'
 import { JunkShape } from '@/types/JunkShape'

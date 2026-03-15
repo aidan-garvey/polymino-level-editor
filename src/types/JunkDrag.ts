@@ -29,7 +29,7 @@ export const getJunkDragDimensions = (format: JunkDragFormat): [number, number] 
   const match = format.match(junkDragPattern)
   if (!match || !match[1] || !match[2])
     throw new TypeError(`Invalid junk drag format: ${format}`)
-  return [parseInt(match[1], 10), parseInt(match[2], 10)]
+  return [Number.parseInt(match[1], 10), Number.parseInt(match[2], 10)]
 }
 
 export interface JunkDragData {

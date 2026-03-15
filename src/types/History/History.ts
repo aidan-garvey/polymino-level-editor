@@ -21,7 +21,7 @@ export class History {
 
   private readonly pending = ref<PendingAction | null>(null)
 
-  private editor: Editor
+  private readonly editor: Editor
 
   private nextId = 0
 

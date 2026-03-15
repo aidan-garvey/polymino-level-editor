@@ -3,7 +3,7 @@
  */
 export const parseOrDefault = (
   data: string,
-  fallback: unknown = undefined
+  fallback?: unknown
 ): unknown => {
   try {
     return JSON.parse(data)

@@ -1,7 +1,7 @@
 <!-- Global dialog manager to facilitate using dialogs programatically -->
 <template>
   <template
-    v-for="conf of confirmations"
+    v-for="conf in confirmations"
     :key="conf.id"
   >
     <pdx-are-you-sure
@@ -12,7 +12,7 @@
     />
   </template>
   <template
-    v-for="alert of alerts"
+    v-for="alert in alerts"
     :key="alert.id"
   >
     <pdx-alert
@@ -26,14 +26,14 @@
 <script setup lang="ts">
 import type { DialogManagerMethods } from './inject'
 
-type Confirmation = {
+interface Confirmation {
   id: number
   message: string
   onConfirm: () => void
   onCancel: () => void
 }
 
-type Alert = {
+interface Alert {
   id: number
   message: string
   onClose: () => void

@@ -50,7 +50,7 @@ export class LevelStorage {
       this.storageHandle = window.localStorage
       LevelStorage.write(this.storageHandle, FEATURE_TEST_PREFIX, 'test')
       LevelStorage.delete(this.storageHandle, FEATURE_TEST_PREFIX)
-      console.debug('Access to local storage acquired')
+      console.info('Access to local storage acquired')
       return this.storageHandle
     } catch (e) {
       if (e instanceof DOMException

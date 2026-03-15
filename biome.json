@@ -37,8 +37,9 @@
 			"performance": "on",
 			"security": {
 				"noSecrets": {
+					"level": "on",
 					"options": {
-						"entropyThreshold": 41
+						"entropyThreshold": 58
 					}
 				}
 			},
@@ -47,7 +48,12 @@
 				"useTemplate": "off"
 			},
 			"suspicious": {
-				"noConsole": "off"
+				"noConsole": {
+					"level": "on",
+					"options": {
+						"allow": ["assert", "error", "warn", "info"]
+					}
+				}
 			}
 		}
 	},

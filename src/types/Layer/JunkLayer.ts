@@ -1,4 +1,5 @@
 import type { JunkDragData } from '@/types/JunkDrag'
+import type { ExportedCellGrid } from '@/types/Exported/ExportedCellGrid'
 import { CellGrid } from '@/types/CellGrid'
 import { BOARD_WIDTH, BOARD_HEIGHT } from '@/consts/board'
 import { getJunkDragFormat, getJunkDragDimensions, getJunkDragData } from '@/types/JunkDrag'
@@ -10,6 +11,10 @@ export class JunkLayer {
 
   constructor(board?: CellGrid) {
     this.board = board ?? new CellGrid(BOARD_WIDTH, BOARD_HEIGHT, true)
+  }
+
+  restore(data: ExportedCellGrid): void {
+    this.board.restore(data)
   }
 
   onCellDragOver(event: DragEvent, row: number, col: number): void {

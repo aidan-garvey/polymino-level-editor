@@ -51,6 +51,13 @@ export class BaseLayer {
     }
   }
 
+  restore(data: SavedBaseLayer): void {
+    this.seed.value = data.seed
+    this.rows.value = data.rows
+    this.bannedColor = data.bannedColor
+    this.generateGrid()
+  }
+
   getSeed(): number {
     return this.seed.value
   }

@@ -1,4 +1,5 @@
 import type { Tool } from '@/types/Tool'
+import type { ExportedCellGrid } from '@/types/Exported/ExportedCellGrid'
 import { BOARD_HEIGHT, BOARD_WIDTH } from '@/consts/board'
 import { BlockState } from '@/types/BlockState'
 import { CellGrid } from '@/types/CellGrid'
@@ -11,6 +12,10 @@ export class BrushLayer {
 
   constructor(board?: CellGrid) {
     this.board = board ?? new CellGrid(BOARD_WIDTH, BOARD_HEIGHT, false)
+  }
+
+  restore(data: ExportedCellGrid): void {
+    this.board.restore(data)
   }
 
   applyBrush(tool: Tool, row: number, col: number): void {

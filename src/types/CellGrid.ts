@@ -56,21 +56,46 @@ export class CellGrid {
     }
 
     const result = new CellGrid(width, height, draggableJunk)
+    result.restore(data)
+    return result
+  }
+
+  restore(data: ExportedCellGrid): void {
+    if (data.cells.length !== this.height) {
+      throw new TypeError(`Height mismatch: CellGrid has height ` +
+        `${this.height} but data has height ${data.cells.length}`
+      )
+    }
+    for (const row of data.cells) {
+      if (row.length !== this.width) {
+        throw new TypeError(`Width mismatch: CellGrid has width ` +
+          `${this.width} but row in data has width ${row.length}`
+        )
+      }
+    }
+
+    // Clear the board
+    for (let row = 0; row < this.height; ++row) {
+      for (let col = 0; col < this.width; ++col) {
+        this.removeBlock(row, col)
+      }
+    }
 
     // Place junk first, then we can set nextColor on our second pass
     for (const junk of data.junkPieces) {
-      result.placeJunk(Junk.fromExported(junk))
+      this.placeJunk(Junk.fromExported(junk))
     }
 
-    for (let row = 0; row < height; ++row) {
-      for (let col = 0; col < width; ++col) {
-        const dest = result.cells[row]?.[col]
+    // Place regular blocks, and set nextColor for junk blocks
+    for (let row = 0; row < this.height; ++row) {
+      for (let col = 0; col < this.width; ++col) {
+        const dest = this.cells[row]?.[col]
         const src = data.cells[row]?.[col]
         if (!dest || !src) {
           throw new TypeError(`Dest/source mismatch at (row, col) = (${row}, ${col})`)
         }
         if (src.state === BlockState.NORMAL) {
-          result.placeBlock(row, col, new NormalBlock(src.color))
+          this.placeBlock(row, col, new NormalBlock(src.color))
         } else if (src.state === BlockState.JUNK) {
           if (dest.value.state === BlockState.JUNK) {
             dest.value.nextColor = src.nextColor
@@ -80,8 +105,6 @@ export class CellGrid {
         }
       }
     }
-
-    return result
   }
 
   /**

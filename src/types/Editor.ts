@@ -72,6 +72,7 @@ export class Editor {
 
   constructor(data?: SavedLevel) {
     if (data) {
+      this.levelName.value = data.name
       this.baseLayer = BaseLayer.fromSaved(data.baseLayer)
       this.brushLayer = new BrushLayer(
         CellGrid.fromExported(data.brushLayer, false)
@@ -110,6 +111,20 @@ export class Editor {
       ...combinedGrid.export(),
       name: this.levelName.value,
       seed: this.seed.value
+    }
+  }
+
+  restore(level: SavedLevel): void {
+    this.levelName.value = level.name
+    this.baseLayer.restore(level.baseLayer)
+    this.brushLayer.restore(level.brushLayer)
+    this.junkLayer.restore(level.junkLayer)
+    this.seed.value = level.seed
+
+    if (this.selectedJunk.value) {
+      if (!this.junkLayer.board.getJunkById(this.selectedJunk.value.id)) {
+        this.deselectJunk()
+      }
     }
   }
 

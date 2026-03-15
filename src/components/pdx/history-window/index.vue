@@ -91,7 +91,7 @@ const contentMaxHeight = computed(() => {
   &__content {
     border: 1px solid #fff;
     overflow-y: scroll;
-    min-width: 100px;
+    min-width: 128px;
   }
 }
 </style>

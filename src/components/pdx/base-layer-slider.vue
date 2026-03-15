@@ -67,6 +67,9 @@ const onPointerDown = (event: PointerEvent) => {
   event.preventDefault()
   pointerId.value = event.pointerId
   sliderThumb.value.setPointerCapture(event.pointerId)
+  // Have to start/end this action on direct pointer interaction, so it isn't
+  // tracked when we update the slider based on external changes
+  props.editor.history.startBaseLayerRows()
 }
 
 const onPointerMove = (event: PointerEvent) => {
@@ -87,6 +90,9 @@ const onPointerMove = (event: PointerEvent) => {
 const onLostCapture = () => {
   pointerId.value = undefined
   updateThumbTop()
+  // Have to start/end this action on direct pointer interaction, so it isn't
+  // tracked when we update the slider based on external changes
+  props.editor.history.endBaseLayerRows()
 }
 
 const updateThumbTop = () => {

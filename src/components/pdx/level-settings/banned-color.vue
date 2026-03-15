@@ -58,10 +58,19 @@ const {
 
 const onColorChange = () => {
   const color = Number.parseInt(colorSelector.value?.value ?? '', 10)
+  const oldColor = props.editor.baseLayer.getBannedColor()
+  const before = props.editor.save()
+
   if (color in BlockColor && color !== BlockColor.GRAY) {
-    props.editor.baseLayer.setBannedColor(color)
+    if (oldColor !== color) {
+      props.editor.baseLayer.setBannedColor(color)
+      props.editor.history.pushSetBannedColor(before)
+    }
   } else {
-    props.editor.baseLayer.setBannedColor()
+    if (oldColor !== undefined) {
+      props.editor.baseLayer.setBannedColor()
+      props.editor.history.pushSetBannedColor(before)
+    }
   }
 }
 </script>

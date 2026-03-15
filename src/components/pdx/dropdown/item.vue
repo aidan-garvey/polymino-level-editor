@@ -1,13 +1,13 @@
 <template>
-  <div class="pdx-file-dropdown-item"
+  <div class="pdx-dropdown-item"
     @click="emit('click')"
   >
-    <span class="pdx-file-dropdown-item__label">
+    <span class="pdx-dropdown-item__label">
       {{ label }}
     </span>
     <span
       v-if="hotkey"
-      class="pdx-file-dropdown-item__hotkey"
+      class="pdx-dropdown-item__hotkey"
     >
       {{ hotkey }}
     </span>
@@ -32,7 +32,7 @@ if (props.hotkey) {
 </script>
 
 <style lang="scss">
-.pdx-file-dropdown-item {
+.pdx-dropdown-item {
   display: flex;
   flex-direction: row;
   justify-content: space-between;

@@ -12,6 +12,8 @@
       :tooltip="'Name of the level in-game,\nseparate from the file name'"
       :allowed-chars="VALID_CHARS"
       :max-length="NAME_MAX_LEN"
+      @focus="() => editor.history.startLevelName()"
+      @blur="() => editor.history.endLevelName()"
     />
 
     <pdx-input-number
@@ -19,6 +21,8 @@
       label="RNG seed"
       tooltip="Value to initialize RNG after the level loads"
       :min="0"
+      @focus="() => editor.history.startRngSeed()"
+      @blur="() => editor.history.endRngSeed()"
     />
 
     <div class="text-title text-center">
@@ -30,6 +34,8 @@
       label="RNG seed"
       :tooltip="'RNG seed used to generate the base layer\'s\ncontent, does not affect in-game RNG'"
       :min="0"
+      @focus="() => editor.history.startBaseLayerSeed()"
+      @blur="() => editor.history.endBaseLayerSeed()"
     />
 
     <pdx-input-number
@@ -38,6 +44,8 @@
       tooltip="How many rows to use for the base layer"
       :min="0"
       :max="24"
+      @focus="() => editor.history.startBaseLayerRows()"
+      @blur="() => editor.history.endBaseLayerRows()"
     />
 
     <pdx-level-settings-banned-color

@@ -11,9 +11,12 @@ import { JunkBuilder } from '@/types/JunkBuilder'
 import { BlockState } from '@/types/BlockState'
 import { BlockColor } from '@/types/BlockColor'
 import { MouseButton } from '@/consts/mouse'
+import { History } from '@/types/History/History'
 import { BOARD_WIDTH, BOARD_HEIGHT } from '@/consts/board'
 
 export class Editor {
+  readonly history: History
+
   /**
    * The base layer is full of random blocks which serves as a good starting
    * point for filling in parts of the level. Its random seed is not related to
@@ -82,12 +85,14 @@ export class Editor {
       )
       this.junkBuilder = new JunkBuilder()
       this.seed = ref(data.seed)
+      this.history = new History(this, false)
     } else {
       this.baseLayer = new BaseLayer()
       this.brushLayer = new BrushLayer()
       this.junkLayer = new JunkLayer()
       this.junkBuilder = new JunkBuilder()
       this.seed = ref(Math.round(performance.now()))
+      this.history = new History(this, true)
     }
   }
 
@@ -193,12 +198,14 @@ export class Editor {
   }
 
   onCellPointerDown(event: PointerEvent, row: number, col: number): void {
-    const useTool = (tool: Ref<Tool>) => {
+    const useTool = (tool: Ref<Tool>, button: MouseButton) => {
       switch (tool.value.kind) {
         case ToolKind.SELECT:
           this.deselectJunk()
           break
         case ToolKind.BRUSH:
+          // must call before applying brush so our 'before' state is correct
+          this.history.startBrush(tool.value, button)
           this.brushLayer.applyBrush(tool.value, row, col)
           break
         case ToolKind.PICKER:
@@ -207,12 +214,12 @@ export class Editor {
       }
     }
 
+    // Can only use one at a time, otherwise history tracking would get weird
     if (event.buttons & MouseButton.LEFT) {
-      useTool(this.leftTool)
-    }
-    if (event.buttons & MouseButton.RIGHT) {
+      useTool(this.leftTool, MouseButton.LEFT)
+    } else if (event.buttons & MouseButton.RIGHT) {
       event.preventDefault()
-      useTool(this.rightTool)
+      useTool(this.rightTool, MouseButton.RIGHT)
     }
   }
 
@@ -222,25 +229,38 @@ export class Editor {
       return
     }
 
-    const useTool = (tool: Ref<Tool>) => {
+    const useTool = (tool: Ref<Tool>, button: MouseButton) => {
       if (tool.value.kind === ToolKind.BRUSH) {
+        // must call before applying brush so our 'before' state is correct
+        this.history.continueBrush(tool.value, button)
         this.brushLayer.applyBrush(tool.value, row, col)
       }
     }
 
+    // Can only use one at a time, otherwise history tracking would get weird
     if (event.buttons & MouseButton.LEFT) {
-      useTool(this.leftTool)
-    }
-    if (event.buttons & MouseButton.RIGHT) {
+      useTool(this.leftTool, MouseButton.LEFT)
+    } else if (event.buttons & MouseButton.RIGHT) {
       event.preventDefault()
-      useTool(this.rightTool)
+      useTool(this.rightTool, MouseButton.RIGHT)
     }
   }
 
   onCellDrop(event: DragEvent, row: number, col: number): void {
+    const before = this.save()
+    const numJunkBefore = this.junkLayer.board.getJunk().length
+
     const result = this.junkLayer.onCellDrop(event, row, col)
-    if (result)
+    if (result) {
       this.selectJunk(result)
+
+      const numJunkNow = this.junkLayer.board.getJunk().length
+      if (numJunkNow > numJunkBefore) {
+        this.history.pushCopyJunk(before)
+      } else {
+        this.history.pushMoveJunk(before)
+      }
+    }
   }
 
   private pick(tool: Tool, row: number, col: number): void {
@@ -263,5 +283,30 @@ export class Editor {
 
   deselectJunk(): void {
     this.selectedJunk.value = null
+  }
+
+  setSelectedJunkColor(color: BlockColor): void {
+    if (this.selectedJunk.value) {
+      const before = this.save()
+      this.selectedJunk.value.color = color
+      this.history.pushEditJunk(before)
+    }
+  }
+
+  setSelectedJunkEffect(effect: JunkEffect | null): void {
+    if (this.selectedJunk.value) {
+      const before = this.save()
+      this.selectedJunk.value.activeEffect = effect
+      this.history.pushEditJunk(before)
+    }
+  }
+
+  deleteSelectedJunk(): void {
+    if (this.selectedJunk.value) {
+      const before = this.save()
+      this.junkLayer.board.removeJunk(this.selectedJunk.value)
+      this.deselectJunk()
+      this.history.pushDeleteJunk(before)
+    }
   }
 }

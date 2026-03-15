@@ -7,6 +7,7 @@
   </div>
   <div class="app-middle">
     <pdx-editor :editor />
+    <pdx-history-window :editor />
   </div>
   <div class="app-bottom">
 
@@ -74,6 +75,9 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
+    // So draggable windows in the editor can use `position: absolute`
+    position: relative;
   }
 }
 

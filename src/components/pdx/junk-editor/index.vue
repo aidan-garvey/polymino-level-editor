@@ -63,24 +63,15 @@ const props = defineProps<{
 provideTooltipRefs()
 
 const onColorClick = (color: BlockColor) => {
-  if (!props.editor.selectedJunk.value)
-    return
-
-  props.editor.selectedJunk.value.color = color
+  props.editor.setSelectedJunkColor(color)
 }
 
 const onEffectClick = (effect: JunkEffect | null) => {
-  if (!props.editor.selectedJunk.value)
-    return
-
-  props.editor.selectedJunk.value.activeEffect = effect
+  props.editor.setSelectedJunkEffect(effect)
 }
 
 const onDelete = () => {
-  if (props.editor.selectedJunk.value) {
-    props.editor.junkLayer.board.removeJunk(props.editor.selectedJunk.value)
-    props.editor.deselectJunk()
-  }
+  props.editor.deleteSelectedJunk()
 }
 
 useEventListener('keyup', makeHotkey(onDelete, 'delete', 'backspace'))

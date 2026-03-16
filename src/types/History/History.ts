@@ -58,7 +58,7 @@ export class History {
     kind: (JunkAction | SettingsAction)['kind'],
     before: SavedLevel
   ): void {
-    this.finishAction()
+    this.startAction()
     this.undoStack.push({
       action: {
         id: ++this.nextId,
@@ -71,7 +71,7 @@ export class History {
 
   private startSettingsAction(kind: SettingsAction['kind']): void {
     if (this.pending.value?.action.kind !== kind) {
-      this.finishAction()
+      this.startAction()
       this.pending.value = {
         action: {
           id: ++this.nextId,
@@ -114,8 +114,21 @@ export class History {
   }
 
   /**
-   * Push the pending action onto the undo stack, and clear the redo stack if
-   * there was a pending action to push.
+   * Push the pending action onto the undo stack (if any), and always clear the
+   * redo stack. This should be done whenever a new pending action is about to
+   * be created due to a new action beginning, and whenever an entire action is
+   * about to be pushed onto the undo stack (bypassing this.pending).
+   */
+  private startAction(): void {
+    this.pushPending()
+    this.redoStack.length = 0
+  }
+
+  /**
+   * Push the pending action onto the undo stack (if any), and clear the redo
+   * stack if there was an action to push.
+   * This should be called before undoing or redoing an action, so all actions
+   * are on either one of the stacks and the correct order is maintained.
    */
   private finishAction(): void {
     if (this.pushPending())
@@ -149,7 +162,7 @@ export class History {
   }
 
   startBrush(tool: Tool, button: MouseButton): void {
-    this.finishAction()
+    this.startAction()
     this.pending.value = {
       action: {
         id: ++this.nextId,
@@ -241,9 +254,6 @@ export class History {
   }
 
   undo(): void {
-    // this.pushPending()
-    // TODO: should be able to delete pushPending as a separate method if the
-    // logic for conditionally clearing the redo stack works for everything
     this.finishAction()
 
     const undone = this.undoStack.at(-1)
@@ -256,6 +266,8 @@ export class History {
   }
 
   redo(): void {
+    this.finishAction()
+
     const redone = this.redoStack.pop()
     if (redone) {
       this.undoStack.push(redone)
@@ -268,9 +280,6 @@ export class History {
    * This results in the specified action being at the top of the undo stack.
    */
   undoTo(id: number): void {
-    // this.pushPending()
-    // TODO: should be able to delete pushPending as a separate method if the
-    // logic for conditionally clearing the redo stack works for everything
     this.finishAction()
 
     // make sure the action with that ID is in the undo stack
@@ -279,7 +288,7 @@ export class History {
       return
     }
     // roll back until it's last on the undo stack
-    while (this.undoStack.length
+    while (this.undoStack.length > 1
       && this.undoStack.at(-1)?.action.id !== id
     ) {
       this.undo()
@@ -291,13 +300,15 @@ export class History {
    * This results in the specified action being at the top of the undo stack.
    */
   redoTo(id: number): void {
+    this.finishAction()
+
     // make sure the action with that ID is in the redo stack
     if (!this.redoStack.find(a => a.action.id === id)) {
       console.warn(`Could not find action with ID ${id} in redo stack`)
       return
     }
     // roll forwards until it's on the undo stack
-    while (this.redoStack.length
+    while (this.redoStack.length > 1
       && this.undoStack.at(-1)?.action.id !== id
     ) {
       this.redo()

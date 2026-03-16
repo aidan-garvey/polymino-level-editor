@@ -86,9 +86,9 @@ watch([() => props.kind, () => props.action], ([kind]) => {
     }
   }
   &--last {
-    background: #00c;
+    background: #16eb;
     &:hover {
-      background: #33f;
+      background: #49fd;
     }
   }
   &--future {

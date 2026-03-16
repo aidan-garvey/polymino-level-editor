@@ -1,6 +1,15 @@
 {
   "compilerOptions": {
+    // (already enabled by both external configs which are extended by .app.json
+    // and .node.json, but it's good to be explicit)
     "strict": true,
-    "noImplicitOverride": true
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
+    "verbatimModuleSyntax": true
   }
 }

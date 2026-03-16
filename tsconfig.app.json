@@ -9,7 +9,9 @@
   ],
   "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
-    "lib": ["ESNext", "DOM"],
+    // Bumped up from ES2020 inherited from Vue, adds Array.prototype.at and
+    // Object.hasOwn, etc. Other elements are the same as Vue.
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
 
     "paths": {

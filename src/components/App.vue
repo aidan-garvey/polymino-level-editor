@@ -10,7 +10,7 @@
     <pdx-history-window :editor />
   </div>
   <div class="app-bottom">
-
+    <pdx-status-bar :editor />
   </div>
   <pdx-dialog-manager
     ref="dialogManager"

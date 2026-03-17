@@ -90,7 +90,7 @@ const saveLevel = () => {
   if (!props.levelStorage.currentLevelName.value) {
     saveLevelAs()
   } else {
-    props.levelStorage.save(editor.value.save())
+    props.levelStorage.save(editor.value.saveForLocalStorage())
   }
 }
 
@@ -100,7 +100,7 @@ const saveLevelAs = () => {
 }
 
 const downloadLevel = () => {
-  props.levelStorage.download(editor.value.save())
+  props.levelStorage.download(editor.value.saveForDownload())
 }
 
 const exportLevel = () => {

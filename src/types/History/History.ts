@@ -11,6 +11,7 @@ import type {
   SettingsAction,
 } from '@/types/History/Action'
 import { ActionKind } from '@/types/History/Action'
+import { notNull } from '@/utils/notNull'
 
 /**
  * Maintains record history of editor actions, enabling undo/redo functionality.
@@ -24,6 +25,12 @@ export class History {
   private readonly editor: Editor
 
   private nextId = 0
+
+  /**
+   * The ID of the action that was most recent on the stack when the level was
+   * last saved. Used to detect if there are unsaved changes.
+   */
+  private readonly lastSavedId: Ref<number>
 
   /**
    * Public view of undoable actions, oldest to newest.
@@ -65,7 +72,7 @@ export class History {
         kind,
       },
       before,
-      after: this.editor.save(),
+      after: this.editor.saveForHistory(),
     })
   }
 
@@ -77,7 +84,7 @@ export class History {
           id: ++this.nextId,
           kind,
         },
-        before: this.editor.save(),
+        before: this.editor.saveForHistory(),
       }
     }
   }
@@ -104,7 +111,7 @@ export class History {
     if (this.pending.value) {
       this.undoStack.push({
         ...this.pending.value,
-        after: this.editor.save(),
+        after: this.editor.saveForHistory(),
       })
       this.pending.value = null
       return true
@@ -158,7 +165,8 @@ export class History {
     const dataActionKind = isNewLevel
       ? ActionKind.NEW_LEVEL
       : ActionKind.OPEN_LEVEL
-    this.pushDataAction(dataActionKind, editor.save())
+    this.pushDataAction(dataActionKind, editor.saveForHistory())
+    this.lastSavedId = ref(notNull(this.undoStack.at(-1)?.action.id))
   }
 
   startBrush(tool: Tool, button: MouseButton): void {
@@ -170,7 +178,7 @@ export class History {
         tool,
         button,
       },
-      before: this.editor.save(),
+      before: this.editor.saveForHistory(),
     }
   }
 
@@ -261,7 +269,7 @@ export class History {
     if (undone && this.undoStack.length > 1) {
       this.undoStack.pop()
       this.redoStack.push(undone)
-      this.editor.restore(undone.before)
+      this.editor.jumpToHistory(undone.before)
     }
   }
 
@@ -271,7 +279,7 @@ export class History {
     const redone = this.redoStack.pop()
     if (redone) {
       this.undoStack.push(redone)
-      this.editor.restore(redone.after)
+      this.editor.jumpToHistory(redone.after)
     }
   }
 
@@ -287,7 +295,8 @@ export class History {
       console.warn(`Could not find action with ID ${id} in undo stack`)
       return
     }
-    // roll back until it's last on the undo stack
+    // roll back until it's last on the undo stack, but don't allow popping the
+    // last thing on the undo stack
     while (this.undoStack.length > 1
       && this.undoStack.at(-1)?.action.id !== id
     ) {
@@ -308,10 +317,23 @@ export class History {
       return
     }
     // roll forwards until it's on the undo stack
-    while (this.redoStack.length > 1
+    while (this.redoStack.length > 0
       && this.undoStack.at(-1)?.action.id !== id
     ) {
       this.redo()
     }
+  }
+
+  onLevelSaved(): void {
+    this.finishAction()
+    this.lastSavedId.value = this.undoStack.at(-1)?.action.id ?? -1
+  }
+
+  hasUnsavedChanges(): boolean {
+    const lastAction = this.pending.value ?? this.undoStack.at(-1)
+    // The case where lastAction is undefined has no meaning because we always
+    // push a NEW_LEVEL or OPEN_LEVEL action when we're created, and don't allow
+    // undoing it.
+    return lastAction?.action.id !== this.lastSavedId.value
   }
 }

@@ -56,6 +56,7 @@ declare module 'vue' {
     PdxLevelSettingsBannedColor: typeof import('./src/components/pdx/level-settings/banned-color.vue')['default']
     PdxMenuBar: typeof import('./src/components/pdx/menu-bar.vue')['default']
     PdxSpace: typeof import('./src/components/pdx/space.vue')['default']
+    PdxStatusBar: typeof import('./src/components/pdx/status-bar.vue')['default']
     PdxTooltip: typeof import('./src/components/pdx/tooltip.vue')['default']
   }
 }

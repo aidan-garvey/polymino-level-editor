@@ -74,6 +74,8 @@ export class Editor {
   isDragging = false
 
   constructor(data?: SavedLevel) {
+    // When a level is loaded or a new level is started, we create a new history
+    // object, which resets the "unsaved changes" state.
     if (data) {
       this.levelName.value = data.name
       this.baseLayer = BaseLayer.fromSaved(data.baseLayer)
@@ -96,7 +98,7 @@ export class Editor {
     }
   }
 
-  save(): SavedLevel {
+  private saveState(): SavedLevel {
     return {
       name: this.levelName.value,
       baseLayer: this.baseLayer.save(),
@@ -105,6 +107,37 @@ export class Editor {
       seed: this.seed.value,
       lastModified: (new Date).toISOString()
     }
+  }
+
+  /**
+   * Save the level for the purposes of writing to local storage. Clears the
+   * "unsaved changes" warning.
+   */
+  saveForLocalStorage(): SavedLevel {
+    this.history.onLevelSaved()
+    return this.saveState()
+  }
+
+  /**
+   * Save the level for the purposes of saving to disk. May or may not clear the
+   * "unsaved changes" warning, depending on if it's is considered to be
+   * equivalent to saving to local storage.
+   */
+  saveForDownload(): SavedLevel {
+    // Assume that downloading is a backup thing, and people will prefer local
+    // storage. If they load a level from local storage and it isn't what they
+    // remember saving (b/c they saved it to disk) they might not think to check
+    // local storage for the right version of the file. I think the best thing
+    // to do is still show the "unsaved changes" warnings.
+    return this.saveState()
+  }
+
+  /**
+   * Return the current editor state as a SavedLevel, without considering it as
+   * the user actually saving the level.
+   */
+  saveForHistory(): SavedLevel {
+    return this.saveState()
   }
 
   export(): ExportedLevel {
@@ -119,7 +152,12 @@ export class Editor {
     }
   }
 
-  restore(level: SavedLevel): void {
+  /**
+   * Should only be called to load the given state for history-related reasons,
+   * not file-loading operations. To open a file or start a new level, you
+   * should re-construct the Editor.
+   */
+  jumpToHistory(level: SavedLevel): void {
     this.levelName.value = level.name
     this.baseLayer.restore(level.baseLayer)
     this.brushLayer.restore(level.brushLayer)
@@ -247,7 +285,7 @@ export class Editor {
   }
 
   onCellDrop(event: DragEvent, row: number, col: number): void {
-    const before = this.save()
+    const before = this.saveForHistory()
     const numJunkBefore = this.junkLayer.board.getJunk().length
 
     const result = this.junkLayer.onCellDrop(event, row, col)
@@ -287,7 +325,7 @@ export class Editor {
 
   setSelectedJunkColor(color: BlockColor): void {
     if (this.selectedJunk.value) {
-      const before = this.save()
+      const before = this.saveForHistory()
       this.selectedJunk.value.color = color
       this.history.pushEditJunk(before)
     }
@@ -295,7 +333,7 @@ export class Editor {
 
   setSelectedJunkEffect(effect: JunkEffect | null): void {
     if (this.selectedJunk.value) {
-      const before = this.save()
+      const before = this.saveForHistory()
       this.selectedJunk.value.activeEffect = effect
       this.history.pushEditJunk(before)
     }
@@ -303,7 +341,7 @@ export class Editor {
 
   deleteSelectedJunk(): void {
     if (this.selectedJunk.value) {
-      const before = this.save()
+      const before = this.saveForHistory()
       this.junkLayer.board.removeJunk(this.selectedJunk.value)
       this.deselectJunk()
       this.history.pushDeleteJunk(before)

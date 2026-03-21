@@ -27,6 +27,18 @@ const levelStorage = new LevelStorage()
 
 const dialogManager = useTemplateRef('dialogManager')
 provide(injectDialogManager, dialogManager)
+
+const onBeforeUnload = (e: BeforeUnloadEvent): void => {
+  e.preventDefault()
+}
+
+watchEffect(() => {
+  if (editor.value.history.hasUnsavedChanges()) {
+    window.addEventListener('beforeunload', onBeforeUnload)
+  } else {
+    window.removeEventListener('beforeunload', onBeforeUnload)
+  }
+})
 </script>
 
 <style lang="scss">

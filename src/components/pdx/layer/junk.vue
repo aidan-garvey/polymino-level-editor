@@ -3,6 +3,8 @@
     :editor
     :grid="editor.junkLayer.board"
     :should-show
+    @cell-pointer-enter="(...args) => editor.junkCellPointerEnter(...args)"
+    @cell-pointer-leave="(...args) => editor.onCellPointerLeave(...args)"
     @cell-drag-over="(...args) => editor.junkLayer.onCellDragOver(...args)"
     @cell-drop="(...args) => editor.onCellDrop(...args)"
     @junk-clicked="(...args) => editor.selectJunk(...args)"

@@ -63,15 +63,33 @@ export class Editor {
     brushEffect: null,
   })
 
-  // When we start dragging a junk piece, this is set to true to ignore
-  // pointerenter events. It won't get set back to false by external code when
-  // the drag ends because the pointerenter event won't fire until more than one
-  // tick after the dragend event; instead, we'll set it to false the next time
-  // onCellPointerEnter is called.
-  // This works out because the user will want to move their mouse to a new cell
-  // before they start painting again, otherwise they'd be painting underneath
-  // the junk piece they just placed.
-  isDragging = false
+  /**
+   * When a drop event occurs, if a different element is at the location where
+   * the drag operation began, a pointerenter event is fired on the new element
+   * before the mouse's state starts being tracked again. So, if we drag a junk
+   * piece around within the cell grid, and the cell at the starting position
+   * isn't still covered by the junk piece after we drop it, a pointerenter
+   * event will fire on the now-revealed cell, and the mouse button will still
+   * be held down (which will apply a brush if selected).
+   *
+   * To work around this, this flag is set to true when a drag operation starts;
+   * then, the next time we get a pointerenter event in the brush layer, we set
+   * it to false and ignore the event.
+   *
+   * If the user drags a junk piece into a cell that already had a junk piece,
+   * there won't be a pointerenter event, but that's OK because before the user
+   * is able to start using another brush/tool, they'll need to move their
+   * cursor to a different cell (clearing the flag) and then start their next
+   * operation with a pointerdown event (which we'll handle normally).
+   *
+   * This is exposed as a reactive value so it can be used for contextual info
+   * about dragging junk pieces.
+   *
+   * Thank you for coming to my TED Talk.
+   */
+  readonly isDragging = ref(false)
+
+  readonly mouseCoordinates = ref<{ row: number, col: number } | null>(null)
 
   constructor(data?: SavedLevel) {
     // When a level is loaded or a new level is started, we create a new history
@@ -235,7 +253,7 @@ export class Editor {
     }
   }
 
-  onCellPointerDown(event: PointerEvent, row: number, col: number): void {
+  brushCellPointerDown(event: PointerEvent, row: number, col: number): void {
     const useTool = (tool: Ref<Tool>, button: MouseButton) => {
       switch (tool.value.kind) {
         case ToolKind.SELECT:
@@ -261,9 +279,11 @@ export class Editor {
     }
   }
 
-  onCellPointerEnter(event: PointerEvent, row: number, col: number): void {
-    if (this.isDragging) {
-      this.isDragging = false
+  brushCellPointerEnter(event: PointerEvent, row: number, col: number): void {
+    this.mouseCoordinates.value = { row, col }
+
+    if (this.isDragging.value) {
+      this.isDragging.value = false
       return
     }
 
@@ -281,6 +301,22 @@ export class Editor {
     } else if (event.buttons & MouseButton.RIGHT) {
       event.preventDefault()
       useTool(this.rightTool, MouseButton.RIGHT)
+    }
+  }
+
+  junkCellPointerEnter(event: PointerEvent, row: number, col: number): void {
+    void event
+    this.mouseCoordinates.value = { row, col }
+  }
+
+  onCellPointerLeave(event: PointerEvent, row: number, col: number): void {
+    void event
+    const coords = this.mouseCoordinates.value
+    // In case there's overlap and this happens after another cell updates the
+    // position with a pointerenter event, we'll only clear this if it's in the
+    // same coordinates that are currently set.
+    if (coords && coords.row === row && coords.col === col) {
+      this.mouseCoordinates.value = null
     }
   }
 

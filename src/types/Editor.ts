@@ -63,17 +63,37 @@ export class Editor {
     brushEffect: null,
   })
 
-  // When we start dragging a junk piece, this is set to true to ignore
-  // pointerenter events. It won't get set back to false by external code when
-  // the drag ends because the pointerenter event won't fire until more than one
-  // tick after the dragend event; instead, we'll set it to false the next time
-  // onCellPointerEnter is called.
-  // This works out because the user will want to move their mouse to a new cell
-  // before they start painting again, otherwise they'd be painting underneath
-  // the junk piece they just placed.
-  isDragging = false
+  /**
+   * When a drop event occurs, if a different element is at the location where
+   * the drag operation began, a pointerenter event is fired on the new element
+   * before the mouse's state starts being tracked again. So, if we drag a junk
+   * piece around within the cell grid, and the cell at the starting position
+   * isn't still covered by the junk piece after we drop it, a pointerenter
+   * event will fire on the now-revealed cell, and the mouse button will still
+   * be held down (which will apply a brush if selected).
+   *
+   * To work around this, this flag is set to true when a drag operation starts;
+   * then, the next time we get a pointerenter event in the brush layer, we set
+   * it to false and ignore the event.
+   *
+   * If the user drags a junk piece into a cell that already had a junk piece,
+   * there won't be a pointerenter event, but that's OK because before the user
+   * is able to start using another brush/tool, they'll need to move their
+   * cursor to a different cell (clearing the flag) and then start their next
+   * operation with a pointerdown event (which we'll handle normally).
+   *
+   * This is exposed as a reactive value so it can be used for contextual info
+   * about dragging junk pieces.
+   *
+   * Thank you for coming to my TED Talk.
+   */
+  readonly isDragging = ref(false)
+
+  readonly mouseCoordinates = ref<{ row: number, col: number } | null>(null)
 
   constructor(data?: SavedLevel) {
+    // When a level is loaded or a new level is started, we create a new history
+    // object, which resets the "unsaved changes" state.
     if (data) {
       this.levelName.value = data.name
       this.baseLayer = BaseLayer.fromSaved(data.baseLayer)
@@ -96,7 +116,7 @@ export class Editor {
     }
   }
 
-  save(): SavedLevel {
+  private saveState(): SavedLevel {
     return {
       name: this.levelName.value,
       baseLayer: this.baseLayer.save(),
@@ -105,6 +125,37 @@ export class Editor {
       seed: this.seed.value,
       lastModified: (new Date).toISOString()
     }
+  }
+
+  /**
+   * Save the level for the purposes of writing to local storage. Clears the
+   * "unsaved changes" warning.
+   */
+  saveForLocalStorage(): SavedLevel {
+    this.history.onLevelSaved()
+    return this.saveState()
+  }
+
+  /**
+   * Save the level for the purposes of saving to disk. May or may not clear the
+   * "unsaved changes" warning, depending on if it's is considered to be
+   * equivalent to saving to local storage.
+   */
+  saveForDownload(): SavedLevel {
+    // Assume that downloading is a backup thing, and people will prefer local
+    // storage. If they load a level from local storage and it isn't what they
+    // remember saving (b/c they saved it to disk) they might not think to check
+    // local storage for the right version of the file. I think the best thing
+    // to do is still show the "unsaved changes" warnings.
+    return this.saveState()
+  }
+
+  /**
+   * Return the current editor state as a SavedLevel, without considering it as
+   * the user actually saving the level.
+   */
+  saveForHistory(): SavedLevel {
+    return this.saveState()
   }
 
   export(): ExportedLevel {
@@ -119,7 +170,12 @@ export class Editor {
     }
   }
 
-  restore(level: SavedLevel): void {
+  /**
+   * Should only be called to load the given state for history-related reasons,
+   * not file-loading operations. To open a file or start a new level, you
+   * should re-construct the Editor.
+   */
+  jumpToHistory(level: SavedLevel): void {
     this.levelName.value = level.name
     this.baseLayer.restore(level.baseLayer)
     this.brushLayer.restore(level.brushLayer)
@@ -197,7 +253,7 @@ export class Editor {
     }
   }
 
-  onCellPointerDown(event: PointerEvent, row: number, col: number): void {
+  brushCellPointerDown(event: PointerEvent, row: number, col: number): void {
     const useTool = (tool: Ref<Tool>, button: MouseButton) => {
       switch (tool.value.kind) {
         case ToolKind.SELECT:
@@ -223,9 +279,11 @@ export class Editor {
     }
   }
 
-  onCellPointerEnter(event: PointerEvent, row: number, col: number): void {
-    if (this.isDragging) {
-      this.isDragging = false
+  brushCellPointerEnter(event: PointerEvent, row: number, col: number): void {
+    this.mouseCoordinates.value = { row, col }
+
+    if (this.isDragging.value) {
+      this.isDragging.value = false
       return
     }
 
@@ -246,8 +304,24 @@ export class Editor {
     }
   }
 
+  junkCellPointerEnter(event: PointerEvent, row: number, col: number): void {
+    void event
+    this.mouseCoordinates.value = { row, col }
+  }
+
+  onCellPointerLeave(event: PointerEvent, row: number, col: number): void {
+    void event
+    const coords = this.mouseCoordinates.value
+    // In case there's overlap and this happens after another cell updates the
+    // position with a pointerenter event, we'll only clear this if it's in the
+    // same coordinates that are currently set.
+    if (coords && coords.row === row && coords.col === col) {
+      this.mouseCoordinates.value = null
+    }
+  }
+
   onCellDrop(event: DragEvent, row: number, col: number): void {
-    const before = this.save()
+    const before = this.saveForHistory()
     const numJunkBefore = this.junkLayer.board.getJunk().length
 
     const result = this.junkLayer.onCellDrop(event, row, col)
@@ -287,7 +361,7 @@ export class Editor {
 
   setSelectedJunkColor(color: BlockColor): void {
     if (this.selectedJunk.value) {
-      const before = this.save()
+      const before = this.saveForHistory()
       this.selectedJunk.value.color = color
       this.history.pushEditJunk(before)
     }
@@ -295,7 +369,7 @@ export class Editor {
 
   setSelectedJunkEffect(effect: JunkEffect | null): void {
     if (this.selectedJunk.value) {
-      const before = this.save()
+      const before = this.saveForHistory()
       this.selectedJunk.value.activeEffect = effect
       this.history.pushEditJunk(before)
     }
@@ -303,7 +377,7 @@ export class Editor {
 
   deleteSelectedJunk(): void {
     if (this.selectedJunk.value) {
-      const before = this.save()
+      const before = this.saveForHistory()
       this.junkLayer.board.removeJunk(this.selectedJunk.value)
       this.deselectJunk()
       this.history.pushDeleteJunk(before)

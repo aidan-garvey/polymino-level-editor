@@ -8,6 +8,7 @@
     }"
     @pointerdown="e => emit('cellPointerDown', e, row, col)"
     @pointerenter="e => emit('cellPointerEnter', e, row, col)"
+    @pointerleave="e => emit('cellPointerLeave', e, row, col)"
     @contextmenu.prevent
     @dragover="e => emit('cellDragOver', e, row, col)"
     @drop="e => emit('cellDrop', e, row, col)"
@@ -55,6 +56,7 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits<{
   cellPointerDown: [event: PointerEvent, row: number, col: number]
   cellPointerEnter: [event: PointerEvent, row: number, col: number]
+  cellPointerLeave: [event: PointerEvent, row: number, col: number]
   cellDragOver: [event: DragEvent, row: number, col: number]
   cellDrop: [event: DragEvent, row: number, col: number]
 }>()

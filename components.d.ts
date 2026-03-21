@@ -54,8 +54,9 @@ declare module 'vue' {
     PdxLevelBrowserSaveButtons: typeof import('./src/components/pdx/level-browser/save-buttons.vue')['default']
     PdxLevelSettings: typeof import('./src/components/pdx/level-settings/index.vue')['default']
     PdxLevelSettingsBannedColor: typeof import('./src/components/pdx/level-settings/banned-color.vue')['default']
-    PdxMenuBar: typeof import('./src/components/pdx/menu-bar/index.vue')['default']
+    PdxMenuBar: typeof import('./src/components/pdx/menu-bar.vue')['default']
     PdxSpace: typeof import('./src/components/pdx/space.vue')['default']
+    PdxStatusBar: typeof import('./src/components/pdx/status-bar.vue')['default']
     PdxTooltip: typeof import('./src/components/pdx/tooltip.vue')['default']
   }
 }

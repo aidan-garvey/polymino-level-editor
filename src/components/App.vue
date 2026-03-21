@@ -10,7 +10,7 @@
     <pdx-history-window :editor />
   </div>
   <div class="app-bottom">
-
+    <pdx-status-bar :editor />
   </div>
   <pdx-dialog-manager
     ref="dialogManager"
@@ -27,6 +27,18 @@ const levelStorage = new LevelStorage()
 
 const dialogManager = useTemplateRef('dialogManager')
 provide(injectDialogManager, dialogManager)
+
+const onBeforeUnload = (e: BeforeUnloadEvent): void => {
+  e.preventDefault()
+}
+
+watchEffect(() => {
+  if (editor.value.history.hasUnsavedChanges()) {
+    window.addEventListener('beforeunload', onBeforeUnload)
+  } else {
+    window.removeEventListener('beforeunload', onBeforeUnload)
+  }
+})
 </script>
 
 <style lang="scss">

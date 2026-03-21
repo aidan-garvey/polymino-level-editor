@@ -3,8 +3,8 @@
     :editor
     :grid="editor.baseLayer.board"
     :should-show
-    @cell-pointer-down="(...args) => editor.onCellPointerDown(...args)"
-    @cell-pointer-enter="(...args) => editor.onCellPointerEnter(...args)"
+    @cell-pointer-down="(...args) => editor.brushCellPointerDown(...args)"
+    @cell-pointer-enter="(...args) => editor.brushCellPointerEnter(...args)"
   />
 </template>
 

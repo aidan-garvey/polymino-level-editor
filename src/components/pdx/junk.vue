@@ -21,6 +21,7 @@
       }"
       @cell-pointer-down="(...args) => emit('cellPointerDown', ...args)"
       @cell-pointer-enter="(...args) => emit('cellPointerEnter', ...args)"
+      @cell-pointer-leave="(...args) => emit('cellPointerLeave', ...args)"
       @cell-drag-over="(...args) => emit('cellDragOver', ...args)"
       @cell-drop="(...args) => emit('cellDrop', ...args)"
       @click="emit('junkClicked', junk)"
@@ -52,6 +53,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   cellPointerDown: [event: PointerEvent, row: number, col: number]
   cellPointerEnter: [event: PointerEvent, row: number, col: number]
+  cellPointerLeave: [event: PointerEvent, row: number, col: number]
   cellDragOver: [event: DragEvent, row: number, col: number]
   cellDrop: [event: DragEvent, row: number, col: number]
   junkClicked: [junk: Junk]
@@ -110,7 +112,7 @@ const onDragStart = (event: DragEvent) => {
   if (!props.grid.draggableJunk)
     return
 
-  props.editor.isDragging = true
+  props.editor.isDragging.value = true
   setDragImage(event)
   setJunkDragData(event, props.junk)
 }

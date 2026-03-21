@@ -96,7 +96,7 @@ const saveLevel = (name: string) => {
 
 const confirmSaveLevel = () => {
   try {
-    props.levelStorage.saveAs(editor.value.save(), fileName.value)
+    props.levelStorage.saveAs(editor.value.saveForLocalStorage(), fileName.value)
     modelValue.value = false
   } catch (error) {
     console.error(error)
@@ -115,7 +115,7 @@ const activateLevel = (name: string) => {
 }
 
 const saveToDisk = () => {
-  props.levelStorage.download(editor.value.save())
+  props.levelStorage.download(editor.value.saveForDownload())
   modelValue.value = false
 }
 

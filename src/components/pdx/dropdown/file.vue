@@ -66,13 +66,15 @@ const showLevelBrowser = ref(false)
 const levelBrowserMode = ref<'open' | 'save'>('open')
 
 const newLevel = () => {
-  // TODO: track unsaved changes so we can skip this for levels which are
-  // unmodified since last save
-  showConfirmation(
-    'Are you sure you want to start a new level?\n' +
-    'Any unsaved progress will be lost.',
-    confirmNewLevel
-  )
+  if (editor.value.history.hasUnsavedChanges()) {
+    showConfirmation(
+      'Are you sure you want to start a new level?\n'
+      + 'Any unsaved changes will be lost.',
+      confirmNewLevel
+    )
+  } else {
+    confirmNewLevel()
+  }
 }
 
 const confirmNewLevel = () => {
@@ -81,7 +83,18 @@ const confirmNewLevel = () => {
 }
 
 const openLevel = () => {
-  // TODO: if there are unsaved changes, ask if user wants to save them first
+  if (editor.value.history.hasUnsavedChanges()) {
+    showConfirmation(
+      'Are you sure you want to open a new level?\n'
+      + 'Any unsaved changes will be lost.',
+      confirmOpenLevel
+    )
+  } else {
+    confirmOpenLevel()
+  }
+}
+
+const confirmOpenLevel = () => {
   levelBrowserMode.value = 'open'
   showLevelBrowser.value = true
 }
@@ -90,7 +103,7 @@ const saveLevel = () => {
   if (!props.levelStorage.currentLevelName.value) {
     saveLevelAs()
   } else {
-    props.levelStorage.save(editor.value.save())
+    props.levelStorage.save(editor.value.saveForLocalStorage())
   }
 }
 
@@ -100,7 +113,7 @@ const saveLevelAs = () => {
 }
 
 const downloadLevel = () => {
-  props.levelStorage.download(editor.value.save())
+  props.levelStorage.download(editor.value.saveForDownload())
 }
 
 const exportLevel = () => {

@@ -17,6 +17,8 @@ export const useDialog = (): DialogManagerMethods => {
     showAlert(...args) {
       dialogManager.value?.showAlert(...args)
     },
+    showInputDialog(...args) {
+      dialogManager.value?.showInputDialog(...args)
+    },
   }
 }
-

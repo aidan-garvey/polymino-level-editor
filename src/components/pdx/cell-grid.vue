@@ -4,6 +4,8 @@
     :style="{
       gridTemplateColumns: cssGridCols,
       gridTemplateRows: cssGridRows,
+      width: cssWidth,
+      height: cssHeight,
     }"
   >
     <template
@@ -74,6 +76,8 @@ const emit = defineEmits<{
 
 const cssGridCols = computed(() => `repeat(${props.grid.width}, 1fr)`)
 const cssGridRows = computed(() => `repeat(${props.grid.height}, 1fr)`)
+const cssWidth = computed(() => `calc(var(--block-size) * ${props.grid.width})`)
+const cssHeight = computed(() => `calc(var(--block-size) * ${props.grid.height})`)
 </script>
 
 <style lang="scss">

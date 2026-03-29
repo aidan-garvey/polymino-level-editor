@@ -21,10 +21,23 @@
       @close="alert.onClose"
     />
   </template>
+  <template
+    v-for="input in inputDialogs"
+    :key="input.id"
+  >
+    <pdx-input-dialog
+      model-value
+      v-bind="input.options"
+      :title="input.title"
+      :input-label="input.label"
+      @confirm="input.onConfirm"
+      @cancel="input.onCancel"
+    />
+  </template>
 </template>
 
 <script setup lang="ts">
-import type { DialogManagerMethods } from './inject'
+import type { DialogManagerMethods, InputDialogOptions } from './inject'
 
 interface Confirmation {
   id: number
@@ -39,12 +52,22 @@ interface Alert {
   onClose: () => void
 }
 
+interface InputDialog {
+  id: number
+  title: string
+  label: string
+  onConfirm: (input: string) => void
+  onCancel: () => void
+  options: InputDialogOptions
+}
+
 let nextId = 0
 const confirmations = ref<Confirmation[]>([])
 const alerts = ref<Alert[]>([])
+const inputDialogs = ref<InputDialog[]>([])
 
 const removeDialog = (id: number) => {
-  for (const arr of [confirmations.value, alerts.value]) {
+  for (const arr of [confirmations.value, alerts.value, inputDialogs.value]) {
     const index = arr.findIndex(d => d.id === id)
     if (index !== -1) {
       arr.splice(index, 1)
@@ -92,8 +115,33 @@ const showAlert = (
   })
 }
 
+const showInputDialog = (
+  title: string,
+  label: string,
+  onConfirm: (inputText: string) => void,
+  onCancel?: () => void,
+  options: InputDialogOptions = {}
+) => {
+  const id = nextId++
+
+  const confirmWrapper = (input: string) => {
+    onConfirm(input)
+    removeDialog(id)
+  }
+
+  inputDialogs.value.push({
+    id,
+    title,
+    label,
+    onConfirm: confirmWrapper,
+    onCancel: wrapHandler(onCancel, id),
+    options,
+  })
+}
+
 defineExpose<DialogManagerMethods>({
   showConfirmation,
   showAlert,
+  showInputDialog,
 })
 </script>

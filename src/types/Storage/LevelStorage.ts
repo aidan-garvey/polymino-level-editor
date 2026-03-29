@@ -30,7 +30,7 @@ export class LevelStorage {
     storage.setItem(key, value)
   }
 
-  private static delete(storage: Storage, key: StorageKey): void {
+  private static erase(storage: Storage, key: StorageKey): void {
     storage.removeItem(key)
   }
 
@@ -38,8 +38,7 @@ export class LevelStorage {
    * Attempt to get a reference to local storage, detecting if the browser has
    * disabled it by giving us a local storage object with a quota of 0.
    * Returns true if we were able to get local storage and set this.local to the
-   * result, false if we could not get it and wrote 'storage-disabled' to
-   * this.error.
+   * result, false if we could not get it and set this.local to null.
    */
   private getLocalStorage(): Storage | null {
     if (this.storageHandle) {
@@ -49,7 +48,7 @@ export class LevelStorage {
     try {
       this.storageHandle = window.localStorage
       LevelStorage.write(this.storageHandle, FEATURE_TEST_PREFIX, 'test')
-      LevelStorage.delete(this.storageHandle, FEATURE_TEST_PREFIX)
+      LevelStorage.erase(this.storageHandle, FEATURE_TEST_PREFIX)
       console.info('Access to local storage acquired')
       return this.storageHandle
     } catch (e) {
@@ -97,7 +96,7 @@ export class LevelStorage {
       const str = LevelStorage.read(storage, key)
       if (str === null) {
         console.warn(`No data at key ${key}, deleting...`)
-        LevelStorage.delete(storage, key)
+        LevelStorage.erase(storage, key)
       } else {
         const data = parseOrDefault(str)
         if (isSavedLevel(data)) {
@@ -116,6 +115,8 @@ export class LevelStorage {
 
   /**
    * Saves the level to local storage if available, falls back on downloading.
+   * `currentLevelName` is used for the file's name, meaning this overwrites the
+   * active level.
    * @throws Will throw a DOMException if storage is full
    */
   save(data: SavedLevel): void {
@@ -135,6 +136,8 @@ export class LevelStorage {
 
   /**
    * Saves the level to local storage if available, falls back on downloading.
+   * The given name is used for the file name and written to `currentLevelName`,
+   * making it the active level.
    * @throws Will throw a DOMException if storage is full
    */
   saveAs(data: SavedLevel, name: string): void {
@@ -142,7 +145,28 @@ export class LevelStorage {
     this.save(data)
   }
 
-  loadLevel(name: string): SavedLevel | null {
+  /**
+   * Reads the given level without making it the active level.
+   */
+  loadPreview(name: string): SavedLevel | null {
+    return this.loadLevel(name)
+  }
+
+  /**
+   * Loads the given level. If successful and the data is a valid level, sets
+   * `currentLevelName` to the given name (making it the active level which will
+   * be overwritten on save). If unable to read the level, or it isn't valid
+   * level data, returns null.
+   */
+  load(name: string): SavedLevel | null {
+    const result = this.loadLevel(name)
+    if (result) {
+      this.currentLevelName.value = name
+    }
+    return result
+  }
+
+  private loadLevel(name: string): SavedLevel | null {
     const storage = this.getLocalStorage()
     if (!storage) {
       return null
@@ -155,10 +179,61 @@ export class LevelStorage {
 
     const data = parseOrDefault(str)
     if (isSavedLevel(data)) {
-      this.currentLevelName.value = name
       return data
     } else {
       return null
+    }
+  }
+
+  /**
+   * Deletes the file with the given name. If it was the active level, the
+   * active level is reset.
+   */
+  delete(name: string): void {
+    const storage = this.getLocalStorage()
+    if (storage) {
+      LevelStorage.erase(storage, `${LEVEL_PREFIX}${name}`)
+    }
+    if (this.currentLevelName.value === name) {
+      this.currentLevelName.value = null
+    }
+  }
+
+  /**
+   * Renames the file with `oldName` to `newName`. If the renamed level was the
+   * active level, `currentLevelName` is updated so it remains as such.
+   * @throws Will throw if localStorage isn't available, the original file can't
+   * be read, or the new file can't be saved.
+   */
+  rename(oldName: string, newName: string): void {
+    // Prevent the level from being deleted if we write it under the "new" name
+    // first then delete the level with that same name in local storage
+    if (oldName === newName) {
+      return
+    }
+
+    const storage = this.getLocalStorage()
+    if (!storage) {
+      throw new Error('Unable to access localStorage')
+    }
+
+    const level = LevelStorage.read(storage, `${LEVEL_PREFIX}${oldName}`)
+    if (!level) {
+      throw new Error('Level to rename not found')
+    }
+
+    // Even though it's riskier in terms of exceeding our storage quota, we'll
+    // write the new version before deleting the old one just in case something
+    // unexpected goes wrong when writing.
+    LevelStorage.write(
+      storage,
+      `${LEVEL_PREFIX}${newName}`,
+      level
+    )
+    LevelStorage.erase(storage, `${LEVEL_PREFIX}${oldName}`)
+
+    if (this.currentLevelName.value === oldName) {
+      this.currentLevelName.value = newName
     }
   }
 
@@ -186,5 +261,6 @@ export class LevelStorage {
     link.click()
 
     URL.revokeObjectURL(url)
+    link.remove()
   }
 }

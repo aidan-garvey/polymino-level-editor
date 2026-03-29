@@ -2,24 +2,25 @@
   <div class="pdx-level-browser-list">
     <!-- TODO: message if local storage isn't available -->
     <!-- TODO: message if no levels are saved -->
-    <!-- TODO: buttons for deleting and renaming levels -->
-    <div
-      v-for="level in levelList"
-      :key="level.name"
-      class="pdx-level-browser-list__item pdx-interactive"
-      :class="{
-        'pdx-level-browser-list__item--selected': level.name === inputFileName,
-      }"
-      tabindex="0"
-      @click="emit('select', level.name)"
-      @keydown.enter="emit('activate', level.name)"
-      @dblclick="emit('activate', level.name)"
-    >
-      <div class="pdx-level-browser-list__item__name text-body">
-        {{ level.name }}
-      </div>
-      <div class="pdx-level-browser-list__item__date text-detail">
-        {{ level.date }}
+    <div class="pdx-level-browser-list__grid">
+      <div
+        v-for="level in levelList"
+        :key="level.name"
+        class="pdx-level-browser-list__item pdx-interactive"
+        :class="{
+          'pdx-level-browser-list__item--selected': level.name === inputFileName,
+        }"
+        tabindex="0"
+        @click="emit('select', level.name)"
+        @keydown.enter="emit('activate', level.name)"
+        @dblclick="emit('activate', level.name)"
+      >
+        <div class="pdx-level-browser-list__item__name text-body">
+          {{ level.name }}
+        </div>
+        <div class="pdx-level-browser-list__item__date text-detail">
+          {{ level.date }}
+        </div>
       </div>
     </div>
   </div>
@@ -68,13 +69,20 @@ const levelList = computed(() => {
 
 <style lang="scss">
 .pdx-level-browser-list {
-  display: grid;
-  grid-template-columns: minmax(175px, 1fr) 175px;
+  flex: 1;
+  padding: 2px;
+  border: 1px solid #aaa;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: minmax(185px, 1fr) 185px;
+  }
 
   &__item {
     display: grid;
     grid-column: 1 / span 2;
     grid-template-columns: subgrid;
+    padding: 0 2px;
 
     &:nth-child(even) {
       background: #111;

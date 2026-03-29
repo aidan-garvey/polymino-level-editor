@@ -6,7 +6,7 @@
     <div
       class="pdx-dialog-title-bar__close pdx-button"
       tabindex="0"
-      @click="dialogOpen = false"
+      @click="onClose"
     >
       <pdx-icon name="close" size="20" />
     </div>
@@ -21,7 +21,21 @@ const props = defineProps<{
   title: string
 }>()
 
+const emit = defineEmits<{
+  /**
+   * Clicking the close button will set the dialog's modelValue to false, so you
+   * usually don't need to listen for this event. It exists so programmatic
+   * dialogs can hook into the close button to properly clean up.
+   */
+  close: []
+}>()
+
 const dialogOpen = notNull(inject(injectDialogOpen))
+
+const onClose = () => {
+  dialogOpen.value = false
+  emit('close')
+}
 </script>
 
 <style lang="scss">

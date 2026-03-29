@@ -3,38 +3,49 @@
     <pdx-dialog-title-bar title="Level Browser" />
 
     <div class="pdx-level-browser">
-      <pdx-level-browser-list
-        :levels
-        :input-file-name="fileName"
-        @select="name => fileName = name"
-        @activate="activateLevel"
-      />
+      <div class="pdx-level-browser__files">
+        <pdx-level-browser-list
+          :levels
+          :input-file-name="fileName"
+          @select="name => fileName = name"
+          @activate="activateLevel"
+        />
 
-      <pdx-level-browser-input
-        v-model="fileName"
-        @keyup.enter="() => activateLevel(fileName)"
-      />
-      <pdx-level-browser-save-buttons
-        v-if="mode === 'save'"
-        :levels
-        :file-name="fileName"
-        @save="saveLevel"
-        @save-to-disk="saveToDisk"
-      />
-      <pdx-level-browser-open-buttons
-        v-else-if="mode === 'open'"
-        :levels="levels"
-        :file-name="fileName"
-        @open="openLevel"
-        @open-from-disk="openFromDisk"
-      />
+        <pdx-level-browser-input
+          v-model="fileName"
+          @keyup.enter="() => activateLevel(fileName)"
+        />
+        <pdx-level-browser-save-buttons
+          v-if="mode === 'save'"
+          :levels
+          :file-name="fileName"
+          @save="saveLevel"
+          @save-to-disk="saveToDisk"
+        />
+        <pdx-level-browser-open-buttons
+          v-else-if="mode === 'open'"
+          :levels="levels"
+          :file-name="fileName"
+          @open="openLevel"
+          @open-from-disk="openFromDisk"
+        />
 
-      <input type="file"
-        v-if="mode === 'open'"
-        hidden
-        ref="fileInputRef"
-        accept=".json"
-        @change="onFileChange"
+        <input type="file"
+          v-if="mode === 'open'"
+          hidden
+          ref="fileInputRef"
+          accept=".json"
+          @change="onFileChange"
+        />
+      </div>
+
+      <pdx-level-browser-file-info
+        :dialog-open="modelValue"
+        :editor
+        :level-storage
+        :file-name
+        @level-renamed="onLevelRenamed"
+        @level-deleted="onLevelDeleted"
       />
     </div>
   </pdx-dialog>
@@ -46,6 +57,7 @@ import { Editor } from '@/types/Editor'
 import { isSavedLevel } from '@/types/Saved/SavedLevel'
 import { parseOrDefault } from '@/utils/parseOrDefault'
 import { useDialog } from '@/use/dialog'
+import { fileNameValid, NameResult } from '@/utils/fileName'
 
 const modelValue = defineModel<boolean>({ required: true })
 const editor = defineModel<Editor>('editor', { required: true })
@@ -64,33 +76,40 @@ const levels = ref<SavedLevelDict | null>(null)
 const fileName = ref('')
 
 const openLevel = (name: string) => {
-  const level = props.levelStorage.loadLevel(name)
+  const level = props.levelStorage.load(name)
   if (level) {
     editor.value = new Editor(level)
     modelValue.value = false
   }
 }
 
-const validNamePattern = /^[a-zA-Z0-9 ._-]+$/
-
 const saveLevel = (name: string) => {
-  name = name.trim()
-  fileName.value = name
+  let exhaustive: never
+  const result = fileNameValid(name, props.levelStorage)
 
-  const levelMatches = !!levels.value
-    && Object.keys(levels.value).some(level => level === name)
-
-  if (!name) {
-    showAlert('Level name cannot be empty')
-  } else if (!validNamePattern.test(name)) {
-    showAlert('Level name contains invalid characters')
-  } else if (levelMatches) {
-    showConfirmation(
-      'Are you sure you want to overwrite this level?',
-      confirmSaveLevel
-    )
-  } else {
-    confirmSaveLevel()
+  switch (result) {
+    case NameResult.EMPTY:
+      showAlert('File name cannot be empty')
+      break
+    case NameResult.INVALID_CHARS:
+      showAlert('File name contains invalid characters')
+      break
+    case NameResult.UNTRIMMED:
+      showAlert('File name cannot begin or end with spaces')
+      break
+    case NameResult.MATCHES_EXISTING:
+      showConfirmation(
+        'Are you sure you want to overwrite this level?',
+        confirmSaveLevel
+      )
+      break
+    case NameResult.SAFE:
+      confirmSaveLevel()
+      break
+    default:
+      exhaustive = result
+      showAlert(`Error: unexpected issue with file name, code: ${exhaustive}`)
+      break
   }
 }
 
@@ -145,18 +164,39 @@ const onFileChange = async () => {
   }
 }
 
+const updateLevels = () => {
+  levels.value = props.levelStorage.getSavedLevels()
+}
+
+const onLevelRenamed = (newName: string) => {
+  fileName.value = newName
+  updateLevels()
+}
+
+const onLevelDeleted = () => {
+  fileName.value = ''
+  updateLevels()
+}
+
 watch(modelValue, open => {
   if (open) {
-    levels.value = props.levelStorage.getSavedLevels()
+    updateLevels()
   }
 })
 </script>
 
 <style lang="scss">
 .pdx-level-browser {
-  padding: 4px;
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 8px;
+  padding: 4px;
+
+  &__files {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
 }
 </style>

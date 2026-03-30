@@ -39,6 +39,16 @@ watchEffect(() => {
     window.removeEventListener('beforeunload', onBeforeUnload)
   }
 })
+
+const noStorageMsg = `Browser storage is unavailable. It may be disabled in \
+your browser's settings. You will still be able to download and upload your \
+levels to and from your device, but will not be able to save them in-app.`
+
+onMounted(() => {
+  if (!levelStorage.isStorageAvailable()) {
+    dialogManager.value?.showAlert(noStorageMsg)
+  }
+})
 </script>
 
 <style lang="scss">

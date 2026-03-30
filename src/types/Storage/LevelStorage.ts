@@ -69,6 +69,10 @@ export class LevelStorage {
     }
   }
 
+  isStorageAvailable(): boolean {
+    return this.getLocalStorage() !== null
+  }
+
   /**
    * @returns Levels saved in local storage by name, or null if local storage
    * is not available.

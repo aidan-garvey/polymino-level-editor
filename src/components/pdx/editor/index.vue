@@ -2,8 +2,8 @@
   <div
     class="pdx-editor"
     :style="{
-      '--board-height': BOARD_HEIGHT,
-      '--board-width': BOARD_WIDTH,
+      '--board-rows': BOARD_HEIGHT,
+      '--board-cols': BOARD_WIDTH,
     }"
   >
     <div class="pdx-editor__left">
@@ -49,15 +49,15 @@ const cursorStyle = computed(() => {
 
 <style lang="scss">
 .pdx-editor {
-  --board-height-px: 90vh;
-  --block-size: calc(var(--board-height-px) / var(--board-height));
-  --board-width-px: calc(var(--block-size) * var(--board-width));
+  --board-height: 90vh;
+  --block-size: calc(var(--board-height) / var(--board-rows));
+  --board-width: calc(var(--block-size) * var(--board-cols));
 
   display: flex;
   flex-direction: row;
   align-items: stretch;
   gap: 16px;
-  height: var(--board-height-px);
+  height: var(--board-height);
   width: 100%;
 
   &__left, &__right {
@@ -66,7 +66,7 @@ const cursorStyle = computed(() => {
     display: flex;
     flex-direction: row;
     gap: 16px;
-    height: var(--board-height-px);
+    height: var(--board-height);
     align-items: stretch;
   }
 
@@ -80,8 +80,8 @@ const cursorStyle = computed(() => {
   &__board {
     position: relative;
     // Needs to have explicit size since its children use absolute positioning
-    height: var(--board-height-px);
-    width: var(--board-width-px);
+    height: var(--board-height);
+    width: var(--board-width);
   }
 }
 </style>

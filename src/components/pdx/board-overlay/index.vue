@@ -65,8 +65,8 @@ const isSelectedJunk = (x: number, y: number): boolean => {
   position: absolute;
   top: 0;
   left: 0;
-  width: var(--board-width-px);
-  height: var(--board-height-px);
+  width: var(--board-width);
+  height: var(--board-height);
   pointer-events: none;
 
   // so it displays over junk pieces

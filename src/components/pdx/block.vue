@@ -1,10 +1,12 @@
 <template>
   <div
     class="pdx-block"
+    :class="{
+      'pdx-block--draggable': isDraggable,
+    }"
     :style="{
       opacity,
       ...visibilityStyle,
-      ...cursorStyle
     }"
     @pointerdown="e => emit('cellPointerDown', e, row, col)"
     @pointerenter="e => emit('cellPointerEnter', e, row, col)"
@@ -98,14 +100,8 @@ const overlayFlip = computed(() => {
   }
 })
 
-const cursorStyle = computed<CSSProperties>(() => {
-  if (cell.value.state === BlockState.JUNK && props.grid.draggableJunk) {
-    return {
-      cursor: 'grab'
-    }
-  } else {
-    return {}
-  }
+const isDraggable = computed(() => {
+  return cell.value.state === BlockState.JUNK && props.grid.draggableJunk
 })
 
 const visibilityStyle = computed<CSSProperties>(() => {
@@ -138,6 +134,14 @@ const opacity = computed(() => {
   width: var(--block-size);
   height: var(--block-size);
   position: relative;
+
+  &--draggable {
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
 
   img {
     display: block;

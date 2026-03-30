@@ -1,6 +1,6 @@
 <template>
   <pdx-dialog v-model="modelValue">
-    <pdx-dialog-title-bar title="Level Browser" />
+    <pdx-dialog-title-bar :title />
 
     <div class="pdx-level-browser">
       <div class="pdx-level-browser__files">
@@ -72,6 +72,10 @@ const { showConfirmation, showAlert } = useDialog()
 const fileInputRef = useTemplateRef('fileInputRef')
 
 const levels = ref<SavedLevelDict | null>(null)
+
+const title = computed(() => {
+  return `${props.mode === 'open' ? 'Open' : 'Save'} Level`
+})
 
 const fileName = ref('')
 

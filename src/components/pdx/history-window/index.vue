@@ -72,9 +72,11 @@ const contentMaxHeight = computed(() => {
 </script>
 
 <style lang="scss">
+@use '../../stacking';
+
 .pdx-history-window {
   position: absolute;
-  z-index: 20;
+  z-index: stacking.$history-window;
 
   background: #111;
   border: 1px solid #fff;

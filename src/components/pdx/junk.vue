@@ -119,12 +119,14 @@ const onDragStart = (event: DragEvent) => {
 </script>
 
 <style lang="scss">
+@use '../stacking';
+
 .pdx-junk {
   display: grid;
   grid-template-rows: subgrid;
   grid-template-columns: subgrid;
   // allows stacking in the grid
-  z-index: 1;
+  z-index: stacking.$junk;
   // don't block events in lower layers, can rely on bubbling from child
   // elements to trigger dragstart on the junk piece
   pointer-events: none;

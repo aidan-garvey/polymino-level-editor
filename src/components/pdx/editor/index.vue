@@ -49,7 +49,9 @@ const cursorStyle = computed(() => {
 
 <style lang="scss">
 .pdx-editor {
-  --board-height: 90vh;
+  // menu and status bars are ~54px, horizontal scrollbar is ~15px on Windows,
+  // plus some extra wiggle room to make it feel comfortable
+  --board-height: min(90dvh, 100dvh - 128px);
   --block-size: calc(var(--board-height) / var(--board-rows));
   --board-width: calc(var(--block-size) * var(--board-cols));
 

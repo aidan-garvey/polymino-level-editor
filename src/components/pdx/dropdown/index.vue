@@ -66,7 +66,6 @@ defineExpose({
     position: absolute;
     background-color: #222;
     border: 1px solid #444;
-    z-index: 2000;
   }
   &:first-child &__list {
     border-left: none;

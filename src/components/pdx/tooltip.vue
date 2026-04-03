@@ -64,8 +64,10 @@ watch(tooltipItemName, () => {
 </script>
 
 <style lang="scss">
+@use '../stacking';
+
 .pdx-tooltip {
-  z-index: 1000;
+  z-index: stacking.$tooltip;
   position: absolute;
 
   white-space: pre-line;

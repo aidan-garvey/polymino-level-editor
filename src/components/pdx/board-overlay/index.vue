@@ -60,6 +60,8 @@ const isSelectedJunk = (x: number, y: number): boolean => {
 </script>
 
 <style lang="scss">
+@use '../../stacking';
+
 .pdx-board-overlay {
   display: grid;
   position: absolute;
@@ -70,7 +72,7 @@ const isSelectedJunk = (x: number, y: number): boolean => {
   pointer-events: none;
 
   // so it displays over junk pieces
-  z-index: 10;
+  z-index: stacking.$board-overlay;
 
   &__cell {
     border: 1px solid rgba(255, 255, 255, 0.1);

@@ -64,6 +64,7 @@ onMounted(() => {
 @use './pdx/junk-selector';
 @use './pdx/side-panel';
 @use './pdx/dialog/common';
+@use './stacking';
 
 * {
   box-sizing: border-box;
@@ -80,15 +81,21 @@ body {
 
 // This component's div element
 #app {
-  width: 100vw;
-  height: 100vh;
+  width: 100dvw;
+  height: 100dvh;
   display: flex;
   overflow-y: hidden;
   flex-direction: column;
   justify-content: center;
 
   .app-top, .app-bottom {
-    flex: 0;
+    flex: none;
+    // Since .app-middle can be wider than #app (which will make it scroll),
+    // ensure the menu/status bars always span the whole screen
+    position: sticky;
+    left: 0;
+    // Make the menu bar's dropdowns appear above anything in .app-middle
+    z-index: stacking.$top-bottom-bars;
   }
 
   .app-middle {
@@ -97,6 +104,9 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    // required to prevent any editor panels from being clipped or squished
+    // below their minimum width
+    min-width: fit-content;
 
     // So draggable windows in the editor can use `position: absolute`
     position: relative;

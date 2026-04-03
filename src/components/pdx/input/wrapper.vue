@@ -60,7 +60,7 @@ const {
   align-items: stretch;
 
   label {
-    flex: 0;
+    flex: none;
     white-space: nowrap;
   }
 

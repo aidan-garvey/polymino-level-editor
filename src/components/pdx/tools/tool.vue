@@ -1,6 +1,6 @@
 <template>
   <div
-    ref="pdxIconToolSelectorRef"
+    ref="toolSelectorRef"
     class="pdx-tool-selector"
     :class="{
       'pdx-tool-selector--left': leftSelected,
@@ -35,12 +35,12 @@ const emit = defineEmits<{
   pointerdown: [PointerEvent]
 }>()
 
-const pdxIconToolSelectorRef = useTemplateRef('pdxIconToolSelectorRef')
+const toolSelectorRef = useTemplateRef('toolSelectorRef')
 
 const { onPointerEnter, onPointerLeave } = useTooltip(
   computed(() => props.iconName),
   computed(() => props.tooltip),
-  pdxIconToolSelectorRef
+  toolSelectorRef
 )
 
 const leftSelected = computed(() => {

@@ -8,7 +8,7 @@
   >
     <div class="pdx-editor__left">
       <pdx-junk-builder :editor />
-      <pdx-editor-brushes :editor />
+      <pdx-tools :editor />
     </div>
     <div
       class="pdx-editor__board"

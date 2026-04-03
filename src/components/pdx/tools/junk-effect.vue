@@ -1,7 +1,7 @@
 <template>
   <div
-    ref="pdxJunkEffectSelectorRef"
-    class="pdx-junk-effect-selector pdx-tool-selector"
+    ref="effectSelectorRef"
+    class="pdx-tools-junk-effect pdx-tool-selector"
     :class="{
       'pdx-tool-selector--left': isBrush && isLeft,
       'pdx-tool-selector--right': isBrush && isRight,
@@ -13,7 +13,7 @@
   >
     <div
       v-if="imageSrc"
-      class="pdx-junk-effect-selector__image-container"
+      class="pdx-tools-junk-effect__image-container"
     >
       <img
         :src="imageSrc"
@@ -61,7 +61,7 @@ const emit = defineEmits<{
   pointerdown: [PointerEvent]
 }>()
 
-const pdxJunkEffectSelectorRef = useTemplateRef('pdxJunkEffectSelectorRef')
+const effectSelectorRef = useTemplateRef('effectSelectorRef')
 
 const junk = computed(() => {
   return new Junk(JunkShape.RECT_1X1, BlockColor.GRAY, 0, 0, props.effect)
@@ -90,7 +90,7 @@ const tooltipText = computed(() => {
 const { onPointerEnter, onPointerLeave } = useTooltip(
   computed(() => props.effect),
   tooltipText,
-  pdxJunkEffectSelectorRef
+  effectSelectorRef
 )
 
 const isLeft = computed(() => {
@@ -106,7 +106,7 @@ const isRight = computed(() => {
 </script>
 
 <style lang="scss">
-.pdx-junk-effect-selector {
+.pdx-tools-junk-effect {
   &__image-container {
     position: relative;
     width: 100%;

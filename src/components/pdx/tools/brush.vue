@@ -1,7 +1,7 @@
 <template>
   <div
-    ref="pdxBrushSelectorRef"
-    class="pdx-brush-selector pdx-tool-selector"
+    ref="brushSelectorRef"
+    class="pdx-tools-brush pdx-tool-selector"
     :class="{
       'pdx-tool-selector--left': isLeft,
       'pdx-tool-selector--right': isRight,
@@ -36,7 +36,7 @@ const props = defineProps<{
   color: BlockColor
 }>()
 
-const pdxBrushSelectorRef = useTemplateRef('pdxBrushSelectorRef')
+const brushSelectorRef = useTemplateRef('brushSelectorRef')
 
 const imageSrc = computed(() => {
   const color = blockColorNames[props.color]
@@ -58,7 +58,7 @@ const tooltipText = computed(() => {
 const { onPointerEnter, onPointerLeave } = useTooltip(
   tooltipText,
   tooltipText,
-  pdxBrushSelectorRef
+  brushSelectorRef
 )
 
 const isLeft = computed(() => {
@@ -74,7 +74,7 @@ const isRight = computed(() => {
 </script>
 
 <style lang="scss">
-.pdx-brush-selector {
+.pdx-tools-brush {
   img {
     display: block;
     object-fit: cover;

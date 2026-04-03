@@ -60,7 +60,7 @@ onMounted(() => {
 @use './color';
 @use './typography';
 @use './button';
-@use './pdx/tool-selector';
+@use './pdx/tools/tool-selector';
 @use './pdx/junk-selector';
 @use './pdx/side-panel';
 @use './pdx/dialog/common';

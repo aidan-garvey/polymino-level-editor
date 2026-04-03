@@ -1,27 +1,27 @@
 <template>
-  <div class="pdx-side-panel pdx-editor-brushes">
+  <div class="pdx-side-panel pdx-tools">
     <pdx-tooltip />
 
     <div class="text-title text-center">
-      Brushes
+      Tools
     </div>
 
-    <div class="pdx-editor-brushes__section">
-      <pdx-icon-tool-selector
+    <div class="pdx-tools__section">
+      <pdx-tools-tool
         :editor="editor"
         :selected-predicate="selectPredicate"
         icon-name="arrow_selector_tool"
-        tooltip="Select (no brush)"
+        tooltip="Select"
         @pointerdown="e => editor.chooseSelectTool(e)"
       />
-      <pdx-icon-tool-selector
+      <pdx-tools-tool
         :editor="editor"
         :selected-predicate="erasePredicate"
         icon-name="ink_eraser"
         tooltip="Erase"
         @pointerdown="e => editor.selectBrush(e, BlockState.EMPTY, BlockColor.GRAY)"
       />
-      <pdx-icon-tool-selector
+      <pdx-tools-tool
         :editor="editor"
         :selected-predicate="pickerPredicate"
         icon-name="colorize"
@@ -30,12 +30,16 @@
       />
     </div>
 
+    <div class="text-title text-center">
+      Brushes
+    </div>
+
     <div class="text-detail text-center">
       Blocks
     </div>
 
-    <div class="pdx-editor-brushes__section">
-      <pdx-brush-selector
+    <div class="pdx-tools__section">
+      <pdx-tools-brush
         v-for="color in normalBlockColors"
         :key="color"
         :state="BlockState.NORMAL"
@@ -48,15 +52,15 @@
       Junk
     </div>
 
-    <div class="pdx-editor-brushes__section">
-      <pdx-brush-selector
+    <div class="pdx-tools__section">
+      <pdx-tools-brush
         v-for="color in junkBlockColors"
         :key="color"
         :state="BlockState.JUNK"
         :color="color"
         :editor="editor"
       />
-      <pdx-icon-tool-selector
+      <pdx-tools-tool
         :editor="editor"
         :selected-predicate="effectOnlyPredicate"
         icon-name="star"
@@ -69,8 +73,8 @@
       Effects
     </div>
 
-    <div class="pdx-editor-brushes__section">
-      <pdx-junk-effect-brush-selector
+    <div class="pdx-tools__section">
+      <pdx-tools-junk-effect
         v-for="effect in junkEffects"
         :key="effect"
         :effect="effect"
@@ -78,7 +82,7 @@
         is-brush
         @pointerdown="e => editor.selectEffect(e, effect)"
       />
-      <pdx-icon-tool-selector
+      <pdx-tools-tool
         :editor="editor"
         :selected-predicate="noEffectPredicate"
         icon-name="block"
@@ -132,7 +136,7 @@ const pickerPredicate = (tool: Tool) => {
 </script>
 
 <style lang="scss">
-.pdx-editor-brushes {
+.pdx-tools {
   display: flex;
   flex-direction: column;
   gap: 4px;

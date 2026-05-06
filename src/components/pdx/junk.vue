@@ -6,13 +6,14 @@
       gridRow,
       gridColumn,
     }"
-    :draggable="grid.draggableJunk"
+    :draggable="isDraggable"
     @dragstart="onDragStart"
   >
     <pdx-block
       v-for="(pos, index) in blockPositions"
       :key="index"
       :grid
+      :editor
       :row="pos.cellGridRow"
       :col="pos.cellGridCol"
       :style="{
@@ -60,6 +61,10 @@ const emit = defineEmits<{
 }>()
 
 const junkRef = useTemplateRef('junkRef')
+
+const isDraggable = computed(() => {
+  return props.grid.draggableJunk && !props.editor.nextColorMode.value
+})
 
 const gridRow = computed(() => {
   const bottomRow = props.grid.height - props.junk.bottomRow
@@ -109,7 +114,7 @@ const setDragImage = (event: DragEvent) => {
 }
 
 const onDragStart = (event: DragEvent) => {
-  if (!props.grid.draggableJunk)
+  if (!isDraggable.value)
     return
 
   props.editor.isDragging.value = true

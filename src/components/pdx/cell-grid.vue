@@ -20,6 +20,7 @@
         v-for="x in grid.width"
         :key="x"
         :grid
+        :editor
         :row="grid.height - yDown"
         :col="x - 1"
         next-color

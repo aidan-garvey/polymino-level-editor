@@ -27,4 +27,9 @@
   &.pdx-tool-selector--right {
     --right-color: oklch(var(--lch-blue) / 0.75);
   }
+
+  &.pdx-tool-selector--disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
 }

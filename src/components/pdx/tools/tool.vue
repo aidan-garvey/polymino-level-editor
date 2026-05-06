@@ -5,7 +5,9 @@
     :class="{
       'pdx-tool-selector--left': leftSelected,
       'pdx-tool-selector--right': rightSelected,
+      'pdx-tool-selector--disabled': disabled,
     }"
+    :inert="disabled"
     @pointerdown="emit('pointerdown', $event)"
     @pointerenter="onPointerEnter"
     @pointerleave="onPointerLeave"
@@ -29,6 +31,7 @@ const props = defineProps<{
   iconName: string
   tooltip: string
   selectedPredicate: (tool: Tool) => boolean
+  disabled?: boolean
 }>()
 
 const emit = defineEmits<{

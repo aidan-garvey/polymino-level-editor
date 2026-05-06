@@ -19,6 +19,7 @@
         :selected-predicate="erasePredicate"
         icon-name="ink_eraser"
         tooltip="Erase"
+        :disabled="editor.nextColorMode.value"
         @pointerdown="e => editor.selectBrush(e, BlockState.EMPTY, BlockColor.GRAY)"
       />
       <pdx-tools-tool
@@ -33,6 +34,17 @@
     <div class="text-title text-center">
       Brushes
     </div>
+
+    <div class="text-detail text-center">
+      Mode
+    </div>
+
+    <button
+      type="button"
+      @click="editor.toggleNextColor()"
+    >
+      {{ editor.nextColorMode.value ? 'Next color' : 'Blocks' }}
+    </button>
 
     <div class="text-detail text-center">
       Blocks
@@ -59,12 +71,14 @@
         :state="BlockState.JUNK"
         :color="color"
         :editor="editor"
+        :disabled="editor.nextColorMode.value"
       />
       <pdx-tools-tool
         :editor="editor"
         :selected-predicate="effectOnlyPredicate"
         icon-name="star"
         tooltip="Effect only"
+        :disabled="editor.nextColorMode.value"
         @pointerdown="e => editor.selectBrush(e, BlockState.JUNK, null)"
       />
     </div>
@@ -80,6 +94,7 @@
         :effect="effect"
         :editor="editor"
         is-brush
+        :disabled="editor.nextColorMode.value"
         @pointerdown="e => editor.selectEffect(e, effect)"
       />
       <pdx-tools-tool
@@ -87,6 +102,7 @@
         :selected-predicate="noEffectPredicate"
         icon-name="block"
         tooltip="No effect"
+        :disabled="editor.nextColorMode.value"
         @pointerdown="e => editor.selectEffect(e, null)"
       />
     </div>

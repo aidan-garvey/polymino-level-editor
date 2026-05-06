@@ -13,7 +13,7 @@
       v-for="(pos, index) in blockPositions"
       :key="index"
       :grid
-      :editor
+      :disable-drag="!isDraggable"
       :row="pos.cellGridRow"
       :col="pos.cellGridCol"
       :style="{
@@ -63,7 +63,13 @@ const emit = defineEmits<{
 const junkRef = useTemplateRef('junkRef')
 
 const isDraggable = computed(() => {
-  return props.grid.draggableJunk && !props.editor.nextColorMode.value
+  if (!props.grid.draggableJunk)
+    return false
+  if (!props.editor.nextColorMode.value)
+    return true
+  // In next-color mode, the only drag we allow is bringing new junk in from
+  // the junk builder. Junk in the editor's junk layer is not draggable.
+  return props.grid === props.editor.junkBuilder.grid.value
 })
 
 const gridRow = computed(() => {

@@ -15,6 +15,7 @@ import { BlockColor } from '@/types/BlockColor'
 import { MouseButton } from '@/consts/mouse'
 import { History } from '@/types/History/History'
 import { BOARD_WIDTH, BOARD_HEIGHT } from '@/consts/board'
+import { getJunkDragData } from '@/types/JunkDrag'
 
 export class Editor {
   readonly history: History
@@ -393,8 +394,14 @@ export class Editor {
   }
 
   onCellDrop(event: DragEvent, row: number, col: number): void {
-    if (this.nextColorMode.value)
-      return
+    if (this.nextColorMode.value) {
+      // Only allow drops that bring new junk in (e.g. from the junk builder),
+      // not moves of pieces already in the junk layer. selectJunk no-ops in
+      // this mode, so the dropped piece won't be auto-selected.
+      const data = getJunkDragData(event)
+      if (!data || this.junkLayer.board.getJunkById(data.id))
+        return
+    }
 
     const before = this.saveForHistory()
     const numJunkBefore = this.junkLayer.board.getJunk().length

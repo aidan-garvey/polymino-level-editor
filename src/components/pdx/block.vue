@@ -37,7 +37,6 @@
 
 <script setup lang="ts">
 import type { CellGrid } from '@/types/CellGrid'
-import type { Editor } from '@/types/Editor'
 import type { CSSProperties } from 'vue'
 import { BlockState } from '@/types/BlockState'
 import { JunkEffect } from '@/types/JunkEffect'
@@ -46,7 +45,12 @@ const props = withDefaults(defineProps<{
   row: number
   col: number
   grid: CellGrid
-  editor?: Editor
+  /**
+   * If true, the block won't show the grab cursor even when it'd otherwise be
+   * draggable. Drag operations are initiated in pdx-junk, this just controls
+   * style.
+   */
+  disableDrag?: boolean
   /**
    * If true, and the block to render is a junk piece, we render its nextColor
    * instead of the main block.
@@ -105,7 +109,7 @@ const overlayFlip = computed(() => {
 const isDraggable = computed(() => {
   return cell.value.state === BlockState.JUNK
     && props.grid.draggableJunk
-    && !props.editor?.nextColorMode.value
+    && !props.disableDrag
 })
 
 const visibilityStyle = computed<CSSProperties>(() => {

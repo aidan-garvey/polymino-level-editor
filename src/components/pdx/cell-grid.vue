@@ -1,6 +1,6 @@
 <template>
   <div
-    class="cell-grid"
+    class="pdx-cell-grid"
     :style="{
       gridTemplateColumns: cssGridCols,
       gridTemplateRows: cssGridRows,
@@ -82,7 +82,7 @@ const cssHeight = computed(() => `calc(var(--block-size) * ${props.grid.height})
 </script>
 
 <style lang="scss">
-.cell-grid {
+.pdx-cell-grid {
   display: grid;
   position: absolute;
   top: 0;

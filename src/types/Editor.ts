@@ -1,5 +1,6 @@
 import type { JunkEffect } from '@/types/JunkEffect'
 import type { Junk } from '@/types/Junk'
+import type { Block } from '@/types/Block'
 import type { SavedLevel } from '@/types/Saved/SavedLevel'
 import type { ExportedLevel } from '@/types/Exported/ExportedLevel'
 import type { Layer } from '@/types/Layer/Layer'
@@ -272,6 +273,7 @@ export class Editor {
 
   brushCellPointerDown(event: PointerEvent, row: number, col: number): void {
     const useTool = (tool: Ref<Tool>, button: MouseButton) => {
+      let block: Block
       switch (tool.value.kind) {
         case ToolKind.SELECT:
           this.deselectJunk()
@@ -290,7 +292,11 @@ export class Editor {
           }
           break
         case ToolKind.PICKER:
-          this.pick(tool.value, row, col)
+          // Pick from the base layer when the brush layer is empty
+          block = this.brushLayer.board.getBlock(row, col)
+          if (block.state === BlockState.EMPTY)
+            block = this.baseLayer.board.getBlock(row, col)
+          this.pick(tool.value, block)
           break
       }
     }
@@ -342,7 +348,9 @@ export class Editor {
       return
 
     const useTool = (tool: Ref<Tool>, button: MouseButton) => {
-      if (isNextColorBrush(tool.value)) {
+      if (tool.value.kind === ToolKind.PICKER) {
+        this.pick(tool.value, this.junkLayer.board.getBlock(row, col))
+      } else if (isNextColorBrush(tool.value)) {
         this.history.startBrush(tool.value, button)
         this.junkLayer.paintNextColor(tool.value.brushColor, row, col)
       }
@@ -419,9 +427,16 @@ export class Editor {
     }
   }
 
-  private pick(tool: Tool, row: number, col: number): void {
-    const block = this.brushLayer.board.getBlock(row, col)
+  private pick(tool: Tool, block: Block): void {
     if (block.state === BlockState.EMPTY) {
+      return
+    }
+
+    if (this.nextColorMode.value && block.state === BlockState.JUNK) {
+      // Pick the junk block's nextColor as a normal block brush.
+      tool.kind = ToolKind.BRUSH
+      tool.brushState = BlockState.NORMAL
+      tool.brushColor = block.nextColor
       return
     }
 

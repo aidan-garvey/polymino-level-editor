@@ -1,5 +1,6 @@
 <template>
   <pdx-cell-grid
+    class="pdx-layer-base"
     :editor
     :grid="editor.baseLayer.board"
     :should-show
@@ -29,3 +30,11 @@ const shouldShow = (row: number, col: number) => {
   }
 }
 </script>
+
+<style lang="scss">
+.pdx-layer-base {
+  // Always use a consistent background color so translucent blocks don't look
+  // different in next-color mode.
+  background-color: #000;
+}
+</style>

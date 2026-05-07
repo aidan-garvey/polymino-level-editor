@@ -40,6 +40,13 @@ watchEffect(() => {
   }
 })
 
+watchEffect(() => {
+  document.body.classList.toggle(
+    'app--next-color-mode',
+    editor.value.nextColorMode.value
+  )
+})
+
 const noStorageMsg = `Browser storage is unavailable. It may be disabled in \
 your browser's settings. You will still be able to download and upload your \
 levels to and from your device, but will not be able to save them in-app.`
@@ -72,11 +79,16 @@ onMounted(() => {
 
 body {
   margin: 0;
-  background: #000;
+  background-color: #000;
   color: #fff;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
     Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
+  transition: background-color 0.1s ease-out;
+
+  &.app--next-color-mode {
+    background-color: #001;
+  }
 }
 
 // This component's div element

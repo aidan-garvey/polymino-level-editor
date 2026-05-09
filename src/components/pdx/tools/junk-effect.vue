@@ -5,7 +5,9 @@
     :class="{
       'pdx-tool-selector--left': isBrush && isLeft,
       'pdx-tool-selector--right': isBrush && isRight,
+      'pdx-tool-selector--disabled': disabled,
     }"
+    :inert="disabled"
     @pointerdown="e => emit('pointerdown', e)"
     @pointerenter="onPointerEnter"
     @pointerleave="onPointerLeave"
@@ -55,6 +57,7 @@ const props = defineProps<{
   editor: Editor
   effect: JunkEffect
   isBrush?: boolean
+  disabled?: boolean
 }>()
 
 const emit = defineEmits<{

@@ -4,11 +4,11 @@
     class="pdx-junk-editor-piece-view"
     :style="gridStyle"
   >
-    <!-- TODO: need to tell the block not to show the drag cursor -->
     <pdx-block
       v-for="(pos, index) in blockPositions"
       :key="index"
       :grid
+      disable-drag
       :row="pos.cellGridRow"
       :col="pos.cellGridCol"
       :style="{

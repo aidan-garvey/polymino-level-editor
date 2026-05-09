@@ -1,8 +1,11 @@
 import type { JunkEffect } from '@/types/JunkEffect'
 import type { Junk } from '@/types/Junk'
+import type { Block } from '@/types/Block'
 import type { SavedLevel } from '@/types/Saved/SavedLevel'
 import type { ExportedLevel } from '@/types/Exported/ExportedLevel'
-import { type Tool, ToolKind } from '@/types/Tool'
+import type { Layer } from '@/types/Layer/Layer'
+import type { Tool } from '@/types/Tool'
+import { ToolKind, isNextColorBrush } from '@/types/Tool'
 import { CellGrid } from '@/types/CellGrid'
 import { BaseLayer } from '@/types/Layer/BaseLayer'
 import { BrushLayer } from '@/types/Layer/BrushLayer'
@@ -13,6 +16,7 @@ import { BlockColor } from '@/types/BlockColor'
 import { MouseButton } from '@/consts/mouse'
 import { History } from '@/types/History/History'
 import { BOARD_WIDTH, BOARD_HEIGHT } from '@/consts/board'
+import { getJunkDragData } from '@/types/JunkDrag'
 
 export class Editor {
   readonly history: History
@@ -28,6 +32,14 @@ export class Editor {
   readonly brushLayer: BrushLayer
 
   readonly junkLayer: JunkLayer
+
+  private get layers(): Layer[] {
+    return [
+      this.baseLayer,
+      this.brushLayer,
+      this.junkLayer,
+    ]
+  }
 
   readonly junkBuilder: JunkBuilder
 
@@ -63,6 +75,8 @@ export class Editor {
     brushEffect: null,
   })
 
+  readonly nextColorMode = ref(false)
+
   /**
    * When a drop event occurs, if a different element is at the location where
    * the drag operation began, a pointerenter event is fired on the new element
@@ -89,6 +103,9 @@ export class Editor {
    */
   readonly isDragging = ref(false)
 
+  /**
+   * Used to display the current cell in the status bar
+   */
   readonly mouseCoordinates = ref<{ row: number, col: number } | null>(null)
 
   constructor(data?: SavedLevel) {
@@ -249,23 +266,37 @@ export class Editor {
       this.leftTool.value.kind = ToolKind.SELECT
     }
     if (event.buttons & MouseButton.RIGHT) {
+      event.preventDefault()
       this.rightTool.value.kind = ToolKind.SELECT
     }
   }
 
   brushCellPointerDown(event: PointerEvent, row: number, col: number): void {
     const useTool = (tool: Ref<Tool>, button: MouseButton) => {
+      let block: Block
       switch (tool.value.kind) {
         case ToolKind.SELECT:
           this.deselectJunk()
           break
         case ToolKind.BRUSH:
-          // must call before applying brush so our 'before' state is correct
-          this.history.startBrush(tool.value, button)
-          this.brushLayer.applyBrush(tool.value, row, col)
+          if (this.nextColorMode.value) {
+            if (isNextColorBrush(tool.value)) {
+              // must call before applying brush so 'before' state is correct
+              this.history.startBrush(tool.value, button)
+              this.brushLayer.paintNextColor(tool.value.brushColor, row, col)
+            }
+          } else {
+            // must call before applying brush so our 'before' state is correct
+            this.history.startBrush(tool.value, button)
+            this.brushLayer.applyBrush(tool.value, row, col)
+          }
           break
         case ToolKind.PICKER:
-          this.pick(tool.value, row, col)
+          // Pick from the base layer when the brush layer is empty
+          block = this.brushLayer.board.getBlock(row, col)
+          if (block.state === BlockState.EMPTY)
+            block = this.baseLayer.board.getBlock(row, col)
+          this.pick(tool.value, block)
           break
       }
     }
@@ -289,9 +320,17 @@ export class Editor {
 
     const useTool = (tool: Ref<Tool>, button: MouseButton) => {
       if (tool.value.kind === ToolKind.BRUSH) {
-        // must call before applying brush so our 'before' state is correct
-        this.history.continueBrush(tool.value, button)
-        this.brushLayer.applyBrush(tool.value, row, col)
+        if (this.nextColorMode.value) {
+          if (isNextColorBrush(tool.value)) {
+            // must call before applying brush so our 'before' state is correct
+            this.history.continueBrush(tool.value, button)
+            this.brushLayer.paintNextColor(tool.value.brushColor, row, col)
+          }
+        } else {
+          // must call before applying brush so our 'before' state is correct
+          this.history.continueBrush(tool.value, button)
+          this.brushLayer.applyBrush(tool.value, row, col)
+        }
       }
     }
 
@@ -304,9 +343,51 @@ export class Editor {
     }
   }
 
+  junkCellPointerDown(event: PointerEvent, row: number, col: number): void {
+    if (!this.nextColorMode.value)
+      return
+
+    const useTool = (tool: Ref<Tool>, button: MouseButton) => {
+      if (tool.value.kind === ToolKind.PICKER) {
+        this.pick(tool.value, this.junkLayer.board.getBlock(row, col))
+      } else if (isNextColorBrush(tool.value)) {
+        this.history.startBrush(tool.value, button)
+        this.junkLayer.paintNextColor(tool.value.brushColor, row, col)
+      }
+    }
+
+    if (event.buttons & MouseButton.LEFT) {
+      useTool(this.leftTool, MouseButton.LEFT)
+    } else if (event.buttons & MouseButton.RIGHT) {
+      event.preventDefault()
+      useTool(this.rightTool, MouseButton.RIGHT)
+    }
+  }
+
   junkCellPointerEnter(event: PointerEvent, row: number, col: number): void {
-    void event
     this.mouseCoordinates.value = { row, col }
+
+    if (!this.nextColorMode.value)
+      return
+
+    if (this.isDragging.value) {
+      this.isDragging.value = false
+      return
+    }
+
+    const useTool = (tool: Ref<Tool>, button: MouseButton) => {
+      if (isNextColorBrush(tool.value)) {
+        this.history.continueBrush(tool.value, button)
+        this.junkLayer.paintNextColor(tool.value.brushColor, row, col)
+      }
+    }
+
+    if (event.buttons & MouseButton.LEFT) {
+      useTool(this.leftTool, MouseButton.LEFT)
+    } else if (event.buttons & MouseButton.RIGHT) {
+      event.preventDefault()
+      useTool(this.rightTool, MouseButton.RIGHT)
+    }
   }
 
   onCellPointerLeave(event: PointerEvent, row: number, col: number): void {
@@ -321,6 +402,14 @@ export class Editor {
   }
 
   onCellDrop(event: DragEvent, row: number, col: number): void {
+    if (this.nextColorMode.value) {
+      // Only allow drops that bring new junk in (e.g. from the junk builder),
+      // not moves of pieces already in the junk layer.
+      const data = getJunkDragData(event)
+      if (!data || this.junkLayer.board.getJunkById(data.id))
+        return
+    }
+
     const before = this.saveForHistory()
     const numJunkBefore = this.junkLayer.board.getJunk().length
 
@@ -337,9 +426,16 @@ export class Editor {
     }
   }
 
-  private pick(tool: Tool, row: number, col: number): void {
-    const block = this.brushLayer.board.getBlock(row, col)
+  private pick(tool: Tool, block: Block): void {
     if (block.state === BlockState.EMPTY) {
+      return
+    }
+
+    if (this.nextColorMode.value && block.state === BlockState.JUNK) {
+      // Pick the junk block's nextColor as a normal block brush.
+      tool.kind = ToolKind.BRUSH
+      tool.brushState = BlockState.NORMAL
+      tool.brushColor = block.nextColor
       return
     }
 
@@ -381,6 +477,27 @@ export class Editor {
       this.junkLayer.board.removeJunk(this.selectedJunk.value)
       this.deselectJunk()
       this.history.pushDeleteJunk(before)
+    }
+  }
+
+  toggleNextColor(): void {
+    this.nextColorMode.value = !this.nextColorMode.value
+    const enabled = this.nextColorMode.value
+
+    if (enabled) {
+      // ensure we aren't selecting a disabled tool
+      for (const tool of [this.leftTool.value, this.rightTool.value]) {
+        if (tool.kind === ToolKind.BRUSH && !isNextColorBrush(tool)) {
+          tool.kind = ToolKind.SELECT
+        }
+      }
+      for (const layer of this.layers) {
+        layer.setNextColorModeOpacity()
+      }
+    } else {
+      for (const layer of this.layers) {
+        layer.setNormalModeOpacity()
+      }
     }
   }
 }

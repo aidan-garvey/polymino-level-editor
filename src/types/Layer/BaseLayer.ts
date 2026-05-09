@@ -1,5 +1,6 @@
 import type { BlockColor } from '@/types/BlockColor'
 import type { SavedBaseLayer } from '@/types/Saved/SavedBaseLayer'
+import type { Layer } from '@/types/Layer/Layer'
 import { NormalBlock } from '@/types/Block'
 import { CellGrid } from '@/types/CellGrid'
 import { MinstdRand } from '@/utils/RandomEngine'
@@ -9,7 +10,7 @@ import { randomColor } from '@/utils/randomColor'
 /**
  * The base layer consists of an initial CellGrid filled with random blocks.
  */
-export class BaseLayer {
+export class BaseLayer implements Layer {
   readonly board: CellGrid
 
   /**
@@ -31,10 +32,10 @@ export class BaseLayer {
     rows = BOARD_HEIGHT
   ) {
     this.board = new CellGrid(BOARD_WIDTH, BOARD_HEIGHT, false)
-    this.board.blockOpacity.value = 0.25
     this.seed = ref(seed)
     this.rows = ref(rows)
     this.generateGrid()
+    this.setNormalModeOpacity()
   }
 
   static fromSaved(data: SavedBaseLayer): BaseLayer {
@@ -80,6 +81,18 @@ export class BaseLayer {
   setBannedColor(color?: BlockColor): void {
     this.bannedColor = color
     this.generateGrid()
+  }
+
+  setNormalModeOpacity() {
+    this.board.blockOpacity.value = 0.25
+    // The base layer should never have junk, but if it somehow did, we want to
+    // see the problem instead of hiding it
+    this.board.junkOpacity.value = 1
+    this.board.nextColorOpacity.value = 1
+  }
+  setNextColorModeOpacity() {
+    // No differences between modes
+    this.setNormalModeOpacity()
   }
 
   private getColor(row: number, col: number): BlockColor | null {

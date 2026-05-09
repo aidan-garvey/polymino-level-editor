@@ -5,7 +5,9 @@
     :class="{
       'pdx-tool-selector--left': isLeft,
       'pdx-tool-selector--right': isRight,
+      'pdx-tool-selector--disabled': disabled,
     }"
+    :inert="disabled"
     @pointerdown="e => editor.selectBrush(e, state, color)"
     @pointerenter="onPointerEnter"
     @pointerleave="onPointerLeave"
@@ -34,6 +36,7 @@ const props = defineProps<{
   editor: Editor
   state: BlockState.NORMAL | BlockState.JUNK
   color: BlockColor
+  disabled?: boolean
 }>()
 
 const brushSelectorRef = useTemplateRef('brushSelectorRef')

@@ -46,6 +46,12 @@ const props = withDefaults(defineProps<{
   col: number
   grid: CellGrid
   /**
+   * If true, the block won't show the grab cursor even when it'd otherwise be
+   * draggable. Drag operations are initiated in pdx-junk, this just controls
+   * style.
+   */
+  disableDrag?: boolean
+  /**
    * If true, and the block to render is a junk piece, we render its nextColor
    * instead of the main block.
    */
@@ -101,7 +107,9 @@ const overlayFlip = computed(() => {
 })
 
 const isDraggable = computed(() => {
-  return cell.value.state === BlockState.JUNK && props.grid.draggableJunk
+  return cell.value.state === BlockState.JUNK
+    && props.grid.draggableJunk
+    && !props.disableDrag
 })
 
 const visibilityStyle = computed<CSSProperties>(() => {

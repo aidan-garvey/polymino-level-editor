@@ -1,5 +1,7 @@
 import type { Tool } from '@/types/Tool'
 import type { ExportedCellGrid } from '@/types/Exported/ExportedCellGrid'
+import type { Layer } from '@/types/Layer/Layer'
+import type { BlockColor } from '@/types/BlockColor'
 import { BOARD_HEIGHT, BOARD_WIDTH } from '@/consts/board'
 import { BlockState } from '@/types/BlockState'
 import { CellGrid } from '@/types/CellGrid'
@@ -7,15 +9,23 @@ import { NormalBlock } from '@/types/Block'
 import { Junk } from '@/types/Junk'
 import { JunkShape } from '@/types/JunkShape'
 
-export class BrushLayer {
+export class BrushLayer implements Layer {
   readonly board: CellGrid
 
   constructor(board?: CellGrid) {
     this.board = board ?? new CellGrid(BOARD_WIDTH, BOARD_HEIGHT, false)
+    this.setNormalModeOpacity()
   }
 
   restore(data: ExportedCellGrid): void {
     this.board.restore(data)
+  }
+
+  paintNextColor(color: BlockColor, row: number, col: number): void {
+    const block = this.board.getBlock(row, col)
+    if (block.state === BlockState.JUNK) {
+      block.nextColor = color
+    }
   }
 
   applyBrush(tool: Tool, row: number, col: number): void {
@@ -42,5 +52,16 @@ export class BrushLayer {
         }
         break
     }
+  }
+
+  setNormalModeOpacity() {
+    this.board.blockOpacity.value = 1
+    this.board.junkOpacity.value = 1
+    this.board.nextColorOpacity.value = 0
+  }
+  setNextColorModeOpacity() {
+    this.board.blockOpacity.value = 0.75
+    this.board.junkOpacity.value = 0.5
+    this.board.nextColorOpacity.value = 1
   }
 }

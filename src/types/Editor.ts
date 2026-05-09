@@ -404,8 +404,7 @@ export class Editor {
   onCellDrop(event: DragEvent, row: number, col: number): void {
     if (this.nextColorMode.value) {
       // Only allow drops that bring new junk in (e.g. from the junk builder),
-      // not moves of pieces already in the junk layer. selectJunk no-ops in
-      // this mode, so the dropped piece won't be auto-selected.
+      // not moves of pieces already in the junk layer.
       const data = getJunkDragData(event)
       if (!data || this.junkLayer.board.getJunkById(data.id))
         return
@@ -449,9 +448,7 @@ export class Editor {
   }
 
   selectJunk(junk: Junk): void {
-    if (!this.nextColorMode.value) {
-      this.selectedJunk.value = junk
-    }
+    this.selectedJunk.value = junk
   }
 
   deselectJunk(): void {
@@ -488,8 +485,6 @@ export class Editor {
     const enabled = this.nextColorMode.value
 
     if (enabled) {
-      // selection is disabled in this mode, so clear any current selection
-      this.selectedJunk.value = null
       // ensure we aren't selecting a disabled tool
       for (const tool of [this.leftTool.value, this.rightTool.value]) {
         if (tool.kind === ToolKind.BRUSH && !isNextColorBrush(tool)) {

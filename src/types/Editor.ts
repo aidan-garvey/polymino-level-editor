@@ -449,9 +449,7 @@ export class Editor {
   }
 
   selectJunk(junk: Junk): void {
-    if (!this.nextColorMode.value) {
-      this.selectedJunk.value = junk
-    }
+    this.selectedJunk.value = junk
   }
 
   deselectJunk(): void {
@@ -488,8 +486,6 @@ export class Editor {
     const enabled = this.nextColorMode.value
 
     if (enabled) {
-      // selection is disabled in this mode, so clear any current selection
-      this.selectedJunk.value = null
       // ensure we aren't selecting a disabled tool
       for (const tool of [this.leftTool.value, this.rightTool.value]) {
         if (tool.kind === ToolKind.BRUSH && !isNextColorBrush(tool)) {

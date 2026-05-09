@@ -1,3 +1,5 @@
+import { hasOpenDialogs } from '@/use/dialog-registry'
+
 type KeyHandler = (e: KeyboardEvent) => void
 
 /**
@@ -5,6 +7,8 @@ type KeyHandler = (e: KeyboardEvent) => void
  * simultaneously is separated by a '+', and an action to perform when the key
  * combination is pressed, return an event handler that calls preventDefault on
  * the event and invokes the given callback when the key combination is pressed.
+ *
+ * Key combos are disabled when a dialog is open.
  */
 export const makeKeyCombo = (
   hotkeyLabel: string,
@@ -44,7 +48,8 @@ export const makeKeyCombo = (
   }
 
   return (e: KeyboardEvent) => {
-    if (e.altKey === alt
+    if (!hasOpenDialogs()
+      && e.altKey === alt
       && e.ctrlKey === ctrl
       && e.shiftKey === shift
       && e.key.toLowerCase() === letter
@@ -58,7 +63,8 @@ export const makeKeyCombo = (
 
 /**
  * Return a KeyboardEvent handler which invokes the given callback when any of
- * the specified keys are pressed, _unless_ an input element is focused.
+ * the specified keys are pressed, _unless_ an input element is focused or a
+ * dialog is open.
  */
 export const makeHotkey = (
   action: KeyHandler,
@@ -68,7 +74,10 @@ export const makeHotkey = (
 
   return (e: KeyboardEvent) => {
     const isTyping = document.activeElement?.tagName === 'INPUT'
-    if (!isTyping && keys.includes(e.key.toLocaleLowerCase())) {
+    if (!hasOpenDialogs()
+      && !isTyping
+      && keys.includes(e.key.toLocaleLowerCase())
+    ) {
       e.preventDefault()
       e.stopPropagation()
       action(e)

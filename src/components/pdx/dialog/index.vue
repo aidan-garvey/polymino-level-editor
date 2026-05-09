@@ -11,6 +11,7 @@
 
 <script setup lang="ts">
 import { injectDialogOpen } from './inject'
+import { registerSelf, deregisterSelf } from '@/use/dialog-registry'
 
 const modelValue = defineModel<boolean>({ required: true })
 
@@ -20,20 +21,32 @@ const props = withDefaults(defineProps<{
   closedby: 'any'
 })
 
+// We won't be registered until we call registerSelf, but calling deregisterSelf
+// with an unknown symbol is a no-op, so this saves us the hassle of null checks
+let dialogId = Symbol()
+
 provide(injectDialogOpen, modelValue)
 
 const dialogRef = useTemplateRef('dialogRef')
 
 const toggle = (show: boolean) => {
   if (show) {
+    deregisterSelf(dialogId)
+    dialogId = registerSelf()
     dialogRef.value?.showModal()
   } else {
+    deregisterSelf(dialogId)
     dialogRef.value?.close()
   }
 }
 
 watch(modelValue, show => toggle(show))
 watch(dialogRef, () => toggle(modelValue.value))
+
+// Always ensure we deregister ourself before the symbol falls out of scope
+onScopeDispose(() => {
+  deregisterSelf(dialogId)
+})
 </script>
 
 <style lang="scss">

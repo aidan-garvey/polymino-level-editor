@@ -1,7 +1,7 @@
 import type { Tool } from '@/types/Tool'
 import type { Editor } from '@/types/Editor'
 import type { MouseButton } from '@/consts/mouse'
-import type { SavedLevel } from '@/types/Saved/SavedLevel'
+import { savedLevelsEqual, type SavedLevel } from '@/types/Saved/SavedLevel'
 import type {
   Action,
   CompletedAction,
@@ -34,13 +34,11 @@ export class History {
 
   /**
    * Public view of undoable actions, oldest to newest.
-   * Includes the pending action, if any.
+   * Does not include the pending action, as the pending action may be silently
+   * discarded if it did not result in any change once it is finished.
    */
   readonly undoActions = computed<Action[]>(() => {
-    const result = this.undoStack.map(a => a.action)
-    if (this.pending.value)
-      result.push(this.pending.value.action)
-    return result
+    return this.undoStack.map(a => a.action)
   })
 
   /**
@@ -104,14 +102,22 @@ export class History {
   }
 
   /**
-   * Push the pending action (if one exists) onto the undo stack. Returns true
-   * if there was an action to push, or false otherwise.
+   * Push the pending action onto the undo stack if one exists and its `before`
+   * state is different from the editor's current state. Returns true if the
+   * action was pushed, or false otherwise.
    */
   private pushPending(): boolean {
     if (this.pending.value) {
+      const currState = this.editor.saveForHistory()
+
+      if (savedLevelsEqual(this.pending.value.before, currState)) {
+        this.pending.value = null
+        return false
+      }
+
       this.undoStack.push({
         ...this.pending.value,
-        after: this.editor.saveForHistory(),
+        after: currState,
       })
       this.pending.value = null
       return true
@@ -183,13 +189,19 @@ export class History {
   }
 
   /**
-   * If the action indentified by the given parameters is a continuation of the
+   * If the action identified by the given parameters is a continuation of the
    * current action, this method does nothing. Otherwise, a new brush action is
    * started.
    */
   continueBrush(tool: Tool, button: MouseButton): void {
     if (!this.matchesPendingBrush(tool, button)) {
       this.startBrush(tool, button)
+    }
+  }
+
+  endBrush(): void {
+    if (this.pending.value?.action.kind === ActionKind.BRUSH) {
+      this.finishAction()
     }
   }
 

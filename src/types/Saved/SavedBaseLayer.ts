@@ -19,3 +19,12 @@ export const isSavedBaseLayer = (data: unknown): data is SavedBaseLayer => {
       || typeof data.bannedColor === typeof BlockColor.BLUE
     )
 }
+
+export const savedBaseLayersEqual = (
+  a: SavedBaseLayer,
+  b: SavedBaseLayer,
+) => {
+  return a.seed === b.seed
+    && a.rows === b.rows
+    && a.bannedColor === b.bannedColor
+}

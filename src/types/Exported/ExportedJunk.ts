@@ -27,3 +27,11 @@ export const isExportedJunk = (data: unknown): data is ExportedJunk => {
       || typeof data.activeEffect === typeof JunkEffect.Armored
     )
 }
+
+export const exportedJunkEqual = (a: ExportedJunk, b: ExportedJunk) => {
+  return a.shape === b.shape
+    && a.color === b.color
+    && a.bottomRow === b.bottomRow
+    && a.leftColumn === b.leftColumn
+    && a.activeEffect === b.activeEffect
+}

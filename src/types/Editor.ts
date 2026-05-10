@@ -426,6 +426,14 @@ export class Editor {
     }
   }
 
+  /**
+   * Global handler for pointerup and pointercancel events, to handle the end of
+   * a brush action.
+   */
+  onPointerReleased(): void {
+    this.history.endBrush()
+  }
+
   private pick(tool: Tool, block: Block): void {
     if (block.state === BlockState.EMPTY) {
       return

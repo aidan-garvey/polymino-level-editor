@@ -51,3 +51,20 @@ export const isExportedBlock = (data: unknown): data is ExportedBlock => {
       return false
   }
 }
+
+export const exportedBlocksEqual = (a: ExportedBlock, b: ExportedBlock) => {
+  switch (a.state) {
+    case BlockState.EMPTY:
+      return a.state === b.state
+    case BlockState.NORMAL:
+      return a.state === b.state
+        && a.color === b.color
+    case BlockState.JUNK:
+      return a.state === b.state
+        && a.color === b.color
+        && a.nextColor === b.nextColor
+    default:
+      // @ts-expect-error this branch should never be reached
+      throw new TypeError(`Invalid state for ExportedBlock ${a.state}`)
+  }
+}

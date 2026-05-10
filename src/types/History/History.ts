@@ -17,6 +17,11 @@ import { notNull } from '@/utils/notNull'
  * Maintains record history of editor actions, enabling undo/redo functionality.
  */
 export class History {
+  /**
+   * Maximum stack entries to store before we start discarding the oldest ones.
+   */
+  private static readonly STACK_LIMIT = 128
+
   private readonly undoStack = reactive<CompletedAction[]>([])
   private readonly redoStack = reactive<CompletedAction[]>([])
 
@@ -48,6 +53,10 @@ export class History {
     return this.redoStack.map(a => a.action).reverse()
   })
 
+  /**
+   * Pushes the initial NEW_LEVEL/OPEN_LEVEL action onto the stack when this
+   * object is constructed.
+   */
   private pushDataAction(kind: DataAction['kind'], data: SavedLevel): void {
     this.undoStack.push({
       action: {
@@ -72,6 +81,7 @@ export class History {
       before,
       after: this.editor.saveForHistory(),
     })
+    this.trimStack()
   }
 
   private startSettingsAction(kind: SettingsAction['kind']): void {
@@ -120,6 +130,7 @@ export class History {
         after: currState,
       })
       this.pending.value = null
+      this.trimStack()
       return true
     } else {
       return false
@@ -164,6 +175,18 @@ export class History {
       && this.pending.value.action.kind === ActionKind.BRUSH
       && this.pending.value.action.button === button
       && compareBrushes(this.pending.value.action.tool, tool)
+  }
+
+  /**
+   * Ensures the undo stack is no larger than STACK_LIMIT.
+   */
+  private trimStack() {
+    // Note that we don't care about the size of the redo stack, as every action
+    // added to the redo stack was removed from the undo stack, and if we add
+    // more actions to the undo stack, we clear the redo stack.
+    while (this.undoStack.length > History.STACK_LIMIT) {
+      this.undoStack.shift()
+    }
   }
 
   constructor(editor: Editor, isNewLevel: boolean) {
@@ -345,7 +368,7 @@ export class History {
     const lastAction = this.pending.value ?? this.undoStack.at(-1)
     // The case where lastAction is undefined has no meaning because we always
     // push a NEW_LEVEL or OPEN_LEVEL action when we're created, and don't allow
-    // undoing it.
+    // undoing the last action on the stack.
     return lastAction?.action.id !== this.lastSavedId.value
   }
 }

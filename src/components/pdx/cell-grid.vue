@@ -89,5 +89,7 @@ const cssHeight = computed(() => `calc(var(--block-size) * ${props.grid.height})
   left: 0;
   // don't block events in lower layers
   pointer-events: none;
+  // prevents highlighting if a click-and-drag starts outside of the cell grid
+  user-select: none;
 }
 </style>

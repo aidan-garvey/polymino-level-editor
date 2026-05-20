@@ -51,8 +51,8 @@ export class JunkLayer implements Layer {
 
     const existing = this.board.getJunkById(data.id)
 
-    // Holding shift copies junk, otherwise it gets moved if it isn't coming
-    // from another cell grid
+    // Holding shift copies junk, and we also assume the junk is coming from the
+    // junk builder if it doesn't already exist in the junk layer.
     if (!existing || event.shiftKey) {
       return this.placeJunk(data, row, col)
     } else {

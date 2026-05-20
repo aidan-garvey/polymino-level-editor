@@ -108,6 +108,17 @@ export class Editor {
    */
   readonly mouseCoordinates = ref<{ row: number, col: number } | null>(null)
 
+  /**
+   * The cell which was most recently clicked, or null if none have been clicked
+   * yet. Whenever the element under the mouse changes due to a brush being
+   * used, the browser fires a pointerenter event on the element, which we need
+   * to ignore to not erroneously apply a brush.
+   * We only care about pointerenter when applying brushes, in which case the
+   * first cell in the brush stroke is painted with a pointerdown event and we
+   * can safely ignore pointerenter events on it until the next brush stroke.
+   */
+  private lastPointerDownCell: { row: number, col: number } | null = null
+
   constructor(data?: SavedLevel) {
     // When a level is loaded or a new level is started, we create a new history
     // object, which resets the "unsaved changes" state.
@@ -272,6 +283,8 @@ export class Editor {
   }
 
   brushCellPointerDown(event: PointerEvent, row: number, col: number): void {
+    this.lastPointerDownCell = { row, col }
+
     const useTool = (tool: Ref<Tool>, button: MouseButton) => {
       let block: Block
       switch (tool.value.kind) {
@@ -318,6 +331,14 @@ export class Editor {
       return
     }
 
+    // Need to check this after `isDragging` so we don't consume all synthetic
+    // events and prevent `isDragging` from ever being cleared.
+    if (this.lastPointerDownCell?.row === row
+      && this.lastPointerDownCell.col === col
+    ) {
+      return
+    }
+
     const useTool = (tool: Ref<Tool>, button: MouseButton) => {
       if (tool.value.kind === ToolKind.BRUSH) {
         if (this.nextColorMode.value) {
@@ -344,6 +365,8 @@ export class Editor {
   }
 
   junkCellPointerDown(event: PointerEvent, row: number, col: number): void {
+    this.lastPointerDownCell = { row, col }
+
     if (!this.nextColorMode.value)
       return
 
@@ -372,6 +395,14 @@ export class Editor {
 
     if (this.isDragging.value) {
       this.isDragging.value = false
+      return
+    }
+
+    // Need to check this after `isDragging` so we don't consume all synthetic
+    // events and prevent `isDragging` from ever being cleared.
+    if (this.lastPointerDownCell?.row === row
+      && this.lastPointerDownCell.col === col
+    ) {
       return
     }
 

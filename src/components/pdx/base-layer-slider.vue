@@ -9,6 +9,7 @@
     <div
       ref="sliderTrack"
       class="pdx-base-layer-slider__track"
+      @pointerdown="onTrackPointerDown"
     >
     </div>
     <div
@@ -70,6 +71,14 @@ const onPointerDown = (event: PointerEvent) => {
   // Have to start/end this action on direct pointer interaction, so it isn't
   // tracked when we update the slider based on external changes
   props.editor.history.startBaseLayerRows()
+}
+
+// When the track is clicked outside of the thumb, call onPointerDown to start
+// pointer capture and the history action, then call onPointerMove to make the
+// thumb jump to the cursor.
+const onTrackPointerDown = (event: PointerEvent) => {
+  onPointerDown(event)
+  onPointerMove(event)
 }
 
 const onPointerMove = (event: PointerEvent) => {

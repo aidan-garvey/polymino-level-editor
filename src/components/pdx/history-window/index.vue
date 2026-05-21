@@ -91,9 +91,11 @@ const contentMaxHeight = computed(() => {
   }
 
   &__content {
+    min-width: 128px;
     border: 1px solid #fff;
     overflow-y: scroll;
-    min-width: 128px;
+    scrollbar-width: thin;
+    scrollbar-color: #777 #333;
   }
 }
 </style>

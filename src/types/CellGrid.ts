@@ -125,7 +125,19 @@ export class CellGrid {
           throw new TypeError(`Cell not found at (row, col) = (${row}, ${col})`)
         }
         if (src.value.state === BlockState.NORMAL) {
+          // Copy our normal blocks
           other.placeBlock(row, col, new NormalBlock(src.value.color))
+        } else if (src.value.state === BlockState.JUNK) {
+          // Set nextColor for junk blocks
+          const dest = other.cells[row]?.[col]
+          if (!dest
+            || dest.value.state !== BlockState.JUNK
+            || dest.value.color !== src.value.color
+          ) {
+            throw new TypeError('Expected placeJunk to have created matching '
+              + `junk block at (row, col) = (${row}, ${col})`)
+          }
+          dest.value.nextColor = src.value.nextColor
         }
       }
     }

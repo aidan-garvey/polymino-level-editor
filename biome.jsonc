@@ -137,8 +137,8 @@
                 "selector": {
                   "kind": "enumMember"
                 },
-                // Both are allowed, they were copied as-is from Polymino's code
-                // and I don't really see the point in changing them.
+                // Both are allowed, some enums were copied directly from
+                // Polymino's code and I don't see the point in changing them.
                 "formats": ["PascalCase", "CONSTANT_CASE"]
               }
             ]

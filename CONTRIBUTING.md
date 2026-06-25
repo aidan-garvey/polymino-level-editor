@@ -1,7 +1,7 @@
 # Contributing
 
 Thank you for your interest in contributing to Polymino's level editor!
-Please read the project's [readme](README.md) for basic info about running the
+Please read the project's [readme](./README.md) for basic info about running the
 project and running the linter, etc.
 
 ## Issues
@@ -40,11 +40,11 @@ Biome is only used for linting the project, you don't have to use it to format
 your code when contributing. However, please use it to lint your code before
 opening a pull request. If you disagree with one of the enabled rules, or think
 certain disabled rules should be enabled, you are more than welcome to open a PR
-which modifies [biome.json](biome.json) to propose changes.
+which modifies [biome.jsonc](./biome.jsonc) to propose changes.
 
 Any rules handled by TypeScript itself rather than the linter should be placed
-in the "compilerOptions" object in [tsconfig.base.json](tsconfig.base.json), and
-you're once again more than welcome to propose changes by opening a PR which
+in the "compilerOptions" object in [tsconfig.base.json](./tsconfig.base.json),
+and you're once again more than welcome to propose changes by opening a PR which
 modifies this file.
 
 ## Design style

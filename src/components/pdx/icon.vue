@@ -22,7 +22,7 @@ defineProps<{
    * Number or numeric string representing size in pixels (not including CSS
    * units)
    */
-  size: number | string
+  size: number | `${number}`
   fill?: boolean
 }>()
 </script>

@@ -77,6 +77,8 @@ const onColorChange = () => {
 
 <style lang="scss">
 .pdx-level-settings-banned-color {
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
 }
 </style>

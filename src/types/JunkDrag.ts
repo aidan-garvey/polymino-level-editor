@@ -39,9 +39,11 @@ export interface JunkDragData {
   effect: JunkEffect | null
 }
 
-export const isJunkDragData = (data: unknown): data is JunkDragData => {
+const isJunkDragData = (data: unknown): data is JunkDragData => {
   return typeof data === 'object'
     && data !== null
+    && 'id' in data
+    && typeof data.id === 'number'
     && 'shape' in data
     && typeof data.shape === typeof JunkShape.RECT_1X1
     && 'color' in data

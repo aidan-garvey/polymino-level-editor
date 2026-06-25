@@ -14,7 +14,7 @@ export interface ExportedNormalBlock {
 // a nice assumption we can make is that each junk piece on the board will be
 // fully intact, and thus we can derive which blocks belong to it based on its
 // position and shape, instead of storing info in each block to identify its
-// piece.
+// piece. For this same reason, we don't need to export JunkBlockTypes either.
 export interface ExportedJunkBlock {
   readonly state: BlockState.JUNK
   readonly color: BlockColor

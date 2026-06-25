@@ -5,10 +5,10 @@ export const useTooltip = (
   tooltip: MaybeRef<string>,
   triggerRef: Readonly<ShallowRef<HTMLElement | null>>,
 ) => {
-  const tooltipOffsetY = toRef(inject(injectTooltipOffsetY, undefined))
-  const tooltipTriggerHeight = toRef(inject(injectTooltipTriggerHeight, undefined))
-  const tooltipItemName = toRef(inject(injectTooltipItemName, undefined))
-  const tooltipText = toRef(inject(injectTooltipText, undefined))
+  const tooltipOffsetY = toRef(injectLocal(injectTooltipOffsetY, undefined))
+  const tooltipTriggerHeight = toRef(injectLocal(injectTooltipTriggerHeight, undefined))
+  const tooltipItemName = toRef(injectLocal(injectTooltipItemName, undefined))
+  const tooltipText = toRef(injectLocal(injectTooltipText, undefined))
 
   const onPointerEnter = () => {
     if (triggerRef.value) {
@@ -32,18 +32,19 @@ export const useTooltip = (
 }
 
 /**
- * Creates and provides refs for tooltips.
+ * Creates and provides refs for tooltips. Uses VueUse's provideLocal so
+ * useTooltip can be used in the same component which calls this.
  */
 export const provideTooltipRefs = () => {
   const tooltipOffsetY = ref(0)
-  provide(injectTooltipOffsetY, tooltipOffsetY)
+  provideLocal(injectTooltipOffsetY, tooltipOffsetY)
 
   const tooltipTriggerHeight = ref(0)
-  provide(injectTooltipTriggerHeight, tooltipTriggerHeight)
+  provideLocal(injectTooltipTriggerHeight, tooltipTriggerHeight)
 
   const tooltipText = ref('')
-  provide(injectTooltipText, tooltipText)
+  provideLocal(injectTooltipText, tooltipText)
 
   const tooltipItemName = ref<string | null>(null)
-  provide(injectTooltipItemName, tooltipItemName)
+  provideLocal(injectTooltipItemName, tooltipItemName)
 }

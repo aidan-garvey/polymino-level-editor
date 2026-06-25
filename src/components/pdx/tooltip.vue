@@ -6,7 +6,7 @@
         top: `${top}`,
         right: `${right}`,
         minHeight: `${tooltipTriggerHeight}px`,
-        padding: `4px ${hPadding}`,
+        padding: `${MIN_PADDING}px ${hPadding}`,
         fontSize: `${FONT_SIZE}px`,
         lineHeight: `${FONT_SIZE}px`,
         ...displayStyle
@@ -18,18 +18,30 @@
 </template>
 
 <script setup lang="ts">
-import { injectTooltipItemName, injectTooltipOffsetY, injectTooltipText, injectTooltipTriggerHeight } from '@/consts/inject'
 import { notNull } from '@/utils/notNull'
+import {
+  injectTooltipItemName,
+  injectTooltipOffsetY,
+  injectTooltipText,
+  injectTooltipTriggerHeight,
+} from '@/consts/inject'
 
 const FONT_SIZE = 16
+const MIN_PADDING = 8
 
+// No need to use `injectLocal` since tooltips are always child components of
+// the `provideTooltipRefs` caller (hence why we can call `useParentElement` to
+// position ourselves).
 const tooltipItemName = notNull(inject(injectTooltipItemName))
 const tooltipOffsetY = notNull(inject(injectTooltipOffsetY))
 const tooltipTriggerHeight = notNull(inject(injectTooltipTriggerHeight))
 const tooltipText = notNull(inject(injectTooltipText))
 
 const hPadding = computed(() => {
-  return `${(tooltipTriggerHeight.value - FONT_SIZE) / 2}px`
+  return `${Math.max(
+    MIN_PADDING,
+    (tooltipTriggerHeight.value - FONT_SIZE) / 2
+  )}px`
 })
 
 const container = useParentElement()

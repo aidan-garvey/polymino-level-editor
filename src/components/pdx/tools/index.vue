@@ -89,7 +89,7 @@
 
     <div class="pdx-tools__section">
       <pdx-tools-junk-effect
-        v-for="effect in junkEffects"
+        v-for="effect in JunkEffect"
         :key="effect"
         :effect="effect"
         :editor="editor"
@@ -115,7 +115,7 @@ import type { Tool } from '@/types/Tool'
 import { BlockState } from '@/types/BlockState'
 import { BlockColor } from '@/types/BlockColor'
 import { normalBlockColors, junkBlockColors } from '@/consts/block'
-import { junkEffects } from '@/types/JunkEffect'
+import { JunkEffect } from '@/types/JunkEffect'
 import { ToolKind } from '@/types/Tool'
 import { provideTooltipRefs } from '@/use/tooltip'
 

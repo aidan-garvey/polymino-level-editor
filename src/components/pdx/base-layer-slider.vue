@@ -49,7 +49,13 @@ const thumbRow = ref(props.editor.baseLayer.getRows())
 const thumbCssTop = ref(0)
 
 watch(thumbRow, () => {
-  props.editor.baseLayer.setRows(thumbRow.value)
+  // Route drags through the editor's setter so the history action survives
+  // being consumed mid-drag (e.g. by undoing). When the change is external
+  // (undo, opening a level) the editor already has the value and writing it
+  // back would wrongly create a history action, so only write while dragging.
+  if (pointerId.value !== undefined) {
+    props.editor.setBaseLayerRows(thumbRow.value)
+  }
 })
 
 /**

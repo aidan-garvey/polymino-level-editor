@@ -13,6 +13,16 @@ import type {
 import { ActionKind } from '@/types/History/Action'
 import { notNull } from '@/utils/notNull'
 
+const captured = Symbol('captured')
+
+/**
+ * Forces the Editor to call `captureBefore` before it can call one of the
+ * public `pushX` methods. See {@link History#captureBefore} for more info.
+ */
+interface CapturedLevel extends SavedLevel {
+  [captured]: true
+}
+
 /**
  * Maintains record history of editor actions, enabling undo/redo functionality.
  */
@@ -70,7 +80,7 @@ export class History {
 
   private pushSimpleAction(
     kind: (JunkAction | SettingsAction)['kind'],
-    before: SavedLevel
+    before: CapturedLevel
   ): void {
     const after = this.editor.saveForHistory()
     // Skip no-ops so they don't flood the history (e.g. repeatedly applying the
@@ -92,6 +102,12 @@ export class History {
     this.trimStack()
   }
 
+  /**
+   * Create a pending settings action of the given kind, unless a matching one
+   * already exists. The public `continueX` methods reuse this no-op behavior to
+   * recreate a pending that was consumed mid-edit (e.g. by undo/redo/save
+   * while the input stayed focused), so later edits are still recorded.
+   */
   private startSettingsAction(kind: SettingsAction['kind']): void {
     if (this.pending.value?.action.kind !== kind) {
       this.pushPending()
@@ -209,23 +225,45 @@ export class History {
     }
   }
 
-  pushMoveJunk(before: SavedLevel): void {
+  /**
+   * Flush any pending action, then return a snapshot of the editor's current
+   * state. Simple actions (no separate start and end) must capture their
+   * `before` state with this rather than `Editor.saveForHistory`. This is to
+   * encourage callers to flush the pending action before applying a change and
+   * calling a `pushX` method. If an action was still pending when the editor
+   * made a change, and a `pushX` method was only called afterwards, the pending
+   * action would be committed with an `after` state that includes the change,
+   * so redoing it would fast forward too far.
+   */
+  captureBefore(): CapturedLevel {
+    this.pushPending()
+    return {
+      ...this.editor.saveForHistory(),
+      [captured]: true,
+    }
+  }
+
+  pushMoveJunk(before: CapturedLevel): void {
     this.pushSimpleAction(ActionKind.MOVE_JUNK, before)
   }
 
-  pushCopyJunk(before: SavedLevel): void {
+  pushCopyJunk(before: CapturedLevel): void {
     this.pushSimpleAction(ActionKind.COPY_JUNK, before)
   }
 
-  pushEditJunk(before: SavedLevel): void {
+  pushEditJunk(before: CapturedLevel): void {
     this.pushSimpleAction(ActionKind.EDIT_JUNK, before)
   }
 
-  pushDeleteJunk(before: SavedLevel): void {
+  pushDeleteJunk(before: CapturedLevel): void {
     this.pushSimpleAction(ActionKind.DELETE_JUNK, before)
   }
 
   startLevelName(): void {
+    this.startSettingsAction(ActionKind.LEVEL_NAME)
+  }
+
+  continueLevelName(): void {
     this.startSettingsAction(ActionKind.LEVEL_NAME)
   }
 
@@ -237,11 +275,19 @@ export class History {
     this.startSettingsAction(ActionKind.GAME_RNG_SEED)
   }
 
+  continueRngSeed(): void {
+    this.startSettingsAction(ActionKind.GAME_RNG_SEED)
+  }
+
   endRngSeed(): void {
     this.endSettingsAction(ActionKind.GAME_RNG_SEED)
   }
 
   startBaseLayerSeed(): void {
+    this.startSettingsAction(ActionKind.BASE_LAYER_SEED)
+  }
+
+  continueBaseLayerSeed(): void {
     this.startSettingsAction(ActionKind.BASE_LAYER_SEED)
   }
 
@@ -253,11 +299,15 @@ export class History {
     this.startSettingsAction(ActionKind.BASE_LAYER_ROWS)
   }
 
+  continueBaseLayerRows(): void {
+    this.startSettingsAction(ActionKind.BASE_LAYER_ROWS)
+  }
+
   endBaseLayerRows(): void {
     this.endSettingsAction(ActionKind.BASE_LAYER_ROWS)
   }
 
-  pushSetBannedColor(before: SavedLevel): void {
+  pushSetBannedColor(before: CapturedLevel): void {
     this.pushSimpleAction(ActionKind.BANNED_COLOR, before)
   }
 

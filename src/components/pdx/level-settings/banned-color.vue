@@ -59,7 +59,7 @@ const {
 const onColorChange = () => {
   const color = Number.parseInt(colorSelector.value?.value ?? '', 10)
   const oldColor = props.editor.baseLayer.getBannedColor()
-  const before = props.editor.saveForHistory()
+  const before = props.editor.history.captureBefore()
 
   if (color in BlockColor && color !== BlockColor.GRAY) {
     if (oldColor !== color) {

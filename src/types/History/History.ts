@@ -72,21 +72,29 @@ export class History {
     kind: (JunkAction | SettingsAction)['kind'],
     before: SavedLevel
   ): void {
-    this.startAction()
+    const after = this.editor.saveForHistory()
+    // Skip no-ops so they don't flood the history (e.g. repeatedly applying the
+    // same color to a junk piece).
+    if (savedLevelsEqual(before, after))
+      return
+
+    this.pushPending()
     this.undoStack.push({
       action: {
         id: ++this.nextId,
         kind,
       },
       before,
-      after: this.editor.saveForHistory(),
+      after,
     })
+    // Need to clear this ourselves in case pushPending didn't.
+    this.redoStack.length = 0
     this.trimStack()
   }
 
   private startSettingsAction(kind: SettingsAction['kind']): void {
     if (this.pending.value?.action.kind !== kind) {
-      this.startAction()
+      this.pushPending()
       this.pending.value = {
         action: {
           id: ++this.nextId,
@@ -97,32 +105,33 @@ export class History {
     }
   }
 
-  private endSettingsAction<T>(
-    kind: SettingsAction['kind'],
-    getOldValue: (lvl: SavedLevel) => T,
-    newValue: T
-  ): void {
+  /**
+   * Finish a pending settings action, relying on `pushPending`'s
+   * `savedLevelsEqual` check to discard the edit if nothing actually changed.
+   */
+  private endSettingsAction(kind: SettingsAction['kind']): void {
     if (this.pending.value?.action.kind === kind) {
-      if (getOldValue(this.pending.value.before) !== newValue) {
-        this.finishAction()
-      } else {
-        this.abortAction()
-      }
+      this.pushPending()
     }
   }
 
   /**
    * Push the pending action onto the undo stack if one exists and its `before`
-   * state is different from the editor's current state. Returns true if the
-   * action was pushed, or false otherwise.
+   * state is different from the editor's current state. If an action is pushed,
+   * the redo stack will be cleared. Otherwise, the pending action will just be
+   * discarded.
+   *
+   * This should be called before undoing or redoing an action, when a new
+   * pending action is about to be created, and when an entire action is about
+   * to be pushed onto the undo stack (bypassing this.pending).
    */
-  private pushPending(): boolean {
+  private pushPending(): void {
     if (this.pending.value) {
       const currState = this.editor.saveForHistory()
 
       if (savedLevelsEqual(this.pending.value.before, currState)) {
         this.pending.value = null
-        return false
+        return
       }
 
       this.undoStack.push({
@@ -130,37 +139,9 @@ export class History {
         after: currState,
       })
       this.pending.value = null
-      this.trimStack()
-      return true
-    } else {
-      return false
-    }
-  }
-
-  /**
-   * Push the pending action onto the undo stack (if any), and always clear the
-   * redo stack. This should be done whenever a new pending action is about to
-   * be created due to a new action beginning, and whenever an entire action is
-   * about to be pushed onto the undo stack (bypassing this.pending).
-   */
-  private startAction(): void {
-    this.pushPending()
-    this.redoStack.length = 0
-  }
-
-  /**
-   * Push the pending action onto the undo stack (if any), and clear the redo
-   * stack if there was an action to push.
-   * This should be called before undoing or redoing an action, so all actions
-   * are on either one of the stacks and the correct order is maintained.
-   */
-  private finishAction(): void {
-    if (this.pushPending())
       this.redoStack.length = 0
-  }
-
-  private abortAction(): void {
-    this.pending.value = null
+      this.trimStack()
+    }
   }
 
   private matchesPendingBrush(tool: Tool, button: MouseButton): boolean {
@@ -199,7 +180,7 @@ export class History {
   }
 
   startBrush(tool: Tool, button: MouseButton): void {
-    this.startAction()
+    this.pushPending()
     this.pending.value = {
       action: {
         id: ++this.nextId,
@@ -224,7 +205,7 @@ export class History {
 
   endBrush(): void {
     if (this.pending.value?.action.kind === ActionKind.BRUSH) {
-      this.finishAction()
+      this.pushPending()
     }
   }
 
@@ -249,11 +230,7 @@ export class History {
   }
 
   endLevelName(): void {
-    this.endSettingsAction(
-      ActionKind.LEVEL_NAME,
-      lvl => lvl.name,
-      this.editor.levelName.value
-    )
+    this.endSettingsAction(ActionKind.LEVEL_NAME)
   }
 
   startRngSeed(): void {
@@ -261,11 +238,7 @@ export class History {
   }
 
   endRngSeed(): void {
-    this.endSettingsAction(
-      ActionKind.GAME_RNG_SEED,
-      lvl => lvl.seed,
-      this.editor.seed.value
-    )
+    this.endSettingsAction(ActionKind.GAME_RNG_SEED)
   }
 
   startBaseLayerSeed(): void {
@@ -273,11 +246,7 @@ export class History {
   }
 
   endBaseLayerSeed(): void {
-    this.endSettingsAction(
-      ActionKind.BASE_LAYER_SEED,
-      lvl => lvl.baseLayer.seed,
-      this.editor.baseLayer.getSeed()
-    )
+    this.endSettingsAction(ActionKind.BASE_LAYER_SEED)
   }
 
   startBaseLayerRows(): void {
@@ -285,11 +254,7 @@ export class History {
   }
 
   endBaseLayerRows(): void {
-    this.endSettingsAction(
-      ActionKind.BASE_LAYER_ROWS,
-      lvl => lvl.baseLayer.rows,
-      this.editor.baseLayer.getRows()
-    )
+    this.endSettingsAction(ActionKind.BASE_LAYER_ROWS)
   }
 
   pushSetBannedColor(before: SavedLevel): void {
@@ -297,10 +262,12 @@ export class History {
   }
 
   undo(): void {
-    this.finishAction()
+    this.pushPending()
 
     const undone = this.undoStack.at(-1)
-    // Don't allow undoing the file action at the beginning
+    // Don't allow undoing the first action, there should always be at least one
+    // entry in the history window (which is why we push a file action on
+    // construction)
     if (undone && this.undoStack.length > 1) {
       this.undoStack.pop()
       this.redoStack.push(undone)
@@ -309,7 +276,7 @@ export class History {
   }
 
   redo(): void {
-    this.finishAction()
+    this.pushPending()
 
     const redone = this.redoStack.pop()
     if (redone) {
@@ -323,7 +290,7 @@ export class History {
    * This results in the specified action being at the top of the undo stack.
    */
   undoTo(id: number): void {
-    this.finishAction()
+    this.pushPending()
 
     // make sure the action with that ID is in the undo stack
     if (!this.undoStack.find(a => a.action.id === id)) {
@@ -344,7 +311,7 @@ export class History {
    * This results in the specified action being at the top of the undo stack.
    */
   redoTo(id: number): void {
-    this.finishAction()
+    this.pushPending()
 
     // make sure the action with that ID is in the redo stack
     if (!this.redoStack.find(a => a.action.id === id)) {
@@ -360,7 +327,7 @@ export class History {
   }
 
   onLevelSaved(): void {
-    this.finishAction()
+    this.pushPending()
     this.lastSavedId.value = this.undoStack.at(-1)?.action.id ?? -1
   }
 

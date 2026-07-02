@@ -14,6 +14,7 @@ variant uses this wrapper and is responsible for inserting and controlling an
     @pointerleave="onPointerLeave"
   >
     <label
+      v-if="label"
       :for="id"
       :class="{
         'text-detail': !inlineLabel,

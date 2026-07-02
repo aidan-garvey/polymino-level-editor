@@ -34,12 +34,12 @@ const contextInfo = computed(() => {
     const { row, col } = props.editor.mouseCoordinates.value
     return `(Row, Column) = (${row}, ${col})`
   } else {
-    return `${props.editor.levelName.value}${hasUnsavedChanges.value ? ' \u25cf' : ''}`
+    return `${props.editor.getLevelName()}${hasUnsavedChanges.value ? ' \u25cf' : ''}`
   }
 })
 
 watch(
-  [hasUnsavedChanges, () => props.editor.levelName.value],
+  [hasUnsavedChanges, () => props.editor.getLevelName()],
   ([unsaved, levelName]) => {
     // U+25CF = filled circle
     const windowTitle = `${unsaved ? '\u25cf ' : ''}${levelName}`

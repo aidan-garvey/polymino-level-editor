@@ -45,7 +45,7 @@ export class Editor {
 
   readonly selectedJunk: ShallowRef<Junk | null> = shallowRef(null)
 
-  readonly levelName: Ref<string> = ref('Untitled')
+  private readonly levelName: Ref<string> = ref('Untitled')
 
   /**
    * All players' random generators will be initalized to this value when the
@@ -53,7 +53,7 @@ export class Editor {
    * will always have the same results. As far as the level editor is concerned,
    * it's just a number that doesn't affect anything.
    */
-  readonly seed: Ref<number>
+  private readonly seed: Ref<number>
 
   /**
    * State of the tool selected on the left mouse button
@@ -215,6 +215,40 @@ export class Editor {
         this.deselectJunk()
       }
     }
+  }
+
+  // Edits to settings via text/number inputs must go through these setters
+  // rather than writing the state directly, so `this.history`'s pending action
+  // is recreated if something consumed it while the input was focused (e.g.
+  // undoing or saving mid-edit). Like brushes, the continue call must come
+  // before the update, so the history action has the correct "before" state.
+
+  getLevelName(): string {
+    return this.levelName.value
+  }
+
+  setLevelName(name: string): void {
+    this.history.continueLevelName()
+    this.levelName.value = name
+  }
+
+  getRngSeed(): number {
+    return this.seed.value
+  }
+
+  setRngSeed(seed: number): void {
+    this.history.continueRngSeed()
+    this.seed.value = seed
+  }
+
+  setBaseLayerSeed(seed: number): void {
+    this.history.continueBaseLayerSeed()
+    this.baseLayer.setSeed(seed)
+  }
+
+  setBaseLayerRows(rows: number): void {
+    this.history.continueBaseLayerRows()
+    this.baseLayer.setRows(rows)
   }
 
   selectBrush(
@@ -441,7 +475,7 @@ export class Editor {
         return
     }
 
-    const before = this.saveForHistory()
+    const before = this.history.captureBefore()
     const numJunkBefore = this.junkLayer.board.getJunk().length
 
     const result = this.junkLayer.onCellDrop(event, row, col)
@@ -496,7 +530,7 @@ export class Editor {
 
   setSelectedJunkColor(color: BlockColor): void {
     if (this.selectedJunk.value) {
-      const before = this.saveForHistory()
+      const before = this.history.captureBefore()
       this.selectedJunk.value.color = color
       this.history.pushEditJunk(before)
     }
@@ -504,7 +538,7 @@ export class Editor {
 
   setSelectedJunkEffect(effect: JunkEffect | null): void {
     if (this.selectedJunk.value) {
-      const before = this.saveForHistory()
+      const before = this.history.captureBefore()
       this.selectedJunk.value.activeEffect = effect
       this.history.pushEditJunk(before)
     }
@@ -512,7 +546,7 @@ export class Editor {
 
   deleteSelectedJunk(): void {
     if (this.selectedJunk.value) {
-      const before = this.saveForHistory()
+      const before = this.history.captureBefore()
       this.junkLayer.board.removeJunk(this.selectedJunk.value)
       this.deselectJunk()
       this.history.pushDeleteJunk(before)

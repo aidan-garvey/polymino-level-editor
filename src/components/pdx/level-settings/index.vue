@@ -7,7 +7,7 @@
     </div>
 
     <pdx-input-text
-      v-model="editor.levelName.value"
+      v-model="levelName"
       label="Level name"
       :tooltip="'Name of the level in-game,\nseparate from the file name'"
       :allowed-chars="VALID_CHARS"
@@ -17,7 +17,7 @@
     />
 
     <pdx-input-number
-      v-model="editor.seed.value"
+      v-model="rngSeed"
       label="RNG seed"
       tooltip="Value to initialize RNG after the level loads"
       :min="0"
@@ -65,14 +65,24 @@ const props = defineProps<{
 
 provideTooltipRefs()
 
+const levelName = computed({
+  get: () => props.editor.getLevelName(),
+  set: name => props.editor.setLevelName(name),
+})
+
+const rngSeed = computed({
+  get: () => props.editor.getRngSeed(),
+  set: seed => props.editor.setRngSeed(seed),
+})
+
 const baseLayerSeed = computed({
   get: () => props.editor.baseLayer.getSeed(),
-  set: val => props.editor.baseLayer.setSeed(val),
+  set: val => props.editor.setBaseLayerSeed(val),
 })
 
 const baseLayerRows = computed({
   get: () => props.editor.baseLayer.getRows(),
-  set: val => props.editor.baseLayer.setRows(val),
+  set: val => props.editor.setBaseLayerRows(val),
 })
 </script>
 

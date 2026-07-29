@@ -311,6 +311,46 @@ export class History {
     this.pushSimpleAction(ActionKind.BANNED_COLOR, before)
   }
 
+  pushSetGoal(before: CapturedLevel): void {
+    this.pushSimpleAction(ActionKind.SET_GOAL, before)
+  }
+
+  pushAddTargetJunk(before: CapturedLevel): void {
+    this.pushSimpleAction(ActionKind.ADD_TARGET_JUNK, before)
+  }
+
+  pushRemoveTargetJunk(before: CapturedLevel): void {
+    this.pushSimpleAction(ActionKind.REMOVE_TARGET_JUNK, before)
+  }
+
+  pushToggleLossCondition(before: CapturedLevel): void {
+    this.pushSimpleAction(ActionKind.TOGGLE_LOSS_CONDITION, before)
+  }
+
+  startEditGoal(): void {
+    this.startSettingsAction(ActionKind.EDIT_GOAL)
+  }
+
+  continueEditGoal(): void {
+    this.startSettingsAction(ActionKind.EDIT_GOAL)
+  }
+
+  endEditGoal(): void {
+    this.endSettingsAction(ActionKind.EDIT_GOAL)
+  }
+
+  startEditLossCondition(): void {
+    this.startSettingsAction(ActionKind.EDIT_LOSS_CONDITION)
+  }
+
+  continueEditLossCondition(): void {
+    this.startSettingsAction(ActionKind.EDIT_LOSS_CONDITION)
+  }
+
+  endEditLossCondition(): void {
+    this.endSettingsAction(ActionKind.EDIT_LOSS_CONDITION)
+  }
+
   undo(): void {
     this.pushPending()
 

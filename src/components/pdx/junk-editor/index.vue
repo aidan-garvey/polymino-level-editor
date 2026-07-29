@@ -41,7 +41,19 @@
 
     <button
       type="button"
-      class="pdx-junk-editor__delete-button"
+      ref="targetButton"
+      class="pdx-junk-editor__button"
+      :disabled="!editor.selectedJunk.value || editor.getGoalKind() !== GoalKind.DESTROY_TARGETS"
+      @click="onToggleTarget"
+      @pointerenter="onTargetEnter"
+      @pointerleave="onTargetLeave"
+    >
+      {{ editor.isSelectedJunkATarget() ? 'Unmark' : 'Mark' }} target
+    </button>
+
+    <button
+      type="button"
+      class="pdx-junk-editor__button"
       :disabled="!editor.selectedJunk.value"
       @click="onDelete"
     >
@@ -54,8 +66,9 @@
 import type { Editor } from '@/types/Editor'
 import type { BlockColor } from '@/types/BlockColor'
 import type { JunkEffect } from '@/types/JunkEffect'
-import { provideTooltipRefs } from '@/use/tooltip'
+import { provideTooltipRefs, useTooltip } from '@/use/tooltip'
 import { makeHotkey } from '@/utils/hotkey'
+import { GoalKind } from '@/types/Rules/Goal'
 
 const props = defineProps<{
   editor: Editor
@@ -63,12 +76,37 @@ const props = defineProps<{
 
 provideTooltipRefs()
 
+const targetButton = useTemplateRef('targetButton')
+
+const targetTooltip = computed(() => {
+  if (!props.editor.selectedJunk.value) {
+    return 'No junk piece is selected'
+  } else if (props.editor.getGoalKind() === GoalKind.DESTROY_TARGETS) {
+    return `Toggle this piece as a target for the "${GoalKind.DESTROY_TARGETS}" goal`
+  } else {
+    return `Requires the "${GoalKind.DESTROY_TARGETS}" goal to be active`
+  }
+})
+
+const {
+  onPointerEnter: onTargetEnter,
+  onPointerLeave: onTargetLeave,
+} = useTooltip(
+  'targetButton',
+  targetTooltip,
+  targetButton,
+)
+
 const onColorClick = (color: BlockColor) => {
   props.editor.setSelectedJunkColor(color)
 }
 
 const onEffectClick = (effect: JunkEffect | null) => {
   props.editor.setSelectedJunkEffect(effect)
+}
+
+const onToggleTarget = () => {
+  props.editor.toggleTargetSelectedJunk()
 }
 
 const onDelete = () => {
@@ -85,7 +123,7 @@ useEventListener('keyup', makeHotkey(onDelete, 'delete', 'backspace'))
   align-items: center;
   gap: 8px;
 
-  &__delete-button {
+  &__button {
     width: 100%;
   }
 }

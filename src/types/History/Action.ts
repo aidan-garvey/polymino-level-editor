@@ -15,6 +15,12 @@ export enum ActionKind {
   BASE_LAYER_SEED,
   BASE_LAYER_ROWS,
   BANNED_COLOR,
+  SET_GOAL,
+  EDIT_GOAL,
+  ADD_TARGET_JUNK,
+  REMOVE_TARGET_JUNK,
+  TOGGLE_LOSS_CONDITION,
+  EDIT_LOSS_CONDITION,
 }
 
 export interface DataAction {
@@ -48,6 +54,13 @@ export interface SettingsAction {
     | ActionKind.BASE_LAYER_SEED
     | ActionKind.BASE_LAYER_ROWS
     | ActionKind.BANNED_COLOR
+    | ActionKind.SET_GOAL
+    | ActionKind.EDIT_GOAL
+    | ActionKind.EDIT_LOSS_CONDITION
+    | ActionKind.ADD_TARGET_JUNK
+    | ActionKind.REMOVE_TARGET_JUNK
+    | ActionKind.TOGGLE_LOSS_CONDITION
+    | ActionKind.EDIT_LOSS_CONDITION
 }
 
 export type Action =

@@ -50,6 +50,21 @@ const actionDesc = computed<string>(() => {
       return 'Base layer rows'
     case ActionKind.BANNED_COLOR:
       return 'Banned color'
+    case ActionKind.SET_GOAL:
+      return 'Set goal'
+    case ActionKind.EDIT_GOAL:
+      return 'Edit goal'
+    case ActionKind.ADD_TARGET_JUNK:
+      return 'Add target junk'
+    case ActionKind.REMOVE_TARGET_JUNK:
+      return 'Remove target junk'
+    case ActionKind.TOGGLE_LOSS_CONDITION:
+      return 'Toggle extra rule'
+    case ActionKind.EDIT_LOSS_CONDITION:
+      return 'Edit extra rule'
+    default:
+      // @ts-expect-error This branch should be unreachable
+      throw new TypeError(`Unknown history action: ${props.action.kind}`)
   }
 })
 

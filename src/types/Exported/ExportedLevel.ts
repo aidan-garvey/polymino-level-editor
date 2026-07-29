@@ -1,4 +1,5 @@
 import type { ExportedCellGrid } from '@/types/Exported/ExportedCellGrid'
+import type { ExportedRules } from '@/types/Exported/ExportedRules'
 
 /**
  * Finalized, exported level data. Does not store the information required to
@@ -11,4 +12,5 @@ export interface ExportedLevel extends ExportedCellGrid {
   // junk pieces that can be dropped, if that's a thing that'd be fun
   readonly name: string
   readonly seed: number
+  readonly rules: ExportedRules
 }

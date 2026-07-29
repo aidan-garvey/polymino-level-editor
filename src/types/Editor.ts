@@ -17,6 +17,9 @@ import { MouseButton } from '@/consts/mouse'
 import { History } from '@/types/History/History'
 import { BOARD_WIDTH, BOARD_HEIGHT } from '@/consts/board'
 import { getJunkDragData } from '@/types/JunkDrag'
+import { GoalKind } from '@/types/Rules/Goal'
+import { LossConditionKind } from '@/types/Rules/LossCondition'
+import { Rules } from '@/types/Rules/Rules'
 
 export class Editor {
   readonly history: History
@@ -40,6 +43,8 @@ export class Editor {
       this.junkLayer,
     ]
   }
+
+  readonly rules: Rules
 
   readonly junkBuilder: JunkBuilder
 
@@ -131,6 +136,7 @@ export class Editor {
       this.junkLayer = new JunkLayer(
         CellGrid.fromExported(data.junkLayer, true)
       )
+      this.rules = Rules.fromExported(data.rules, (r, c) => this.positionToId(r, c))
       this.junkBuilder = new JunkBuilder()
       this.seed = ref(data.seed)
       this.history = new History(this, false)
@@ -138,9 +144,41 @@ export class Editor {
       this.baseLayer = new BaseLayer()
       this.brushLayer = new BrushLayer()
       this.junkLayer = new JunkLayer()
+      this.rules = new Rules()
       this.junkBuilder = new JunkBuilder()
       this.seed = ref(Math.round(performance.now()))
       this.history = new History(this, true)
+    }
+  }
+
+  /**
+   * Checks the junk layer for a piece with the given ID, and returns the
+   * (row, column) position of an _arbitrary_ block belonging to it, or null if
+   * there is no such piece. We can't return the (bottomRow, leftColumn)
+   * position in case a potential future shape had an empty block in its
+   * lower-left corner. We ignore the brush layer because it would create
+   * ambiguity if there was a piece occupying the same cell in each layer.
+   */
+  private idToPosition(id: number): [number, number] | null {
+    const j = this.junkLayer.board.getJunkById(id)
+    if (j) {
+      return this.junkLayer.board.junkBlockPositions(j)[0] ?? null
+    } else {
+      return null
+    }
+  }
+
+  /**
+   * Checks the junk layer for a junk piece occupying the given position,
+   * returning its ID. We ignore the brush layer for the same reason described
+   * above for {@link idToPosition}.
+   */
+  private positionToId(row: number, col: number): number | null {
+    const j = this.junkLayer.board.getBlock(row, col)
+    if (j.state === BlockState.JUNK) {
+      return j.junk.id
+    } else {
+      return null
     }
   }
 
@@ -150,8 +188,9 @@ export class Editor {
       baseLayer: this.baseLayer.save(),
       brushLayer: this.brushLayer.board.export(),
       junkLayer: this.junkLayer.board.export(),
+      rules: this.rules.export(id => this.idToPosition(id)),
       seed: this.seed.value,
-      lastModified: (new Date).toISOString()
+      lastModified: (new Date).toISOString(),
     }
   }
 
@@ -173,8 +212,8 @@ export class Editor {
     // Assume that downloading is a backup thing, and people will prefer local
     // storage. If they load a level from local storage and it isn't what they
     // remember saving (b/c they saved it to disk) they might not think to check
-    // local storage for the right version of the file. I think the best thing
-    // to do is still show the "unsaved changes" warnings.
+    // their disk for the right version of the file. I think the best thing to
+    // do is still show the "unsaved changes" warnings.
     return this.saveState()
   }
 
@@ -194,7 +233,8 @@ export class Editor {
     return {
       ...combinedGrid.export(),
       name: this.levelName.value,
-      seed: this.seed.value
+      seed: this.seed.value,
+      rules: this.rules.export(id => this.idToPosition(id)),
     }
   }
 
@@ -208,6 +248,7 @@ export class Editor {
     this.baseLayer.restore(level.baseLayer)
     this.brushLayer.restore(level.brushLayer)
     this.junkLayer.restore(level.junkLayer)
+    this.rules.restore(level.rules, (r, c) => this.positionToId(r, c))
     this.seed.value = level.seed
 
     if (this.selectedJunk.value) {
@@ -547,10 +588,101 @@ export class Editor {
   deleteSelectedJunk(): void {
     if (this.selectedJunk.value) {
       const before = this.history.captureBefore()
+      this.rules.unmarkTarget(this.selectedJunk.value.id)
       this.junkLayer.board.removeJunk(this.selectedJunk.value)
       this.deselectJunk()
       this.history.pushDeleteJunk(before)
     }
+  }
+
+  setGoalKind(kind: GoalKind): void {
+    if (kind === this.rules.goal.value.kind) {
+      return
+    }
+    const before = this.history.captureBefore()
+    this.rules.setGoalKind(kind)
+    this.history.pushSetGoal(before)
+  }
+
+  getGoalKind(): GoalKind {
+    return this.rules.goal.value.kind
+  }
+
+  /**
+   * If we're using the `DESTROY_TARGETS` goal, toggle the currently-selected
+   * piece (if any) being marked as a target.
+   */
+  toggleTargetSelectedJunk(): void {
+    const selected = this.selectedJunk.value
+    if (selected && this.rules.goal.value.kind === GoalKind.DESTROY_TARGETS) {
+      const before = this.history.captureBefore()
+      this.rules.toggleTarget(selected.id)
+      this.history.pushAddTargetJunk(before)
+    }
+  }
+
+  /**
+   * If we're using the `DESTROY_TARGETS` goal, and the given junk piece is
+   * marked as a target, unmark it.
+   */
+  removeTarget(junk: Junk): void {
+    if (this.rules.goal.value.kind !== GoalKind.DESTROY_TARGETS
+      || !this.rules.isTarget(junk.id)
+    ) {
+      return
+    }
+    const before = this.history.captureBefore()
+    this.rules.unmarkTarget(junk.id)
+    this.history.pushAddTargetJunk(before)
+  }
+
+  isSelectedJunkATarget(): boolean {
+    const selected = this.selectedJunk.value
+    return !!selected && this.rules.isTarget(selected.id)
+  }
+
+  setTargetScore(target: number): void {
+    this.history.continueEditGoal()
+    this.rules.setTargetScore(target)
+  }
+
+  setCollatCount(collatCount: number): void {
+    this.history.continueEditGoal()
+    this.rules.setCollatCount(collatCount)
+  }
+
+  setMaxMoves(maxMoves: number): void {
+    this.history.continueEditLossCondition()
+    this.rules.lossCondition(LossConditionKind.MAX_MOVES).maxMoves = maxMoves
+  }
+
+  setEndOnWin(endOnWin: boolean): void {
+    if (this.rules.endOnWin.value === endOnWin) {
+      return
+    }
+    const before = this.history.captureBefore()
+    this.rules.endOnWin.value = endOnWin
+    this.history.pushSetGoal(before)
+  }
+
+  toggleLossCondition(kind: LossConditionKind, enabled: boolean): void {
+    const condition = this.rules.lossCondition(kind)
+    if (condition.enabled === enabled) {
+      return
+    }
+    const before = this.history.captureBefore()
+    condition.enabled = enabled
+    this.history.pushToggleLossCondition(before)
+  }
+
+  setBanishedColor(color: BlockColor): void {
+    const condition = this.rules.lossCondition(LossConditionKind.CANT_MATCH_COLOR)
+    if (condition.banishedColor === color) {
+      return
+    }
+    const before = this.history.captureBefore()
+    condition.banishedColor = color
+    this.history.pushToggleLossCondition(before)
   }
 
   toggleNextColor(): void {

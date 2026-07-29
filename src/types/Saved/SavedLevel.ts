@@ -1,13 +1,16 @@
 import type { SavedBaseLayer } from '@/types/Saved/SavedBaseLayer'
 import type { ExportedCellGrid } from '@/types/Exported/ExportedCellGrid'
+import type { ExportedRules } from '@/types/Exported/ExportedRules'
 import { isSavedBaseLayer, savedBaseLayersEqual } from '@/types/Saved/SavedBaseLayer'
 import { isExportedCellGrid, exportedCellGridsEqual } from '@/types/Exported/ExportedCellGrid'
+import { exportedRulesEqual, isExportedRules } from '@/types/Exported/ExportedRules'
 
 export interface SavedLevel {
   readonly name: string
   readonly baseLayer: SavedBaseLayer
   readonly brushLayer: ExportedCellGrid
   readonly junkLayer: ExportedCellGrid
+  readonly rules: ExportedRules
   readonly seed: number
   /**
    * Metadata used to display how long ago levels were modified in the UI and
@@ -27,6 +30,8 @@ export const isSavedLevel = (data: unknown): data is SavedLevel => {
     && isExportedCellGrid(data.brushLayer)
     && 'junkLayer' in data
     && isExportedCellGrid(data.junkLayer)
+    && 'rules' in data
+    && isExportedRules(data.rules)
     && 'seed' in data
     && typeof data.seed === 'number'
     && 'lastModified' in data
@@ -44,5 +49,6 @@ export const savedLevelsEqual = (a: SavedLevel, b: SavedLevel) => {
     && savedBaseLayersEqual(a.baseLayer, b.baseLayer)
     && exportedCellGridsEqual(a.brushLayer, b.brushLayer)
     && exportedCellGridsEqual(a.junkLayer, b.junkLayer)
+    && exportedRulesEqual(a.rules, b.rules)
     && a.seed === b.seed
 }

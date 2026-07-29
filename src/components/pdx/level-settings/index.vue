@@ -51,6 +51,10 @@
     <pdx-level-settings-banned-color
       :editor
     />
+
+    <pdx-level-settings-rules
+      :editor
+    />
   </div>
 </template>
 

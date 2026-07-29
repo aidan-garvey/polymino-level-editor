@@ -19,5 +19,6 @@ export const exportSavedLevel = (level: SavedLevel): ExportedLevel => {
     ...combined.export(),
     name: level.name,
     seed: level.seed,
+    rules: level.rules,
   }
 }
